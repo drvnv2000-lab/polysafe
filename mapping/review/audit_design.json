@@ -1,0 +1,16 @@
+{
+ "stratum_keys": 257,
+ "R": 13279,
+ "needed_for_80": 45,
+ "head_keys": 45,
+ "head_rows": 10637,
+ "N": 212,
+ "tail_population_rows": 2642,
+ "n": 50,
+ "tail_mode": "sample",
+ "rows_min": 1,
+ "rows_median": 7.0,
+ "rows_max": 1251,
+ "seed": 20261004,
+ "search_terms_sha": "aaef7a99e175e4875abf667ab2667744f60b4dbc"
+}
