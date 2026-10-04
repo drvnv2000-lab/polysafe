@@ -549,3 +549,16 @@ sentence inside D6.0's block, which this property forbids. That insertion was
 reverted and the sentence re-appended as D6.0a, so it visibly post-dates the
 rule it qualifies. The property applies from the revert commit onward; the
 revert itself is the one disclosed deletion.
+
+**D6.0c [protocol addition] Definition of the pre-specified class set.** D6.0
+refers to "all pre-specified class variables"; no committed text defined that
+set. It is defined here as exactly the medication classes named in the
+committed protocol: the NSAID class with aspirin excluded (D4.1),
+aminoglycosides (D4.1, D4.5), and iodinated contrast (D4.1, D4.5). ACE
+inhibitors/ARBs and loop diuretics appear only in code (review.CLASSES) and are
+named nowhere in the committed protocol; they do not enter the primary model
+and are reported descriptively as post-hoc exposures, labelled as not
+pre-registered. Aminoglycosides are absent from the data and therefore
+contribute no variable - an empty set, not an exclusion.
+Basis: which classes the committed protocol names. Not exposure frequency.
+Written after exposed-stay counts were known; disclosed.
