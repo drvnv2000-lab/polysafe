@@ -296,3 +296,35 @@ and reported, to identify which correlation (rho) in the power table applies.
 
 Decided after the section 9.1 simulation and before any model was fitted. No
 model output or association estimate had been examined.
+
+### D3 — 2026-10-04, before any model was fitted
+
+**D3.1 — Section 8: APACHE severity excluded despite being pre-specified.** In
+74 of 868 stays (8.5%), eICU's APACHE day-1 values match labs drawn after T, by
+up to 7.3 h, including the worst creatinine in 25 stays. Using them would break
+the section 3 rule (features only from offset <= T). Severity is carried by the
+labs, blood pressure and urine output measured by T.
+
+**D3.2 — `vitalPeriodic` added** (heart rate, respiratory rate, temperature,
+SpO2). Omitting standard vitals would weaken the clinical baseline and bias
+dAUROC upward.
+
+**D3.3 — Unit type and admission source added; admission diagnosis as a coarse
+category only.**
+
+**D3.4 — Ethnicity excluded as a predictor**, retained for subgroup performance
+reporting.
+
+**D3.5 — Primary logistic regression is L2-penalised, tuned within training
+folds.** Events per variable is 78/48 = 1.6 (48 = the step-4 clinical feature
+set, before the D3.2-D3.3 additions), far below the conventional minimum of 10;
+this is stated in the README.
+
+**D3.6 — Imputation: median plus missingness indicator, fitted within each
+training fold.** Labs above 40% missingness across all 868 stays (lactate, pH,
+phosphate) are excluded from the LR model and retained for LightGBM.
+
+**D3.7 — Lookback for pre-ICU values capped at 7 days before admission.**
+
+Decided before any model was fitted. No model output or association estimate
+had been examined.
