@@ -629,3 +629,30 @@ prior modifications lie outside that baseline:
   - d972c0c inserted lines inside D6.0's block and was reverted by
     50792b0, leaving the file byte-identical to 067ee23.
 No history was rewritten and no commit was force-pushed.
+
+**D6.0g [protocol addition] Definition of "committed protocol".**
+The term is used by D6.0c and D6.0e and was never defined. It is
+defined here on the basis of HANDOFF.md:6-9, which names
+PREREGISTRATION.md "the analysis plan of record", gives it precedence
+where the two differ, and allows it to change only through its
+append-only Deviations section.
+
+"The committed protocol" means PREREGISTRATION.md as committed, including
+its appended Deviations entries, and nothing else. It is the sole source
+of pre-specification: no other file pre-specifies any analysis, variable,
+exposure or threshold.
+
+"Protocol documents", as used by the step-8 citation audit, means
+PREREGISTRATION.md and HANDOFF.md - the files whose sections and entries
+may be cited. That is a wider set serving a different purpose: citation
+resolution, not pre-specification. The two terms are distinct and are not
+interchangeable.
+
+DATA_REPORT.md, MAPPING_REPORT.md, REVIEW_PACKET.md and DEMO_SCOPE.md are
+records of measurement or process. Nothing in them pre-specifies anything.
+
+This definition does not change the class set determined by D6.0c:
+NSAIDs, aminoglycosides and iodinated contrast are named in
+PREREGISTRATION.md (D4.1, D4.5) and remain in; ACE inhibitors/ARBs and
+loop diuretics are named nowhere in it and remain out. The definition is
+therefore not outcome-selected.
