@@ -328,3 +328,58 @@ phosphate) are excluded from the LR model and retained for LightGBM.
 
 Decided before any model was fitted. No model output or association estimate
 had been examined.
+
+### D4 — 2026-10-04, before any model was fitted
+
+**D4.1 — NSAID class: aspirin excluded.** Aspirin accounts for 1,026 of the
+1,154 NSAID rows (89%). Low-dose aspirin has a different indication and renal
+risk profile; it is excluded from the NSAID class and not analysed separately
+unless pre-specified later. Residual NSAIDs are 11 keys / 128 rows / 99 stays
+across all 2,520 and fall below the exposure threshold, so NSAIDs join
+aminoglycosides and iodinated contrast as not individually analysable.
+Analysable exposures: vancomycin, piperacillin-tazobactam, furosemide; negative
+control: ondansetron.
+
+**D4.2 — Temperature excluded from the LR** (91% missing), retained for
+LightGBM.
+
+**D4.3 — The 40% missingness threshold (D3.6) is applied to the primary
+cohort, not all 868 stays.** INR (41.6% missing in the primary cohort) is
+therefore also excluded from the LR. LR exclusions: lactate, pH, phosphate, INR,
+temperature.
+
+**D4.4 — Primary logistic regression uses a pre-specified reduced feature
+set,** chosen by the PI on clinical grounds before any model output was seen:
+
+    age, cr_baseline, cr_max, bun, hco3, albumin, hgb, wbc, map_min,
+    urine_ml_kg_h, hx_ckd, hx_chf, hx_diabetes, dx_operative
+
+Per D3.6, missingness indicators are added only where missingness is plausibly
+informative and substantial: urine_ml_kg_h (27.3%) and albumin (25.9%), plus a
+single merged indicator for the three hx_* flags (4.6%, missing on the same
+stays, where median imputation would assert absence of comorbidity). The
+remaining variables (hco3, map_min, wbc, hgb, dx_operative; 1.5-6.0% missing)
+receive median imputation without an indicator, their missingness being
+technical rather than clinical. This refines D3.6 for the reduced model only;
+the full 74-feature LR retains indicators for every imputed variable.
+
+Total: 14 variables / 17 parameters. EPV = 78/17 = 4.6, below the conventional
+minimum of 10, which is stated in the README.
+
+Excluded for collinearity (map_below_65, anion_gap), availability (cr_pre_icu
+67%, bili 70%), parameter cost (unit_*, 4 extra dummies) or rarity
+(hx_cirrhosis, 1.6%). All remain in the full penalised LR and in LightGBM. The
+full 74-feature penalised LR is a sensitivity analysis; LightGBM uses all
+features.
+
+**D4.5 — Aminoglycosides cannot be analysed:** absent from the data. Iodinated
+contrast (69 stays) is below the exposure threshold and will not be reported
+individually.
+
+**D4.6 — eICU's `drughiclseqno` is NOT RxNorm's `HIC_SEQN`.** Cross-walking
+them returns wrong ingredients (furosemide -> enoxacin, vancomycin -> corn
+syrup). All mapping goes via drug names. RxNorm ATC classes are also unreliable
+for combination products and are not used for class assignment.
+
+Decided before any model was fitted. No model output or association estimate
+had been examined.
