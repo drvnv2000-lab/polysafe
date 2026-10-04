@@ -59,6 +59,11 @@ def test_tf_and_ft_resolve_to_the_same_category():
     assert got.nunique() == 1
 
 
+def test_radinj_resolves_as_inj_and_injection_do():
+    got = routes.route_category(pd.Series(["RADINJ", "INJ", "Injection"]))
+    assert got.tolist() == ["parenteral_unspecified"] * 3
+
+
 def test_the_table_rejects_a_category_outside_the_vocabulary(tmp_path):
     bad = routes.read_table().head(2).assign(route_category=["parenteral_iv", "systemic"])
     bad.to_csv(tmp_path / "t.csv", index=False)
