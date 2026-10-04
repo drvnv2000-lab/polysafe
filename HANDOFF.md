@@ -127,7 +127,7 @@ event count at each step — as `results/cohort_flow.md`.
 | 3 | **Draft ready for PI review** (`mapping/hicl_draft.csv`, `mapping/MAPPING_REPORT.md`). **Drug normalization** on HICL — see below. The PI does the clinical mapping. |
 | 4 | **Clinical part done** (`results/features_clinical.md`, 74 features; APACHE excluded per D3.1). Medication features wait for the reviewed mapping. |
 | 5 | Clinical-only model (logistic regression, then gradient boosting). |
-| 6 | Clinical + medication model. **The headline is the paired difference.** |
+| 6 | Clinical + medication model. **The headline is the paired difference.** When the medication feature builder is written, re-point `tests/test_review.py::test_end_to_end_decision_to_stay_level_exposure` at the builder itself: a builder that bypasses `review.rows_counted` must fail it. |
 | 7 | Evaluation as in Validation design, plus the four exposure-ascertainment sensitivity analyses (pre-registration section 6). |
 | 8 | Secondary: pre-specified agents (vancomycin, piperacillin-tazobactam, furosemide; ondansetron as negative control), propensity-adjusted, associational language only. |
 | 9 | FastAPI + Docker + README with real numbers. |
