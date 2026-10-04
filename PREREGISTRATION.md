@@ -562,3 +562,14 @@ pre-registered. Aminoglycosides are absent from the data and therefore
 contribute no variable - an empty set, not an exclusion.
 Basis: which classes the committed protocol names. Not exposure frequency.
 Written after exposed-stay counts were known; disclosed.
+
+**D6.0d [clarification] Ondansetron's role.** Section 10 enumerates the
+pre-specified exposures under two distinct headings: "Exposures" (vancomycin,
+piperacillin-tazobactam, furosemide) and "Negative control exposure"
+(ondansetron). That structural separation assigns ondansetron a secondary
+negative-control role, so it is not a primary-model medication feature under
+D6.0. It remains the negative control in the secondary propensity analysis
+(section 10) and a tier-1 agent for ascertainment reporting. The observation
+that ondansetron is not nephrotoxic is consistent with this role but is not the
+basis for it; section 1:19's "nephrotoxic agents" phrasing scopes the secondary
+research question, not primary-model inclusion.
