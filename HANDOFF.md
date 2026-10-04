@@ -121,11 +121,11 @@ event count at each step — as `results/cohort_flow.md`.
 | Step | Deliverable |
 |---|---|
 | 1 | **Done.** Loaders + cohort builder. Tests on real rows. |
-| 2a | Cohort with the RRT-at-T exclusion; report the flow. |
-| 2b | AKI labels for baselines A and C under the pre-registered outcome (7-day window censored at ICU discharge, RRT rule). Incidence for both, post-T follow-up distribution, comparison with DATA_REPORT's provisional 22.6%. |
-| 2c | **Power simulation** (pre-registration section 9) on the real cohort, real patient grouping and real fold structure. Append the result to PREREGISTRATION.md section 9 and commit — **before any model is trained.** |
-| 3 | **Drug normalization** on HICL — see below. The PI does the clinical mapping. |
-| 4 | Features at T: demographics, APACHE severity, baseline creatinine, labs, vitals, urine output, comorbidities. |
+| 2a | **Done.** Cohort with the RRT-at-T exclusion; report the flow. |
+| 2b | **Done** (`results/cohort_flow.md`, `results/aki_labels.md`). AKI labels for baselines A and C under the pre-registered outcome (7-day window censored at ICU discharge, RRT rule). Incidence for both, post-T follow-up distribution, comparison with DATA_REPORT's provisional 22.6%. |
+| 2c | **Done** (PREREGISTRATION 9.1, deviations D2-D3). **Power simulation** (pre-registration section 9) on the real cohort, real patient grouping and real fold structure. Append the result to PREREGISTRATION.md section 9 and commit — **before any model is trained.** |
+| 3 | **Draft ready for PI review** (`mapping/hicl_draft.csv`, `mapping/MAPPING_REPORT.md`). **Drug normalization** on HICL — see below. The PI does the clinical mapping. |
+| 4 | **Clinical part done** (`results/features_clinical.md`, 74 features; APACHE excluded per D3.1). Medication features wait for the reviewed mapping. |
 | 5 | Clinical-only model (logistic regression, then gradient boosting). |
 | 6 | Clinical + medication model. **The headline is the paired difference.** |
 | 7 | Evaluation as in Validation design, plus the four exposure-ascertainment sensitivity analyses (pre-registration section 6). |
