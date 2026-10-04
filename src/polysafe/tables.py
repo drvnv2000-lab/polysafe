@@ -27,6 +27,7 @@ TABLES = (
     "apacheApsVar",
     "apachePredVar",
     "admissionDx",
+    "vitalPeriodic",  # added by PREREGISTRATION D3.2
 )
 
 

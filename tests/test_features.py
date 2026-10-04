@@ -24,7 +24,7 @@ def X(inputs, stays):
 
 
 def test_shape_and_no_apache(X, inputs, stays):
-    assert X.shape == (868, 48)
+    assert X.shape == (868, 74)
     assert X.index.equals(pd.Index(stays))
     assert not [c for c in X.columns if "apache" in c.lower()]
     assert not [t for t in inputs if "apache" in t.lower()]
@@ -45,6 +45,11 @@ def test_nothing_after_T_can_change_a_feature(inputs, stays, X):
     ph = t["pastHistory"]
     late = ph["pasthistoryenteredoffset"] > T_MIN
     ph.loc[late, "pasthistorypath"] = "x/Cardiovascular (R)/Congestive Heart Failure/x"
+    vp = t["vitalPeriodic"]
+    vp.loc[vp["observationoffset"] > T_MIN, ["heartrate", "respiration", "sao2"]] = 60.0
+    adx = t["admissionDx"]
+    adx.loc[adx["admitdxenteredoffset"] > T_MIN, "admitdxpath"] = (
+        "admission diagnosis|All Diagnosis|Operative|Diagnosis|Trauma|x")
     pd.testing.assert_frame_equal(features.build(t, stays), X)
 
 
@@ -92,3 +97,41 @@ def test_urine_counts_are_not_volumes():
 
 def test_unmeasured_stays_stay_missing(X):
     assert X["lactate"].isna().any() and not np.isinf(X.select_dtypes("number")).any().any()
+
+
+def test_pre_icu_lookback_is_seven_days():
+    week = features.PRE_ICU_LOOKBACK_MIN
+    lab = pd.DataFrame({"patientunitstayid": [1, 2], "labresultoffset": [-week, -week - 1],
+                        "labname": ["albumin", "albumin"], "labresult": [3.0, 3.0]})
+    out = features.lab_features(lab)
+    assert out.loc[1, "albumin"] == 3.0 and 2 not in out.index
+
+
+def test_temperature_in_fahrenheit_is_converted():
+    vp = pd.DataFrame({"patientunitstayid": [1, 1, 2], "observationoffset": [60, 120, 60],
+                       "heartrate": 80.0, "respiration": 18.0, "sao2": 97.0,
+                       "temperature": [98.6, 37.0, 101.3]})
+    out = features.periodic_vital_features(vp)
+    assert out.loc[1, "temp_max"] == pytest.approx(37.0)
+    assert out.loc[2, "temp_max"] == pytest.approx((101.3 - 32) * 5 / 9)
+
+
+def test_admission_diagnosis_entered_after_T_is_missing():
+    p = pd.DataFrame({"patientunitstayid": [1, 2], "unittype": ["MICU", "MICU"],
+                      "unitadmitsource": ["Floor", None]})
+    adx = pd.DataFrame({"patientunitstayid": [1, 2], "admitdxenteredoffset": [30, T_MIN + 5],
+                        "admitdxpath": ["admission diagnosis|All Diagnosis|Non-operative|"
+                                        "Diagnosis|Respiratory|Pneumonia"] * 2})
+    out = features.admission_context(p, adx)
+    assert out.loc[1, "dx_respiratory"] == 1 and out.loc[1, "dx_operative"] == 0
+    assert out.loc[2, ["dx_operative", "dx_respiratory", "dx_gi"]].isna().all()
+    assert out.loc[2, ["src_floor", "src_ed"]].isna().all()  # unknown source: missing, not 0
+    assert out.loc[1, "src_floor"] == 1 and out.loc[1, "unit_medical"] == 1
+
+
+def test_ethnicity_is_not_a_feature(X):
+    assert not [c for c in X.columns if "ethnic" in c.lower() or "race" in c.lower()]
+
+
+def test_lr_exclusions_are_real_columns(X):
+    assert set(features.LR_EXCLUDED) <= set(X.columns)

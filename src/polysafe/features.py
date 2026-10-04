@@ -9,9 +9,14 @@ Missing stays missing (NaN). Absence of a record is never coded as normal or
 as "condition absent", except for comorbidity flags of stays whose past
 history was taken (see ``comorbidities``).
 
-APACHE scores are NOT included: eICU's APACHE day-1 values use lab results
-drawn after T for 8.5% of the cohort (up to 7.3 h after T), so they would
-leak. Pending a PI decision.
+Pre-registration deviations implemented here:
+  D3.1  APACHE scores excluded: eICU's APACHE day-1 values use lab results
+        drawn after T for 74 of 868 stays (up to 7.3 h after T).
+  D3.2  vitalPeriodic: heart rate, respiratory rate, temperature, SpO2.
+  D3.3  unit type, admission source, coarse admission diagnosis.
+  D3.4  ethnicity is not a feature (written separately for subgroup reporting).
+  D3.6  ``LR_EXCLUDED``: labs left out of the logistic regression only.
+  D3.7  pre-ICU measured values (labs, creatinine) look back at most 7 days.
 
 Usage:
     python -m polysafe.features   # writes results/features_clinical.csv, FEATURES.md
@@ -28,6 +33,11 @@ import pandas as pd
 from polysafe import cohort
 from polysafe.cohort import T_MIN
 from polysafe.tables import load
+
+PRE_ICU_LOOKBACK_MIN = 7 * 24 * 60  # D3.7
+
+# D3.6: above 40% missing across all 868 stays; kept for LightGBM, not for LR.
+LR_EXCLUDED = ("lactate", "ph", "phos")
 
 # Most recent value at or before T. Panel: AKI-relevant labs available at T for
 # >= 40% of the cohort.
@@ -63,6 +73,22 @@ COMORBIDITIES = {
 }
 
 
+# D3.3: coarse categories. Unlisted non-missing values fall into "other".
+UNIT_TYPE = {"Med-Surg ICU": "medsurg", "MICU": "medical", "SICU": "surgical",
+             "Neuro ICU": "neuro", "Cardiac ICU": "cardiac", "CCU-CTICU": "cardiac",
+             "CSICU": "cardiac", "CTICU": "cardiac"}
+ADMIT_SOURCE = {"Emergency Department": "ed", "Floor": "floor", "Acute Care/Floor": "floor",
+                "Operating Room": "or_recovery", "Recovery Room": "or_recovery",
+                "PACU": "or_recovery", "Direct Admit": "direct",
+                "Step-Down Unit (SDU)": "icu_stepdown", "Other ICU": "icu_stepdown",
+                "ICU to SDU": "icu_stepdown", "ICU": "icu_stepdown"}
+ADMIT_DX_SYSTEM = {"Cardiovascular": "cardiovascular", "Respiratory": "respiratory",
+                   "Neurology": "neuro", "Gastrointestinal": "gi",
+                   "Metabolic/Endocrine": "metabolic", "Genitourinary": "gu", "Trauma": "trauma"}
+ADMIT_DX = (r"^admission diagnosis\|All Diagnosis\|(?P<op>Non-operative|Operative)\|Diagnosis\|"
+            r"(?P<system>[^|]+)")
+
+
 def _at_or_before_t(df: pd.DataFrame, offset: str, start: float = -np.inf) -> pd.DataFrame:
     """Rows with start <= offset <= T: the only data any feature may use."""
     return df[(df[offset] >= start) & (df[offset] <= T_MIN)]
@@ -80,11 +106,11 @@ def demographics(patient: pd.DataFrame) -> pd.DataFrame:
 
 
 def creatinine_features(cr: pd.DataFrame) -> pd.DataFrame:
-    w = _at_or_before_t(cr, "offset")
+    w = _at_or_before_t(cr, "offset", start=-PRE_ICU_LOOKBACK_MIN)
     g = w.groupby("patientunitstayid")["value"]
     return pd.DataFrame({
         "cr_baseline": cohort.baseline_a(cr)["value"],  # first draw in [0, T]
-        "cr_pre_icu": cohort.baseline_c(cr)["value"],  # last draw before admission
+        "cr_pre_icu": cohort.baseline_c(w)["value"],  # last draw before admission, <= 7 d back
         "cr_last": g.last(),
         "cr_max": g.max(),
     })
@@ -92,7 +118,7 @@ def creatinine_features(cr: pd.DataFrame) -> pd.DataFrame:
 
 def lab_features(lab: pd.DataFrame) -> pd.DataFrame:
     w = _at_or_before_t(lab[lab["labname"].isin(LAB_PANEL) & lab["labresult"].notna()],
-                        "labresultoffset")
+                        "labresultoffset", start=-PRE_ICU_LOOKBACK_MIN)
     w = w.sort_values(["patientunitstayid", "labresultoffset"], kind="stable")
     last = w.groupby(["patientunitstayid", "labname"])["labresult"].last().unstack()
     return last.rename(columns=LAB_PANEL).reindex(columns=list(LAB_PANEL.values()))
@@ -108,6 +134,47 @@ def vital_features(vitals: pd.DataFrame) -> pd.DataFrame:
                          "sbp_min": g["sbp"].min(),
                          "map_below_65": g["mbp"].min().lt(65).astype(float)
                          .where(g["mbp"].count() > 0)})
+
+
+def periodic_vital_features(vp: pd.DataFrame) -> pd.DataFrame:
+    """D3.2: heart rate, respiratory rate, temperature (degC; degF converted), SpO2 in [0, T]."""
+    w = _at_or_before_t(vp, "observationoffset", start=0)
+    temp = w["temperature"].where(w["temperature"] <= 50, (w["temperature"] - 32) * 5 / 9)
+    w = w.assign(hr=w["heartrate"].where(w["heartrate"].between(20, 250)),
+                 rr=w["respiration"].where(w["respiration"].between(2, 80)),
+                 spo2=w["sao2"].where(w["sao2"].between(50, 100)),
+                 temp=temp.where(temp.between(30, 45)))
+    g = w.groupby("patientunitstayid")
+    return pd.DataFrame({"hr_mean": g["hr"].mean(), "hr_max": g["hr"].max(),
+                         "rr_mean": g["rr"].mean(), "rr_max": g["rr"].max(),
+                         "spo2_min": g["spo2"].min(), "temp_max": g["temp"].max()})
+
+
+def _one_hot(values: pd.Series, prefix: str, levels) -> pd.DataFrame:
+    """Indicator columns; a missing category gives NaN in every column of the group."""
+    out = pd.DataFrame({f"{prefix}_{lv}": (values == lv).astype(float) for lv in levels},
+                       index=values.index)
+    return out.where(values.notna())
+
+
+def admission_context(patient: pd.DataFrame, admission_dx: pd.DataFrame) -> pd.DataFrame:
+    """D3.3: unit type, admission source, coarse admission diagnosis entered by T."""
+    p = patient.set_index("patientunitstayid")
+    unit = p["unittype"].map(UNIT_TYPE)  # every eICU demo unit type is listed
+    src = p["unitadmitsource"].map(ADMIT_SOURCE).where(p["unitadmitsource"].isna(),
+                                                       lambda s: s.fillna("other"))
+    dx = admission_dx[admission_dx["admitdxenteredoffset"] <= T_MIN]
+    parts = dx["admitdxpath"].str.extract(ADMIT_DX).assign(
+        patientunitstayid=dx["patientunitstayid"], at=dx["admitdxenteredoffset"]).dropna()
+    parts = parts.sort_values("at", kind="stable").groupby("patientunitstayid").first()
+    system = parts["system"].map(ADMIT_DX_SYSTEM).fillna("other").reindex(p.index)
+    operative = (parts["op"] == "Operative").astype(float).reindex(p.index)
+    return pd.concat([
+        _one_hot(unit, "unit", sorted(set(UNIT_TYPE.values()))),
+        _one_hot(src, "src", sorted(set(ADMIT_SOURCE.values()) | {"other"})),
+        operative.rename("dx_operative"),
+        _one_hot(system, "dx", sorted(set(ADMIT_DX_SYSTEM.values()) | {"other"})),
+    ], axis=1)
 
 
 def urine_features(io: pd.DataFrame, weight_kg: pd.Series) -> pd.DataFrame:
@@ -137,6 +204,8 @@ def build(tables: dict[str, pd.DataFrame], stays) -> pd.DataFrame:
         creatinine_features(cohort.serum_creatinine(tables["lab"])),
         lab_features(tables["lab"]),
         vital_features(tables["vitalAperiodic"]),
+        periodic_vital_features(tables["vitalPeriodic"]),
+        admission_context(tables["patient"], tables["admissionDx"]),
         urine_features(tables["intakeOutput"], demo["weight_kg"]),
         comorbidities(tables["pastHistory"]),
     ]
@@ -159,14 +228,20 @@ def load_feature_inputs() -> dict[str, pd.DataFrame]:
         "pastHistory": load("pastHistory", usecols=["patientunitstayid",
                                                     "pasthistoryenteredoffset",
                                                     "pasthistorypath"]),
+        "vitalPeriodic": load("vitalPeriodic", usecols=["patientunitstayid", "observationoffset",
+                                                        "heartrate", "respiration", "sao2",
+                                                        "temperature"]),
+        "admissionDx": load("admissionDx", usecols=["patientunitstayid", "admitdxenteredoffset",
+                                                    "admitdxpath"]),
     }
 
 
 def dictionary(X: pd.DataFrame, primary: pd.Index) -> str:
     lines = ["# Clinical features at T (generated by `python -m polysafe.features`)", "",
-             "All features use only data with offset <= T = 24 h. Missing = not measured "
-             "by T; it is never filled with a normal value here. APACHE scores are "
-             "excluded (post-T leakage, see `features.py`).", "",
+             "All features use only data with offset <= T = 24 h; pre-ICU measured values "
+             "look back at most 7 days (D3.7). Missing = not measured by T; it is never "
+             "filled with a normal value here. APACHE scores are excluded (D3.1). "
+             f"Left out of the logistic regression only (D3.6): {', '.join(LR_EXCLUDED)}.", "",
              f"Cohort: baseline A, all sites n = {len(X):,}; primary sites n = {len(primary):,}.",
              "", "| Feature | Missing (all sites) | Missing (primary) | Median | IQR |",
              "|---|---:|---:|---:|---|"]
@@ -188,6 +263,9 @@ def main(argv: list[str] | None = None) -> int:
     primary = pd.Index(lab.loc[lab["primary_site"], "patientunitstayid"])
     args.out.mkdir(parents=True, exist_ok=True)
     X.to_csv(args.out / "features_clinical.csv")
+    # D3.4: ethnicity is reported by subgroup, never used as a predictor.
+    eth = load("patient", usecols=["patientunitstayid", "ethnicity"]).set_index("patientunitstayid")
+    eth.reindex(X.index).to_csv(args.out / "subgroups.csv")
     md = dictionary(X, primary)
     (args.out / "features_clinical.md").write_text(md, encoding="utf-8")
     print(md)
