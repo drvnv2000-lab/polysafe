@@ -1,0 +1,822 @@
+{
+ "generated_utc": "2026-10-04T15:44:27+00:00",
+ "preregistration": {
+  "path": "PREREGISTRATION.md",
+  "sections": [
+   "1. Research questions",
+   "2. Data",
+   "3. Temporal design",
+   "4. Outcome definition",
+   "5. Cohort and exclusions",
+   "6. Medication exposure and the estimand",
+   "7. Validation design",
+   "8. Models and metrics",
+   "9. Power \u2014 to be established by simulation before modelling",
+   "10. Secondary epidemiological analysis",
+   "11. Deviations"
+  ],
+  "deviations": [
+   {
+    "id": "D1.1",
+    "tag": "clarification",
+    "date": "2026-10-04",
+    "title": "Section 3, \"1,238 usable stays\": definition was ambiguous, not wrong",
+    "introduced_in": {
+     "sha": "29a66d844e4b85b3ea2ad07a8d47c27c95b77da9",
+     "utc": "2026-10-04T11:46:24+00:00"
+    }
+   },
+   {
+    "id": "D1.2",
+    "tag": "correction",
+    "date": "2026-10-04",
+    "title": "Section 9, prevalence 22-25%: this was wrong",
+    "introduced_in": {
+     "sha": "29a66d844e4b85b3ea2ad07a8d47c27c95b77da9",
+     "utc": "2026-10-04T11:46:24+00:00"
+    }
+   },
+   {
+    "id": "D1.3",
+    "tag": "substantive change",
+    "date": "2026-10-04",
+    "title": "Analysis cohort is smaller than section 9 assumed",
+    "introduced_in": {
+     "sha": "29a66d844e4b85b3ea2ad07a8d47c27c95b77da9",
+     "utc": "2026-10-04T11:46:24+00:00"
+    }
+   },
+   {
+    "id": "D1.4",
+    "tag": "substantive change",
+    "date": "2026-10-04",
+    "title": "Consequence: the primary endpoint is re-specified",
+    "introduced_in": {
+     "sha": "29a66d844e4b85b3ea2ad07a8d47c27c95b77da9",
+     "utc": "2026-10-04T11:46:24+00:00"
+    }
+   },
+   {
+    "id": "D2.1",
+    "tag": "substantive change",
+    "date": "2026-10-04",
+    "title": "Section 8 / D1.4: confidence-interval method",
+    "introduced_in": {
+     "sha": "6dd893f39f70ba5de873ee7c7d1832e5966ec50f",
+     "utc": "2026-10-04T12:33:57+00:00"
+    }
+   },
+   {
+    "id": "D2.2",
+    "tag": "clarification",
+    "date": "2026-10-04",
+    "title": "Section 3: primary estimand clarified",
+    "introduced_in": {
+     "sha": "6dd893f39f70ba5de873ee7c7d1832e5966ec50f",
+     "utc": "2026-10-04T12:33:57+00:00"
+    }
+   },
+   {
+    "id": "D2.3",
+    "tag": "clarification",
+    "date": "2026-10-04",
+    "title": "Section 9.1: known limitation",
+    "introduced_in": {
+     "sha": "6dd893f39f70ba5de873ee7c7d1832e5966ec50f",
+     "utc": "2026-10-04T12:33:57+00:00"
+    }
+   },
+   {
+    "id": "D2.4",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "Section 9.1: which assumption applies",
+    "introduced_in": {
+     "sha": "6dd893f39f70ba5de873ee7c7d1832e5966ec50f",
+     "utc": "2026-10-04T12:33:57+00:00"
+    }
+   },
+   {
+    "id": "D3.1",
+    "tag": "substantive change",
+    "date": "2026-10-04",
+    "title": "Section 8: APACHE severity excluded despite being pre-specified",
+    "introduced_in": {
+     "sha": "e2f3084d499fff49329b78ba5c8e3ecda4484412",
+     "utc": "2026-10-04T12:44:57+00:00"
+    }
+   },
+   {
+    "id": "D3.2",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "`vitalPeriodic` added",
+    "introduced_in": {
+     "sha": "e2f3084d499fff49329b78ba5c8e3ecda4484412",
+     "utc": "2026-10-04T12:44:57+00:00"
+    }
+   },
+   {
+    "id": "D3.3",
+    "tag": "substantive change",
+    "date": "2026-10-04",
+    "title": "Unit type and admission source added; admission diagnosis as a coarse",
+    "introduced_in": {
+     "sha": "e2f3084d499fff49329b78ba5c8e3ecda4484412",
+     "utc": "2026-10-04T12:44:57+00:00"
+    }
+   },
+   {
+    "id": "D3.4",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "Ethnicity excluded as a predictor",
+    "introduced_in": {
+     "sha": "e2f3084d499fff49329b78ba5c8e3ecda4484412",
+     "utc": "2026-10-04T12:44:57+00:00"
+    }
+   },
+   {
+    "id": "D3.5",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "Primary logistic regression is L2-penalised, tuned within training",
+    "introduced_in": {
+     "sha": "e2f3084d499fff49329b78ba5c8e3ecda4484412",
+     "utc": "2026-10-04T12:44:57+00:00"
+    }
+   },
+   {
+    "id": "D3.6",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "Imputation: median plus missingness indicator, fitted within each",
+    "introduced_in": {
+     "sha": "e2f3084d499fff49329b78ba5c8e3ecda4484412",
+     "utc": "2026-10-04T12:44:57+00:00"
+    }
+   },
+   {
+    "id": "D3.7",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "Lookback for pre-ICU values capped at 7 days before admission",
+    "introduced_in": {
+     "sha": "e2f3084d499fff49329b78ba5c8e3ecda4484412",
+     "utc": "2026-10-04T12:44:57+00:00"
+    }
+   },
+   {
+    "id": "D4.1",
+    "tag": "substantive change",
+    "date": "2026-10-04",
+    "title": "NSAID class: aspirin excluded",
+    "introduced_in": {
+     "sha": "71b247e39f02b560f9b6be7f5a4501cdb27689a2",
+     "utc": "2026-10-04T14:51:41+00:00"
+    }
+   },
+   {
+    "id": "D4.2",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "Temperature excluded from the LR",
+    "introduced_in": {
+     "sha": "71b247e39f02b560f9b6be7f5a4501cdb27689a2",
+     "utc": "2026-10-04T14:51:41+00:00"
+    }
+   },
+   {
+    "id": "D4.3",
+    "tag": "substantive change",
+    "date": "2026-10-04",
+    "title": "The 40% missingness threshold (D3.6) is applied to the primary",
+    "introduced_in": {
+     "sha": "71b247e39f02b560f9b6be7f5a4501cdb27689a2",
+     "utc": "2026-10-04T14:51:41+00:00"
+    }
+   },
+   {
+    "id": "D4.4",
+    "tag": "substantive change",
+    "date": "2026-10-04",
+    "title": "Primary logistic regression uses a pre-specified reduced feature",
+    "introduced_in": {
+     "sha": "71b247e39f02b560f9b6be7f5a4501cdb27689a2",
+     "utc": "2026-10-04T14:51:41+00:00"
+    }
+   },
+   {
+    "id": "D4.5",
+    "tag": "clarification",
+    "date": "2026-10-04",
+    "title": "Aminoglycosides cannot be analysed:",
+    "introduced_in": {
+     "sha": "71b247e39f02b560f9b6be7f5a4501cdb27689a2",
+     "utc": "2026-10-04T14:51:41+00:00"
+    }
+   },
+   {
+    "id": "D4.6",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "eICU's `drughiclseqno` is NOT RxNorm's `HIC_SEQN`",
+    "introduced_in": {
+     "sha": "71b247e39f02b560f9b6be7f5a4501cdb27689a2",
+     "utc": "2026-10-04T14:51:41+00:00"
+    }
+   },
+   {
+    "id": "D5.1",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "HICL review stratified by consequence",
+    "introduced_in": {
+     "sha": "97ba70e12411c09d9bd74481000a165ee4a35a22",
+     "utc": "2026-10-04T15:16:22+00:00"
+    }
+   },
+   {
+    "id": "D5.2",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "Audit design and estimator",
+    "introduced_in": {
+     "sha": "97ba70e12411c09d9bd74481000a165ee4a35a22",
+     "utc": "2026-10-04T15:16:22+00:00"
+    }
+   },
+   {
+    "id": "D5.3",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "Decision vocabulary",
+    "introduced_in": {
+     "sha": "97ba70e12411c09d9bd74481000a165ee4a35a22",
+     "utc": "2026-10-04T15:16:22+00:00"
+    }
+   },
+   {
+    "id": "D5.4",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "Correction scope",
+    "introduced_in": {
+     "sha": "97ba70e12411c09d9bd74481000a165ee4a35a22",
+     "utc": "2026-10-04T15:16:22+00:00"
+    }
+   },
+   {
+    "id": "D5.5",
+    "tag": "clarification",
+    "date": "2026-10-04",
+    "title": "Mapping adjudication preceded any drug-outcome",
+    "introduced_in": {
+     "sha": "97ba70e12411c09d9bd74481000a165ee4a35a22",
+     "utc": "2026-10-04T15:16:22+00:00"
+    }
+   },
+   {
+    "id": "D5.6",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "Search-term list fixed and committed before",
+    "introduced_in": {
+     "sha": "97ba70e12411c09d9bd74481000a165ee4a35a22",
+     "utc": "2026-10-04T15:16:22+00:00"
+    }
+   },
+   {
+    "id": "D5.7",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "Optional exploratory intra-rater second pass",
+    "introduced_in": {
+     "sha": "97ba70e12411c09d9bd74481000a165ee4a35a22",
+     "utc": "2026-10-04T15:16:22+00:00"
+    }
+   },
+   {
+    "id": "D5.8",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "Within-key reconciliation rule",
+    "introduced_in": {
+     "sha": "97ba70e12411c09d9bd74481000a165ee4a35a22",
+     "utc": "2026-10-04T15:16:22+00:00"
+    }
+   },
+   {
+    "id": "D5.9",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "The ascertainment comparison is reported in full",
+    "introduced_in": {
+     "sha": "97ba70e12411c09d9bd74481000a165ee4a35a22",
+     "utc": "2026-10-04T15:16:22+00:00"
+    }
+   },
+   {
+    "id": "D5.10",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "Tier-3 matching is whole-token and whole-phrase",
+    "introduced_in": {
+     "sha": "97ba70e12411c09d9bd74481000a165ee4a35a22",
+     "utc": "2026-10-04T15:16:22+00:00"
+    }
+   },
+   {
+    "id": "D5.11",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "Wrong strings are never reassigned",
+    "introduced_in": {
+     "sha": "97ba70e12411c09d9bd74481000a165ee4a35a22",
+     "utc": "2026-10-04T15:16:22+00:00"
+    }
+   },
+   {
+    "id": "D5.12",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "Unnamed rows",
+    "introduced_in": {
+     "sha": "664d9b04c8bfff4600d7daf45264db326604b7fd",
+     "utc": "2026-10-04T15:38:08+00:00"
+    }
+   },
+   {
+    "id": "D5.13",
+    "tag": "correction",
+    "date": "2026-10-04",
+    "title": "Unsure keys in the sensitivity variant",
+    "introduced_in": {
+     "sha": "664d9b04c8bfff4600d7daf45264db326604b7fd",
+     "utc": "2026-10-04T15:38:08+00:00"
+    }
+   },
+   {
+    "id": "D5.14",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "Brand alias list",
+    "introduced_in": {
+     "sha": "664d9b04c8bfff4600d7daf45264db326604b7fd",
+     "utc": "2026-10-04T15:38:08+00:00"
+    }
+   },
+   {
+    "id": "D5.15",
+    "tag": "clarification",
+    "date": "2026-10-04",
+    "title": "Unascertainable rows",
+    "introduced_in": {
+     "sha": "664d9b04c8bfff4600d7daf45264db326604b7fd",
+     "utc": "2026-10-04T15:38:08+00:00"
+    }
+   }
+  ]
+ },
+ "corrections": [
+  {
+   "figure": "Expected AKI prevalence",
+   "original": "22\u201325% prevalence",
+   "original_in": "\u00a79",
+   "corrected_by": "D1.2",
+   "corrected_to": "16.1%",
+   "current": "measured prevalence 11.6%",
+   "current_in": "\u00a79.1",
+   "status": "verified"
+  },
+  {
+   "figure": "Analysis cohort size",
+   "original": "n = 1,037",
+   "original_in": "\u00a79",
+   "corrected_by": "D1.3",
+   "corrected_to": "**868 stays**",
+   "current": "**671** are at medication-recording sites",
+   "current_in": "D1.3",
+   "status": "verified"
+  },
+  {
+   "figure": "Events per variable, primary LR",
+   "original": "78/48 = 1.6",
+   "original_in": "D3.5",
+   "corrected_by": "D4.4",
+   "corrected_to": "EPV = 78/17 = 4.6",
+   "current": "EPV = 78/17 = 4.6",
+   "current_in": "D4.4",
+   "status": "verified"
+  },
+  {
+   "figure": "Basis of the 40% LR missingness threshold",
+   "original": "across all 868 stays",
+   "original_in": "D3.6",
+   "corrected_by": "D4.3",
+   "corrected_to": "applied to the primary",
+   "current": "LR exclusions: lactate, pH, phosphate, INR,",
+   "current_in": "D4.3",
+   "status": "verified"
+  },
+  {
+   "figure": "APACHE severity covariate",
+   "original": "APACHE",
+   "original_in": "\u00a78",
+   "corrected_by": "D3.1",
+   "corrected_to": "APACHE severity excluded",
+   "current": "APACHE severity excluded",
+   "current_in": "D3.1",
+   "status": "verified"
+  },
+  {
+   "figure": "Rows of an unsure key in the sensitivity variant",
+   "original": null,
+   "original_in": "analyst's report (not in the pre-registration)",
+   "corrected_by": "D5.13",
+   "corrected_to": "EXCLUDING strings listed in",
+   "current": "EXCLUDING strings listed in",
+   "current_in": "D5.13",
+   "status": "verified"
+  }
+ ],
+ "commits": [
+  {
+   "sha": "664d9b04c8bfff4600d7daf45264db326604b7fd",
+   "utc": "2026-10-04T15:38:08+00:00",
+   "subject": "Pre-registration: D5.12-D5.15 (unnamed-row sensitivity, unsure row rule correction, brand alias provenance, unascertainable rows)"
+  },
+  {
+   "sha": "ab3f335bf42f8c9afc97aabc83ddcb848da003c9",
+   "utc": "2026-10-04T15:37:56+00:00",
+   "subject": "search_terms.txt: brand alias template for the owner (no aliases filled; generic terms unchanged from aaef7a9)"
+  },
+  {
+   "sha": "97ba70e12411c09d9bd74481000a165ee4a35a22",
+   "utc": "2026-10-04T15:16:22+00:00",
+   "subject": "Pre-registration: retrospective type tags for D1-D4 (appended) and deviation D5 (HICL review protocol, before any model is fitted)"
+  },
+  {
+   "sha": "723e86295a4893fec0df46337d8b20d1878f1c1e",
+   "utc": "2026-10-04T15:15:48+00:00",
+   "subject": "HICL review packet (PREREGISTRATION D5): consequence-stratified tiers, audit overlay, string-level exposure filter"
+  },
+  {
+   "sha": "aaef7a99e175e4875abf667ab2667744f60b4dbc",
+   "utc": "2026-10-04T15:13:13+00:00",
+   "subject": "Stage 0: tier-3 search terms fixed before screening (PREREGISTRATION D5.6)"
+  },
+  {
+   "sha": "aefee98f130094ebf1d3c1af196105ebf41524ef",
+   "utc": "2026-10-04T14:53:27+00:00",
+   "subject": "Mapping checklist: aspirin out of the NSAID search terms (D4.1)"
+  },
+  {
+   "sha": "71b247e39f02b560f9b6be7f5a4501cdb27689a2",
+   "utc": "2026-10-04T14:51:41+00:00",
+   "subject": "Pre-registration deviation D4: aspirin out of NSAIDs, LR exclusions on the primary cohort, pre-specified 14-variable primary LR, unanalysable classes, HICL mapping caveats (before any model is fitted)"
+  },
+  {
+   "sha": "de873fdfb775703c4bef200ffff225491e5067ec",
+   "utc": "2026-10-04T13:49:26+00:00",
+   "subject": "Step 3: first-pass HICL -> ingredient mapping draft for PI review"
+  },
+  {
+   "sha": "e2f3084d499fff49329b78ba5c8e3ecda4484412",
+   "utc": "2026-10-04T12:44:57+00:00",
+   "subject": "Pre-registration deviation D3: APACHE excluded (post-T leakage), vitals and admission context added, LR penalisation and imputation specified (before any model is fitted)"
+  },
+  {
+   "sha": "6dd893f39f70ba5de873ee7c7d1832e5966ec50f",
+   "utc": "2026-10-04T12:33:57+00:00",
+   "subject": "Pre-registration deviation D2: BCa intervals, estimand clarified, simulation limits (before any model is fitted)"
+  },
+  {
+   "sha": "46c9f9c91ec8dc3e28da59534eb0df763719d1f4",
+   "utc": "2026-10-04T12:17:23+00:00",
+   "subject": "Pre-registration section 9.1: power simulation result (before modelling)"
+  },
+  {
+   "sha": "29a66d844e4b85b3ea2ad07a8d47c27c95b77da9",
+   "utc": "2026-10-04T11:46:24+00:00",
+   "subject": "Pre-registration amendment D1: corrected prevalence, cohort size, and primary endpoint structure (before modelling)"
+  },
+  {
+   "sha": "291760dff1981392fabfc0186a3f5921f635c817",
+   "utc": "2026-10-04T11:29:44+00:00",
+   "subject": "Pre-registration: committed before modelling"
+  }
+ ],
+ "tests": {
+  "collected": 137,
+  "passed": 137,
+  "failed": 0,
+  "skipped": 0,
+  "junit": "results\\integrity_pytest.xml"
+ },
+ "ruff": {
+  "clean": true,
+  "summary": "All checks passed!"
+ },
+ "controls": [
+  {
+   "control": "T = 24 h feature cutoff (offset <= T)",
+   "established_by": "section 3",
+   "tests": [
+    "tests/test_features.py::test_nothing_after_T_can_change_a_feature",
+    "tests/test_features.py::test_value_at_T_counts_and_one_minute_later_does_not",
+    "tests/test_cohort.py::test_creatinine_after_T_cannot_change_the_cohort"
+   ],
+   "status": "enforced (passed)"
+  },
+  {
+   "control": "APACHE excluded",
+   "established_by": "D3.1",
+   "tests": [
+    "tests/test_features.py::test_shape_and_no_apache"
+   ],
+   "status": "enforced (passed)"
+  },
+  {
+   "control": "Patient-level grouping on uniquepid",
+   "established_by": "section 7",
+   "tests": [
+    "tests/test_power.py::test_no_patient_spans_two_folds_on_the_real_cohort"
+   ],
+   "status": "enforced (passed)"
+  },
+  {
+   "control": "Repeated stratified grouped CV",
+   "established_by": "section 7",
+   "tests": [
+    "tests/test_power.py::test_no_patient_spans_two_folds_on_the_real_cohort",
+    "tests/test_power.py::test_folds_are_stratified"
+   ],
+   "status": "enforced (passed)"
+  },
+  {
+   "control": "String-level wrong_strings exclusion",
+   "established_by": "D5.8, D5.11",
+   "tests": [
+    "tests/test_review.py::test_string_level_filtering_drops_only_wrong_strings",
+    "tests/test_review.py::test_end_to_end_decision_to_stay_level_exposure"
+   ],
+   "status": "enforced (passed)"
+  },
+  {
+   "control": "Unnamed-row sensitivity",
+   "established_by": "D5.12",
+   "tests": [
+    "tests/test_review.py::test_named_only_sensitivity_drops_rows_without_a_string"
+   ],
+   "status": "enforced (passed)"
+  },
+  {
+   "control": "Unsure handling",
+   "established_by": "D5.13",
+   "tests": [
+    "tests/test_review.py::test_unsure_only_in_the_sensitivity_variant_and_wrong_strings_still_excluded"
+   ],
+   "status": "enforced (passed)"
+  },
+  {
+   "control": "Serum creatinine only (urinary excluded)",
+   "established_by": "section 4",
+   "tests": [
+    "tests/test_cohort.py::test_serum_creatinine_excludes_urinary"
+   ],
+   "status": "enforced (passed)"
+  },
+  {
+   "control": "Floating-point tolerance on 0.3 mg/dL",
+   "established_by": "section 4",
+   "tests": [
+    "tests/test_cohort.py::test_rise_rule"
+   ],
+   "status": "enforced (passed)"
+  },
+  {
+   "control": "Outcome window censored at ICU discharge",
+   "established_by": "section 3, D2.2",
+   "tests": [
+    "tests/test_labels.py::test_creatinine_after_icu_discharge_is_censored",
+    "tests/test_labels.py::test_every_onset_is_inside_the_window"
+   ],
+   "status": "enforced (passed)"
+  },
+  {
+   "control": "Exclusions: <24 h, ESRD, AKI by T, RRT by T",
+   "established_by": "section 5",
+   "tests": [
+    "tests/test_cohort.py::test_final_cohort_respects_every_exclusion"
+   ],
+   "status": "enforced (passed)"
+  },
+  {
+   "control": "Ethnicity not a predictor",
+   "established_by": "D3.4",
+   "tests": [
+    "tests/test_features.py::test_ethnicity_is_not_a_feature"
+   ],
+   "status": "enforced (passed)"
+  },
+  {
+   "control": "Pre-ICU lookback capped at 7 days",
+   "established_by": "D3.7",
+   "tests": [
+    "tests/test_features.py::test_pre_icu_lookback_is_seven_days"
+   ],
+   "status": "enforced (passed)"
+  },
+  {
+   "control": "Primary LR: 14 variables / 17 parameters, LR exclusions",
+   "established_by": "D4.2-D4.4",
+   "tests": [
+    "tests/test_features.py::test_primary_lr_spec_matches_d4"
+   ],
+   "status": "enforced (passed)"
+  },
+  {
+   "control": "No outcome or prediction column in review CSVs",
+   "established_by": "D5.5",
+   "tests": [
+    "tests/test_review.py::test_no_outcome_or_prediction_column_in_any_review_csv"
+   ],
+   "status": "enforced (passed)"
+  },
+  {
+   "control": "Audit draw reproducible from seed 20261004",
+   "established_by": "D5.2",
+   "tests": [
+    "tests/test_review.py::test_audit_draw_is_reproducible"
+   ],
+   "status": "enforced (passed)"
+  },
+  {
+   "control": "Whole-token search matching",
+   "established_by": "D5.10",
+   "tests": [
+    "tests/test_review.py::test_token_match_rejects_substring_and_accepts_whole_token"
+   ],
+   "status": "enforced (passed)"
+  },
+  {
+   "control": "Site-level restriction; medication_data_available never a predictor",
+   "established_by": "section 6",
+   "tests": [],
+   "status": "asserted, not tested"
+  },
+  {
+   "control": "Search terms committed before screening",
+   "established_by": "D5.6",
+   "tests": [],
+   "status": "asserted, not tested"
+  },
+  {
+   "control": "BCa bootstrap intervals for dAUROC",
+   "established_by": "D2.1",
+   "tests": [],
+   "status": "asserted, not tested"
+  },
+  {
+   "control": "Pre-registration is append-only after modelling begins",
+   "established_by": "section 11",
+   "tests": [],
+   "status": "asserted, not tested"
+  }
+ ],
+ "review_packet": {
+  "tiers": {
+   "1": {
+    "keys": 33,
+    "rows": 4998
+   },
+   "2": {
+    "keys": 36,
+    "rows": 1088
+   },
+   "3": {
+    "keys": 7,
+    "rows": 515
+   },
+   "4": {
+    "keys": 1424,
+    "rows": 64721
+   }
+  },
+  "audit_head_keys": 45,
+  "audit_tail_keys": 50,
+  "audit_tail_mode": "sample",
+  "seed": 20261004,
+  "unmappable_rows": 1646,
+  "search_terms_sha": "aaef7a99e175e4875abf667ab2667744f60b4dbc"
+ },
+ "review_decisions": {
+  "status": "not_started",
+  "keys_to_review": 171
+ },
+ "cohort": {
+  "primary": {
+   "stays": 671,
+   "patients": 586,
+   "events": 78,
+   "prevalence_pct": 11.6
+  },
+  "all_sites": {
+   "stays": 868,
+   "patients": 756,
+   "events": 107,
+   "prevalence_pct": 12.3
+  },
+  "primary_prevalence_ci_pct": [
+   9.4,
+   14.3
+  ],
+  "epv_primary_lr": {
+   "events": 78,
+   "parameters": 17,
+   "epv": 4.6,
+   "source": "PREREGISTRATION D4.4"
+  },
+  "power_mde": {
+   "mde": [
+    0.076,
+    0.061,
+    0.04,
+    0.029
+   ],
+   "rho": [
+    0.6,
+    0.75,
+    0.9,
+    0.95
+   ]
+  }
+ },
+ "timeline": [
+  {
+   "stage": "Pre-registration",
+   "status": "done",
+   "artifacts": [
+    "PREREGISTRATION.md"
+   ]
+  },
+  {
+   "stage": "Cohort",
+   "status": "done",
+   "artifacts": [
+    "results/cohort_flow.md"
+   ]
+  },
+  {
+   "stage": "Outcome",
+   "status": "done",
+   "artifacts": [
+    "results/aki_labels.md",
+    "results/labels_A.csv"
+   ]
+  },
+  {
+   "stage": "Leakage audit",
+   "status": "done",
+   "artifacts": [
+    "results/integrity_pytest.xml"
+   ]
+  },
+  {
+   "stage": "Feature specification",
+   "status": "done",
+   "artifacts": [
+    "results/features_clinical.md"
+   ]
+  },
+  {
+   "stage": "Medication QC",
+   "status": "packet built; review not started",
+   "artifacts": [
+    "mapping/review/REVIEW_PACKET.md"
+   ]
+  },
+  {
+   "stage": "Model fitting",
+   "status": "not fitted",
+   "artifacts": [
+    "results/models"
+   ]
+  },
+  {
+   "stage": "Validation",
+   "status": "not started",
+   "artifacts": [
+    "results/validation.json"
+   ]
+  },
+  {
+   "stage": "Robustness",
+   "status": "not started",
+   "artifacts": [
+    "results/robustness.json"
+   ]
+  }
+ ]
+}
