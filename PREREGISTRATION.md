@@ -272,3 +272,27 @@ model is trained:
 
 This deviation was decided from power arithmetic alone. No outcome data,
 model output or association estimate had been examined.
+
+### D2 — 2026-10-04, before any model was fitted
+
+**D2.1 — Section 8 / D1.4: confidence-interval method.** The patient-level
+percentile bootstrap CI is replaced with a patient-level BCa (bias-corrected and
+accelerated) bootstrap CI. Reason: the section 9.1 simulation measured a type I
+error of 3.9% (max 6.5% in any cell) against a nominal one-sided 2.5%. Measured
+coverage will be reported alongside every interval.
+
+**D2.2 — Section 3: primary estimand clarified.** The outcome is AKI during the
+remainder of the ICU stay, capped at 7 days after T. ICU discharge ends the
+exposure period rather than censoring it. The >= 48 h fixed-window analysis
+(n = 314 stays at medication-recording sites, baseline A) is the pre-specified
+sensitivity analysis.
+
+**D2.3 — Section 9.1: known limitation.** The simulation omits model-fitting
+noise, so the real detectable effects are larger than tabulated.
+
+**D2.4 — Section 9.1: which assumption applies.** The realised correlation
+between the clinical-only and clinical+medication predictions will be measured
+and reported, to identify which correlation (rho) in the power table applies.
+
+Decided after the section 9.1 simulation and before any model was fitted. No
+model output or association estimate had been examined.
