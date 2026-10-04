@@ -383,3 +383,105 @@ for combination products and are not used for class assignment.
 
 Decided before any model was fitted. No model output or association estimate
 had been examined.
+
+### Type tags for D1.1-D4.6 (appended retrospectively, 2026-10-04)
+
+Tags are added here instead of editing the entries above, so the
+Deviations section stays append-only and the text of D1-D4 is unchanged.
+Assigned by the analyst (Claude); the PI may confirm or amend them in a later
+entry.
+
+- [clarification]: states an existing rule more precisely; nothing computed changes.
+- [correction]: fixes a factual or numerical error; the method is unchanged.
+- [protocol addition]: adds a rule or procedure the protocol did not cover.
+- [substantive change]: changes a pre-specified population, endpoint, covariate or method.
+
+| Entry | Tag | Entry | Tag |
+|---|---|---|---|
+| D1.1 | [clarification] | D3.2 | [protocol addition] |
+| D1.2 | [correction] | D3.3 | [substantive change] |
+| D1.3 | [substantive change] | D3.4 | [protocol addition] |
+| D1.4 | [substantive change] | D3.5 | [protocol addition] |
+| D2.1 | [substantive change] | D3.6 | [protocol addition] |
+| D2.2 | [clarification] | D3.7 | [protocol addition] |
+| D2.3 | [clarification] | D4.1 | [substantive change] |
+| D2.4 | [protocol addition] | D4.2 | [protocol addition] |
+| D3.1 | [substantive change] | D4.3 | [substantive change] |
+| | | D4.4 | [substantive change] |
+| | | D4.5 | [clarification] |
+| | | D4.6 | [protocol addition] |
+
+### D5 — 2026-10-04, before any model was fitted
+
+**D5.1 [protocol addition] HICL review stratified by consequence.** Tiers are
+mutually exclusive and exhaustive over the keys of `mapping/hicl_draft.csv`,
+first match wins: (1) current mapping names a pre-specified agent; (2) current
+mapping feeds a pre-specified class variable; (3) any other key, whatever its
+mapping status, whose drugname strings match a committed search term; (4) the
+remainder, not reviewed. Tiers 1-3 are reviewed exhaustively. Keys not
+currently feeding a pre-specified exposure or class variable are outside the
+deterministic exposure construction. Unreviewed keys may still contain
+undetected false positives or false negatives; this is quantified through the
+pre-specified audit sample, not eliminated. After a name-based screen over all
+keys (tier 3), residual false negatives are limited to keys whose drugname
+strings contain no recognizable agent or class name. Mapping-coverage figures
+are reported from the full key set, not the reviewed subset.
+
+**D5.2 [protocol addition] Audit design and estimator** exactly as stated in
+`mapping/review/REVIEW_PACKET.md`, including the limits on what it estimates
+and the restriction of Wilson intervals to the key-level proportion.
+
+**D5.3 [protocol addition] Decision vocabulary.** keep / reject / unsure;
+unsure is excluded from the primary ascertainment strategy and included in a
+sensitivity variant; both are reported.
+
+**D5.4 [protocol addition] Correction scope.** corrected_name may remove a key
+from an exposure, move it between two already pre-specified agent exposures,
+or add or move it to an already pre-specified class variable. It may not
+create a new exposure or class; corrections needing one are logged and
+excluded.
+
+**D5.5 [clarification] Mapping adjudication preceded any drug-outcome
+association.** AKI labels existed and their marginal distribution was known;
+no exposure-outcome estimate of any kind existed. Verifiable from commit
+order. Disclosed for completeness: during cohort work on 2026-10-04, before
+this entry, the crude AKI rate was compared once between stays with and
+without any medication record (19.2% vs 15.1%, under the superseded
+uncensored outcome definition). That comparison concerns whether medication
+data exist at all, not any drug, and was never committed to the repository.
+
+**D5.6 [protocol addition] Search-term list fixed and committed before
+screening:** `mapping/review/search_terms.txt` at commit
+`aaef7a99e175e4875abf667ab2667744f60b4dbc`.
+
+**D5.7 [protocol addition] Optional exploratory intra-rater second pass**,
+seed 20261004, blind to pass 1: 20 tier-1/2 keys, reported as raw percent
+agreement alongside Cohen's kappa and labelled exploratory intra-rater
+consistency, not a validation statistic.
+
+**D5.8 [protocol addition] Within-key reconciliation rule.** A key whose
+drugname strings name different ingredients is kept with row-level exclusion
+of minority strings when one ingredient accounts for >= 90% of the key's rows,
+and marked unsure otherwise. Threshold fixed before review. Rationale: forcing
+every mixed key to unsure would discard large numbers of correctly mapped rows
+on the evidence of a few stray ones.
+
+**D5.9 [protocol addition] The ascertainment comparison is reported in full
+regardless of what it shows:** tier counts, affected rows and stays,
+per-strategy exposure prevalence for each pre-specified agent, and delta-AUROC
+under each of the four ascertainment strategies. Whether this comparison
+leads the write-up is an editorial decision about emphasis and does not alter
+which numbers are reported.
+
+**D5.10 [protocol addition] Tier-3 matching is whole-token and whole-phrase**
+after NFKD normalization and casefolding, never bare substring. Search terms
+with zero hits are reported.
+
+**D5.11 [protocol addition] Wrong strings are never reassigned.** Rows of
+strings listed in wrong_strings are excluded from all exposures. They are never
+reassigned to another agent or class, even when the string names one.
+corrected_name operates at hiclseqno level only. This is conservative by
+design and biases toward under-ascertainment.
+
+Decided before any model was fitted and before any drug-outcome association
+was computed.
