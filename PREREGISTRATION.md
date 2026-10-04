@@ -694,3 +694,12 @@ hicl_draft.csv and rxnorm_cache.json are data, not attribution.
 The conclusion is unchanged: neither class is named in the committed
 protocol as a pre-specified class or candidate, so both remain excluded
 from the primary model under D6.0c.
+
+**D6.0i [correction] Scope of "named nowhere in PREREGISTRATION.md".**
+D6.0c and D6.0g state that ACE inhibitors/ARBs and loop diuretics are
+named nowhere in PREREGISTRATION.md. As written that is now literally
+false: the file names them in D6.0c, D6.0e, D6.0g and D6.0h, which exclude
+them. The intended and operative claim is that they are never named in
+PREREGISTRATION.md as a pre-specified class, candidate exposure, or model
+variable, and appear only in the entries that exclude them. Read D6.0c
+and D6.0g with that scope.
