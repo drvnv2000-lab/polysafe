@@ -485,3 +485,36 @@ design and biases toward under-ascertainment.
 
 Decided before any model was fitted and before any drug-outcome association
 was computed.
+
+### D5 amendments — 2026-10-04, before any model was fitted
+
+**D5.12 [protocol addition] Unnamed rows.** Unnamed medication rows sharing an
+adjudicated HICL key are included in the primary ascertainment strategy under
+that key's adjudicated mapping. A pre-specified sensitivity analysis excludes
+all rows lacking a drugname string, holding the ascertainment strategy fixed,
+quantifying dependence on HICL-only evidence. Both reported.
+
+**D5.13 [correction] Unsure keys in the sensitivity variant.** The unsure
+sensitivity variant includes an unsure key's rows EXCLUDING strings listed in
+wrong_strings, identical to the row rule for kept keys. The earlier reading
+that it includes all of the key's rows contradicts D5.11 and is void.
+
+**D5.14 [protocol addition] Brand alias list.** The four ascertainment
+strategies, including "+brand", were pre-specified. The CONTENT of the brand
+alias list was not. That list was authored after an uncommitted exploratory
+screen had revealed that at least one brand-only key exists; it was authored
+from the reviewer's pharmacological knowledge, not from that screen's output,
+which was discarded and never seen by the reviewer. Screen A (generic-only) is
+unaffected and remains fully pre-committed. Screen A and screen B are both
+reported in full; neither replaces or suppresses the other. No new
+ascertainment strategy is created by this entry. Disclosed for completeness by
+the analyst: the discarded screen's output (33 brand-like tokens and a 14-key
+diagnostic table) was displayed in the analyst's working session on
+2026-10-04, and the analyst's report to the reviewer quoted two of its strings,
+"ZOFRAN" and "Zofran", as examples of brand-only keys. Whether the reviewer
+viewed the session output is for the reviewer to state.
+
+**D5.15 [clarification] Unascertainable rows.** 1,646 non-cancelled
+medication rows carry neither a HICL code nor a drugname and are
+unascertainable by any strategy. Reported as a floor on measurement
+completeness.
