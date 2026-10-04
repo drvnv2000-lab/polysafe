@@ -1,0 +1,75 @@
+# PolySafe HICL review: tier-3 search terms (PREREGISTRATION D5.6).
+# Fixed and committed BEFORE the screen runs. One term per line; '#' = comment.
+# Matching (D5.10): NFKD + casefold, punctuation -> space, whole-token for one
+# word, contiguous whole tokens for a phrase. Never bare substring.
+# piperacillin-tazobactam is listed as its two components so that
+# 'piperacillin/tazobactam', 'piperacillin and tazobactam' etc. all match.
+
+# == Generic names: pre-specified agents (section 10, D4.1) ==
+# vancomycin
+vancomycin
+# piperacillin-tazobactam
+piperacillin
+tazobactam
+# furosemide
+furosemide
+# ondansetron
+ondansetron
+
+# == Generic names: pre-specified class members ==
+# loop diuretics
+bumetanide
+torsemide
+ethacrynic acid
+# ACE inhibitors / ARBs
+lisinopril
+enalapril
+enalaprilat
+captopril
+ramipril
+benazepril
+quinapril
+fosinopril
+trandolapril
+moexipril
+perindopril
+losartan
+valsartan
+irbesartan
+olmesartan
+telmisartan
+candesartan
+azilsartan
+eprosartan
+# NSAIDs (aspirin excluded, D4.1)
+ibuprofen
+ketorolac
+naproxen
+meloxicam
+celecoxib
+indomethacin
+diclofenac
+nabumetone
+etodolac
+sulindac
+piroxicam
+# aminoglycosides
+gentamicin
+tobramycin
+amikacin
+streptomycin
+neomycin
+# iodinated contrast
+iohexol
+iopamidol
+iodixanol
+ioversol
+iopromide
+ioxaglate
+diatrizoate
+
+# == BRAND NAMES (owner) ==
+# To be filled in by the owner: one brand name per line between these markers.
+# Empty = screen on generic names only. Any change must be committed before
+# the screen is re-run.
+# == END BRAND NAMES ==
