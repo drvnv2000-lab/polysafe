@@ -111,7 +111,7 @@ def search_terms_text() -> str:
              "# piperacillin-tazobactam is listed as its two components so that",
              "# 'piperacillin/tazobactam', 'piperacillin and tazobactam' etc. all match.", "",
              "# == Generic names: pre-specified agents (section 10, D4.1) =="]
-    seen: set[str] = set()
+    seen: list[str] = []  # ordered, de-duplicated
     for group in (AGENTS, CLASSES):
         if group is CLASSES:
             lines += ["", "# == Generic names: pre-specified class members =="]
@@ -120,26 +120,58 @@ def search_terms_text() -> str:
             for t in terms:
                 if t not in seen:
                     lines.append(t)
-                    seen.add(t)
+                    seen.append(t)
     lines += ["", BRAND_START,
-              "# To be filled in by the owner: one brand name per line between these markers.",
-              "# Empty = screen on generic names only. Any change must be committed before",
-              "# the screen is re-run.", BRAND_END]
+              "# Template for the owner (D5.14). One slot per generic; write brand aliases",
+              "# after '=', separated by ';'. Leave a slot empty if there is none.",
+              "# Commit the completed file ALONE before running screen B.",
+              "# Format:  <generic> = <alias>; <alias>"]
+    lines += [f"{t} =" for t in seen]
+    lines += [BRAND_END]
     return "\n".join(lines) + "\n"
 
 
-def read_search_terms(path: Path) -> tuple[list[str], list[str]]:
-    """(generic terms, brand terms) from search_terms.txt, as written."""
-    generics, brands, in_brands = [], [], False
+def read_brand_aliases(path: Path) -> dict[str, str]:
+    """{alias: generic it was written against} from the brand section ('' if unattributed)."""
+    aliases, in_brands = {}, False
     for raw in path.read_text(encoding="utf-8").splitlines():
         line = raw.strip()
         if line == BRAND_START:
             in_brands = True
         elif line == BRAND_END:
             in_brands = False
-        elif line and not line.startswith("#"):
-            (brands if in_brands else generics).append(line)
-    return generics, brands
+        elif in_brands and line and not line.startswith("#"):
+            generic, _, rest = line.partition("=") if "=" in line else ("", "", line)
+            for alias in (a.strip() for a in rest.split(";")):
+                if alias:
+                    aliases[alias] = generic.strip()
+    return aliases
+
+
+def read_search_terms(path: Path) -> tuple[list[str], list[str]]:
+    """(generic terms, brand aliases) from search_terms.txt, as written."""
+    generics, in_brands = [], False
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if line == BRAND_START:
+            in_brands = True
+        elif line == BRAND_END:
+            in_brands = False
+        elif line and not line.startswith("#") and not in_brands:
+            generics.append(line)
+    return generics, list(read_brand_aliases(path))
+
+
+def term_groups(path: Path) -> dict[str, str]:
+    """Search term (normalised) -> agent or class it stands for; aliases via their generic."""
+    groups = {}
+    for group in (CLASSES, AGENTS):  # agents last, so they win for furosemide
+        for name, terms in group.items():
+            for t in terms:
+                groups[normalize(t)] = name
+    for alias, generic in read_brand_aliases(path).items():
+        groups[normalize(alias)] = groups.get(normalize(generic), "")
+    return groups
 
 
 def committed_sha(path: Path) -> str:
@@ -263,14 +295,16 @@ def _row_keys(med: pd.DataFrame) -> pd.Series:
     return key.fillna("NAME:" + med["drugname"].fillna(""))
 
 
-def rows_counted(med: pd.DataFrame, reviewed: pd.DataFrame,
-                 include_unsure: bool = False) -> pd.Series:
+def rows_counted(med: pd.DataFrame, reviewed: pd.DataFrame, include_unsure: bool = False,
+                 named_only: bool = False) -> pd.Series:
     """Which medication rows count toward a reviewed key's exposure. Filters at the
     drugname-STRING level, not the hiclseqno level (D5.8).
 
-    keep   -> the key's rows, minus rows whose drugname is listed in wrong_strings
-              (rows with no drugname have no string to be wrong and inherit the key)
-    unsure -> no rows in the primary strategy; all rows when ``include_unsure``
+    keep   -> the key's rows, minus rows whose drugname is listed in wrong_strings.
+              Rows with no drugname follow the key (D5.12) unless ``named_only``
+              (the D5.12 sensitivity analysis), which drops every row lacking a string.
+    unsure -> no rows in the primary strategy; with ``include_unsure`` the same row
+              rule as keep, i.e. wrong strings still excluded (D5.13)
     reject -> no rows
     A key named only through admissiondrug has no medication strings: any wrong string
     there removes all of its rows.
@@ -283,15 +317,16 @@ def rows_counted(med: pd.DataFrame, reviewed: pd.DataFrame,
     adm_only = r["name_source"].eq("admissiondrug") & wrong.map(bool)
     row_wrong = [isinstance(n, str) and n in wrong.get(k, []) for k, n in
                  zip(key, med["drugname"], strict=True)]
-    counted = decision.eq("keep") & ~pd.Series(row_wrong, index=med.index) \
+    usable = ~pd.Series(row_wrong, index=med.index) \
         & ~key.map(adm_only).fillna(False).astype(bool)
-    if include_unsure:
-        counted |= decision.eq("unsure")
-    return counted
+    if named_only:
+        usable &= med["drugname"].notna()
+    accepted = decision.isin(("keep", "unsure") if include_unsure else ("keep",))
+    return accepted & usable
 
 
-def exposure_rows(med: pd.DataFrame, reviewed: pd.DataFrame,
-                  include_unsure: bool = False) -> pd.DataFrame:
+def exposure_rows(med: pd.DataFrame, reviewed: pd.DataFrame, include_unsure: bool = False,
+                  named_only: bool = False) -> pd.DataFrame:
     """Medication rows that count, each labelled with the ONE exposure its key feeds.
 
     ``reviewed`` columns: key, name_source, decision, wrong_strings, corrected_name and
@@ -306,7 +341,7 @@ def exposure_rows(med: pd.DataFrame, reviewed: pd.DataFrame,
     if new:
         raise ValueError(f"corrected_name must be a pre-specified agent or class: {new}")
     target = corrected.where(corrected != "", r["exposure"].fillna(""))
-    counted = rows_counted(med, reviewed, include_unsure)
+    counted = rows_counted(med, reviewed, include_unsure, named_only)
     rows = med[counted].assign(exposure=_row_keys(med)[counted].map(target))
     return rows[rows["exposure"].fillna("") != ""]
 
@@ -470,6 +505,80 @@ def build_review_packet(draft_csv: Path | None = None, out_dir: Path | None = No
             "zero_hit_terms": zero_hit, "design": design, "sha": sha}
 
 
+ZERO_HIT_HEADING = "### terms with no hits - absent from eICU or misspelled"
+
+
+def _md_table(df: pd.DataFrame) -> str:
+    head = "| " + " | ".join(df.columns) + " |"
+    rule = "|" + "|".join("---" for _ in df.columns) + "|"
+    body = ["| " + " | ".join(str(v) for v in row) + " |" for row in df.itertuples(index=False)]
+    return "\n".join([head, rule, *body])
+
+
+def read_zero_hit(packet_md: Path) -> list[str]:
+    """Zero-hit terms as printed in a REVIEW_PACKET.md."""
+    lines = packet_md.read_text(encoding="utf-8").splitlines()
+    i = lines.index(ZERO_HIT_HEADING)
+    body = next(x for x in lines[i + 1:] if x.strip())
+    return [] if body.strip() == "(none)" else re.findall(r"`([^`]+)`", body)
+
+
+def compare_screens(a_dir: Path, b_dir: Path, med: pd.DataFrame, terms_file: Path) -> dict:
+    """Per agent/class: tier-3 candidate keys, rows, distinct stays in A and B, and B - A.
+
+    Rows are non-cancelled medication rows; stays are counted distinctly per group,
+    never summed over keys. Screen A's files are read as they are, never rebuilt.
+    """
+    groups = term_groups(terms_file)
+    live = med[med["drugordercancelled"] != "Yes"]
+    row_key = _row_keys(live)
+
+    def by_group(d: Path) -> dict[str, set]:
+        t3 = pd.read_csv(d / "tier3_screen.csv", dtype=str, keep_default_na=False)
+        out: dict[str, set] = {}
+        for _, r in t3.iterrows():
+            for term in r["hit_terms"].split(" | "):
+                g = groups.get(normalize(term), "")
+                out.setdefault(g, set()).add(r["key"])
+        return out
+
+    a, b = by_group(a_dir), by_group(b_dir)
+    rows = []
+    for g in [*AGENTS, *CLASSES, ""]:
+        ka, kb = a.get(g, set()), b.get(g, set())
+        ra, rb = live[row_key.isin(ka)], live[row_key.isin(kb)]
+        sa, sb = set(ra["patientunitstayid"]), set(rb["patientunitstayid"])
+        rows.append({"group": g or "(unattributed alias)", "A_keys": len(ka), "A_rows": len(ra),
+                     "A_stays": len(sa), "B_keys": len(kb), "B_rows": len(rb),
+                     "B_stays": len(sb), "added_keys": len(kb - ka),
+                     "added_rows": len(live[row_key.isin(kb - ka)]),
+                     "added_stays": len(sb - sa)})
+    return {"per_group": pd.DataFrame(rows),
+            "zero_hit_A": read_zero_hit(a_dir / "REVIEW_PACKET.md"),
+            "zero_hit_B": read_zero_hit(b_dir / "REVIEW_PACKET.md")}
+
+
+def build_screen_b(review_dir: Path = REVIEW_DIR) -> dict:
+    """Screen B: the committed term file with the owner's brand aliases. Screen A is kept."""
+    terms_file = review_dir / "search_terms.txt"
+    if not read_brand_aliases(terms_file):
+        raise RuntimeError("no brand aliases in search_terms.txt; screen B would equal screen A")
+    b_dir = review_dir / "screen_b"
+    med = load("medication")
+    result = build_review_packet(out_dir=b_dir, terms_file=terms_file, med=med)
+    cmp = compare_screens(review_dir, b_dir, med, terms_file)
+    md = ["# Screen A vs screen B (generated by `python -m polysafe.review --screen-b`)", "",
+          f"Screen A: generic names only (`{review_dir.name}/`). Screen B: generic names plus "
+          f"the owner's brand aliases at commit `{result['sha']}` (`screen_b/`). Both are "
+          "reported in full; neither replaces the other (D5.14). Tier-3 candidates only; "
+          "nothing is recovered until adjudication accepts it.", "",
+          _md_table(cmp["per_group"]), "",
+          "Zero-hit terms, screen A: " + (", ".join(cmp["zero_hit_A"]) or "(none)"), "",
+          "Zero-hit terms, screen B: " + (", ".join(cmp["zero_hit_B"]) or "(none)")]
+    (b_dir / "SCREEN_COMPARISON.md").write_text("\n".join(md) + "\n", encoding="utf-8")
+    return cmp
+
+
 ESTIMATOR = """\
 error_rows_i = total rows of the drugname strings within key i that the
                reviewer marked wrong (NOT all rows of key i).
@@ -527,7 +636,7 @@ def packet_markdown(draft, tier, source, generics, brands, zero_hit, d, sha,
               "Tier-3 keys by source:", "", "| Source | Keys |", "|---|---:|"]
     for s in ("unmapped", "admissiondrug-only", "mapped to something else"):
         lines.append(f"| {s} | {int((source == s).sum())} |")
-    lines += ["", "### terms with no hits - absent from eICU or misspelled", ""]
+    lines += ["", ZERO_HIT_HEADING, ""]
     lines += [", ".join(f"`{t}`" for t in zero_hit) if zero_hit else "(none)"]
     never = int(((draft["key_type"] == "HICL") & (draft["name_source"] == "none")).sum())
     lines += ["", f"**Limit:** {never:,} HICL keys have no drugname anywhere in eICU; no name "
@@ -667,7 +776,12 @@ def main(argv: list[str] | None = None) -> int:
     g.add_argument("--terms", action="store_true", help="stage 0: write search_terms.txt")
     g.add_argument("--reliability", action="store_true",
                    help="freeze filled pass 1 and draw the blind pass-2 sample")
+    g.add_argument("--screen-b", action="store_true",
+                   help="run screen B with the owner's committed brand aliases")
     args = p.parse_args(argv)
+    if args.screen_b:
+        print(build_screen_b()["per_group"].to_string(index=False))
+        return 0
     if args.terms:
         REVIEW_DIR.mkdir(parents=True, exist_ok=True)
         path = REVIEW_DIR / "search_terms.txt"

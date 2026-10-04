@@ -156,7 +156,12 @@ def test_string_level_filtering_drops_only_wrong_strings():
 
 
 def test_end_to_end_decision_to_stay_level_exposure():
-    """review decision -> string-level inclusion -> exposure rows -> stay exposure -> dataset."""
+    """review decision -> string-level inclusion -> exposure rows -> stay exposure -> dataset.
+
+    TODO (owner instruction, item 7): when the medication feature builder is written,
+    re-point this test at the builder itself, so a builder that bypasses
+    review.rows_counted fails it.
+    """
     med, reviewed = _chain_fixture()
     rows = review.exposure_rows(med, reviewed)
     assert (rows["exposure"] == "furosemide").sum() == 500
@@ -175,11 +180,25 @@ def test_corrected_name_cannot_create_a_new_variable():
     assert set(moved["exposure"]) == {"loop diuretics"}
 
 
-def test_unsure_only_in_the_sensitivity_variant():
+def test_unsure_only_in_the_sensitivity_variant_and_wrong_strings_still_excluded():
+    """D5.13: in the sensitivity variant an unsure key follows the keep row rule."""
     med, reviewed = _chain_fixture()
     unsure = reviewed.assign(decision="unsure")
     assert review.rows_counted(med, unsure).sum() == 0
-    assert review.rows_counted(med, unsure, include_unsure=True).sum() == 503
+    assert review.rows_counted(med, unsure, include_unsure=True).sum() == 500
+
+
+def test_named_only_sensitivity_drops_rows_without_a_string():
+    """D5.12: unnamed rows follow the key in the primary strategy, dropped in the sensitivity."""
+    med, reviewed = _chain_fixture()
+    unnamed = pd.DataFrame({"patientunitstayid": [13, 13], "drughiclseqno": 3660.0,
+                            "drugname": [None, None]})
+    med = pd.concat([med, unnamed], ignore_index=True)
+    assert review.rows_counted(med, reviewed).sum() == 502
+    assert review.rows_counted(med, reviewed, named_only=True).sum() == 500
+    data = review.stay_exposure(review.exposure_rows(med, reviewed, named_only=True),
+                                stays=range(1, 14))
+    assert not data.loc[13, "furosemide"]
 
 
 # ---------------------------------------------------------------- audit and estimator
@@ -261,3 +280,57 @@ def test_reliability_hook(packet, tmp_path):
     p2.to_csv(path, index=False)
     rep = review.reliability_report(tmp_path)
     assert rep["percent_agreement"] == 0.9 and "exploratory" in rep["label"]
+
+
+# ---------------------------------------------------------------- brand template, screen B
+
+
+def test_brand_template_has_one_empty_slot_per_generic(tmp_path):
+    f = tmp_path / "search_terms.txt"
+    f.write_text(review.search_terms_text(), encoding="utf-8")
+    generics, brands = review.read_search_terms(f)
+    assert brands == [] and review.read_brand_aliases(f) == {}
+    body = f.read_text(encoding="utf-8")
+    section = body[body.index(review.BRAND_START):body.index(review.BRAND_END)]
+    slots = [ln[:-2] for ln in section.splitlines() if ln.endswith(" =")]
+    assert slots == generics
+
+
+def test_filled_aliases_are_read_with_their_generic(tmp_path):
+    f = tmp_path / "search_terms.txt"
+    text = review.search_terms_text().replace("furosemide =\n",
+                                              "furosemide = FakeBrandA; FakeB\n")
+    f.write_text(text, encoding="utf-8")
+    assert review.read_brand_aliases(f) == {"FakeBrandA": "furosemide", "FakeB": "furosemide"}
+    assert review.term_groups(f)[review.normalize("FakeBrandA")] == "furosemide"
+    assert review.term_groups(f)["bumetanide"] == "loop diuretics"
+
+
+def _screen_dir(d, rows, zero):
+    d.mkdir()
+    pd.DataFrame(rows, columns=["key", "hit_terms"]).to_csv(d / "tier3_screen.csv", index=False)
+    (d / "REVIEW_PACKET.md").write_text(f"x\n\n{review.ZERO_HIT_HEADING}\n\n{zero}\n",
+                                        encoding="utf-8")
+
+
+def test_compare_screens_counts_distinct_stays_per_agent(tmp_path):
+    f = tmp_path / "search_terms.txt"
+    f.write_text(review.search_terms_text().replace("furosemide =\n", "furosemide = FakeLas\n"),
+                 encoding="utf-8")
+    _screen_dir(tmp_path / "a", [("HICL:1", "furosemide")], "`zzq`")
+    _screen_dir(tmp_path / "b", [("HICL:1", "furosemide"), ("NAME:FAKELAS", "FakeLas")], "(none)")
+    med = pd.DataFrame({"patientunitstayid": [1, 1, 2, 2, 3], "drugordercancelled": "No",
+                        "drughiclseqno": [1.0, 1.0, None, None, None],
+                        "drugname": ["X", "X", "FAKELAS", "FAKELAS", "FAKELAS"]})
+    c = review.compare_screens(tmp_path / "a", tmp_path / "b", med, f)
+    row = c["per_group"].set_index("group").loc["furosemide"]
+    assert (row.A_keys, row.A_rows, row.A_stays) == (1, 2, 1)
+    assert (row.B_keys, row.B_rows, row.B_stays) == (2, 5, 3)
+    assert (row.added_keys, row.added_rows, row.added_stays) == (1, 3, 2)
+    assert c["zero_hit_A"] == ["zzq"] and c["zero_hit_B"] == []
+
+
+def test_screen_b_refuses_without_aliases(tmp_path):
+    (tmp_path / "search_terms.txt").write_text(review.search_terms_text(), encoding="utf-8")
+    with pytest.raises(RuntimeError, match="no brand aliases"):
+        review.build_screen_b(tmp_path)
