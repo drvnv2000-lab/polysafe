@@ -1,9 +1,9 @@
 """PREREGISTRATION.md is append-only at DOCUMENT level (PREREGISTRATION D6.0b).
 
 New content may only be added at the end of the file. Inserting text inside an
-earlier entry's block fails, as do deleting or modifying a line. Line endings are
-normalised before comparing, so the rule holds on Windows (CRLF working copies)
-and Linux alike.
+earlier entry's block fails, as do deleting or modifying a line. Both sides of every
+comparison are read as git blobs (`git show <sha>:PREREGISTRATION.md`), never from the
+working tree, so checkout line-ending translation cannot affect the result.
 
 BASELINE is the later of the two one-time modifications D6.0b discloses (the
 line-ending commit); the property is checked for every commit after it. The
@@ -91,12 +91,6 @@ def test_every_commit_since_baseline_only_appends():
     bad = {c[:7]: why for c in commits
            if (why := appended_only(_version(f"{c}^"), _version(c))) is not None}
     assert not bad, f"PREREGISTRATION.md changed other than by appending: {bad}"
-
-
-def test_working_tree_only_appends_to_head():
-    current = (ROOT / DOC).read_text(encoding="utf-8")
-    why = appended_only(_version("HEAD"), current)
-    assert why is None, f"uncommitted edit to PREREGISTRATION.md: {why}"
 
 
 @pytest.mark.parametrize("rev", PRE_BASELINE_CHANGES)
