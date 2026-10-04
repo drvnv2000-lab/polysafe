@@ -656,3 +656,41 @@ NSAIDs, aminoglycosides and iodinated contrast are named in
 PREREGISTRATION.md (D4.1, D4.5) and remain in; ACE inhibitors/ARBs and
 loop diuretics are named nowhere in it and remain out. The definition is
 therefore not outcome-selected.
+
+**D6.0h [clarification] Provenance of the two excluded code-only classes.**
+D6.0c excluded ACE inhibitors/ARBs and loop diuretics as not named in the
+committed protocol. Both share a single origin, recorded here.
+
+Both trace to uncommitted drafts of HANDOFF.md, authored in session on
+2026-10-04 and read by the implementing agent, containing: "Pool the rest
+into classes (NSAIDs, ACEi/ARB, aminoglycosides, vancomycin, loop
+diuretics, contrast)." The class list in src/polysafe/medmap.py was
+drafted from that sentence. The sentence was removed when HANDOFF.md was
+rewritten before its first commit and therefore appears in no committed
+version. Git cannot verify those drafts; this is session testimony, not
+evidence.
+
+Two committed attributions then cited sources that do not support the
+list:
+  - de873fd, medmap.py:46-47: "draft ingredient search terms for the
+    pre-specified agents and classes (sections 6 and 10)". Sections 6 and
+    10 name no class. This is the FIRST committed trace of the class
+    list, predating the review.py attribution. D6.0e recorded it as an
+    overstated citation; it is also the list's earliest committed source.
+  - 723e862, review.py: cited a HANDOFF passage present in no committed
+    version.
+Both were removed at 25502e2.
+
+ACE inhibitors/ARBs additionally appear at DATA_REPORT.md:105-106 as a
+pooling recommendation. That is a data report, not protocol, and it was
+demonstrably not adopted as written: it names lisinopril as supporting
+drug-specific estimates, while section 10's exposure list excludes
+lisinopril. The plan of record departed from the recommendation.
+
+Loop diuretics appear in no other committed file except documents
+downstream of medmap.CHECKLIST. The RxNorm ATC codes C03CA and C03CB in
+hicl_draft.csv and rxnorm_cache.json are data, not attribution.
+
+The conclusion is unchanged: neither class is named in the committed
+protocol as a pre-specified class or candidate, so both remain excluded
+from the primary model under D6.0c.
