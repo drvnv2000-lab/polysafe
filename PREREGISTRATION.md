@@ -533,3 +533,10 @@ variables. The class list used by the review code (`src/polysafe/review.py`,
 `CLASSES`) is attributed there to a HANDOFF passage that appears in no
 committed version of HANDOFF.md. Section 10 lists ondansetron as a
 negative-control exposure, separately from its list of exposures.
+
+**D6.0a [correction] Provenance scope of D6.0.** The rule's APPLICATION admits
+no frequency-based exclusion of any pre-specified exposure. The choice to adopt
+a frequency-independent rule was itself made with knowledge that some named
+classes are rare; that is disclosed here rather than denied. At D6.0's commit,
+exposed-stay counts and tier-3 candidate counts were already known; events
+among exposed, events among unexposed and all model results were not.
