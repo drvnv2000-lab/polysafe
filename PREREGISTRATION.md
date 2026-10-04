@@ -540,3 +540,12 @@ a frequency-independent rule was itself made with knowledge that some named
 classes are rare; that is disclosed here rather than denied. At D6.0's commit,
 exposed-stay counts and tier-3 candidate counts were already known; events
 among exposed, events among unexposed and all model results were not.
+
+**D6.0b [clarification] Append-only property and one repaired commit.** The
+property in force is document-level: new content is appended at the end of
+this file; nothing is inserted inside an earlier entry's block and no existing
+line is deleted or modified. 067ee23 committed D6.0. d972c0c inserted a
+sentence inside D6.0's block, which this property forbids. That insertion was
+reverted and the sentence re-appended as D6.0a, so it visibly post-dates the
+rule it qualifies. The property applies from the revert commit onward; the
+revert itself is the one disclosed deletion.
