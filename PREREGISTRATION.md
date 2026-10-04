@@ -573,3 +573,23 @@ D6.0. It remains the negative control in the secondary propensity analysis
 that ondansetron is not nephrotoxic is consistent with this role but is not the
 basis for it; section 1:19's "nephrotoxic agents" phrasing scopes the secondary
 research question, not primary-model inclusion.
+
+**D6.0e [correction] False citation in code, removed; full citation audit.**
+src/polysafe/review.py attributed its class list to a HANDOFF passage ("HANDOFF:
+NSAIDs, ACEi/ARB, aminoglycosides, vancomycin, loop diuretics, contrast") that
+appears in no committed version of HANDOFF.md. That attribution is removed and
+replaced with the list's actual provenance: no committed protocol source defined
+it; the NSAID class, aminoglycosides and iodinated contrast are named in D4.1
+and D4.5; "ACEi/ARB" appears only in DATA_REPORT.md, a data report rather than
+the protocol; loop diuretics appear in no committed document. The D6 analyst
+note above describes the attribution as it stood before this removal.
+A repository-wide audit then resolved every citation of a D-entry, section
+number, line number or quoted protocol passage in code, docstrings, tests,
+PREREGISTRATION.md, HANDOFF.md, DEMO_SCOPE.md, DATA_REPORT.md,
+MAPPING_REPORT.md, REVIEW_PACKET.md, search_terms.txt and the results reports
+against committed text. No other unresolved citations found. One citation that
+resolved but overstated its source was tightened: the medication checklist
+comment in src/polysafe/medmap.py cited sections 6 and 10 for both the agents
+and the classes; section 10 names the agents and neither section names the
+classes. A test now fails if any cited D-entry id or section number is absent
+from the committed protocol.
