@@ -723,3 +723,11 @@ and D6.0g with that scope.
       cited text supports the claim made. Every citation defect found in
       this repair - de873fd, 723e862, and medmap.py's sections 6 and 10 -
       was of the second kind, which this test cannot catch.
+
+**D6.0k [correction] Count of citation defects in D6.0j(c).**
+D6.0j(c) lists "de873fd, 723e862, and medmap.py's sections 6 and 10" as
+the citation defects found in this repair. de873fd IS the medmap.py
+"sections 6 and 10" citation, so that list names two distinct defects and
+one of them twice. The count is two, both of the semantic kind - a cited
+source that exists but does not support the claim made. No statement in
+D6.0j(c) is false; the list is redundant and invites a miscount.
