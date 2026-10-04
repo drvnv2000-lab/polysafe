@@ -1,0 +1,22 @@
+name: protocol-integrity
+
+# Data-free checks only: the eICU tables are not in the repository (ODbL data,
+# re-downloadable), so the full suite runs locally. These two need only git.
+on:
+  push:
+  pull_request:
+
+jobs:
+  protocol:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # the append-only test reads every commit since the baseline
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install "pandas>=2.1.4,<3" "numpy>=1.26.4,<2" pytest
+      - name: Append-only and citation tests
+        run: python -m pytest -q tests/test_preregistration.py tests/test_citations.py
