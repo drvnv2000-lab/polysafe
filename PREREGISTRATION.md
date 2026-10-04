@@ -604,3 +604,28 @@ comment in src/polysafe/medmap.py cited sections 6 and 10 for both the agents
 and the classes; section 10 names the agents and neither section names the
 classes. A test now fails if any cited D-entry id or section number is absent
 from the committed protocol.
+
+**D6.0f [correction] Scope of commit 9635d73 and the append-only baseline.**
+
+9635d73 added .gitattributes establishing "*.md text eol=lf". Running
+`git add --renormalize .` produced no change to any stored markdown
+content - the staged diff was ".gitattributes | 1 +" alone - so the mass
+CRLF-to-LF modification anticipated when that step was specified did not
+occur, and no pre-existing markdown line was altered by normalisation.
+
+That commit did, however, amend D6.0b in place. D6.0b's sentence stating
+that the line-ending commit "changed no committed line" refers to the
+renormalisation only, not to the commit as a whole; the commit changed
+D6.0b's own lines. That amendment is a modification inside the repair
+window and is disclosed here rather than undone, since restoring D6.0b's
+8230b37 text would require a further in-place edit and a further
+re-baseline for no gain.
+
+The document-level append-only property is baselined at 9635d73. Three
+prior modifications lie outside that baseline:
+  - 29a66d8 deleted a "(none yet)" placeholder. Disclosed, not reverted.
+  - 46c9f9c inserted section 9.1 inside section 9. Disclosed, not
+    reverted.
+  - d972c0c inserted lines inside D6.0's block and was reverted by
+    50792b0, leaving the file byte-identical to 067ee23.
+No history was rewritten and no commit was force-pushed.
