@@ -703,3 +703,23 @@ them. The intended and operative claim is that they are never named in
 PREREGISTRATION.md as a pre-specified class, candidate exposure, or model
 variable, and appear only in the entries that exclude them. Read D6.0c
 and D6.0g with that scope.
+
+**D6.0j [clarification] Repair-process disclosures.**
+  (a) The citation-existence test failed during the run that produced
+      6f15199 (D6.0f). The defect was in the test, which treated a new
+      entry's own heading as an unresolved citation while the entry was
+      present in the working tree but not yet committed; it was not a
+      defect in the committed content. Verified by checking out 6f15199
+      and running the pre-cfae4bf test against it: the test failed
+      against the WORKING TREE only. Against the COMMITTED tree at
+      6f15199 it passes; with D6.0f present but uncommitted on top of
+      084b305, the state of the original run, it fails exactly as it did
+      then. Linux CI passed on f6c2e19. Fixed at cfae4bf.
+  (b) The failure was hidden because pytest output was piped to `tail`,
+      which discards the exit status. Commands are now run so that a
+      failing test stops the chain.
+  (c) Known limitation: the citation-existence test checks that a cited
+      D-entry id or section number EXISTS. It does not check that the
+      cited text supports the claim made. Every citation defect found in
+      this repair - de873fd, 723e862, and medmap.py's sections 6 and 10 -
+      was of the second kind, which this test cannot catch.
