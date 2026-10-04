@@ -518,3 +518,18 @@ viewed the session output is for the reviewer to state.
 medication rows carry neither a HICL code nor a drugname and are
 unascertainable by any strategy. Reported as a floor on measurement
 completeness.
+
+### D6 — 2026-10-04, before any model was fitted
+
+**D6.0 [protocol addition] Primary-model exposure set.** All pre-specified
+agents and all pre-specified class variables enter the primary model
+regardless of exposure frequency. The resulting EPV is reported as an observed
+consequence and is not used to drop variables. This rule was committed before
+events among exposed were computed; verifiable from commit order.
+
+Analyst note (statement of fact about the committed text; not part of the
+rule): no committed document defines the set of pre-specified class
+variables. The class list used by the review code (`src/polysafe/review.py`,
+`CLASSES`) is attributed there to a HANDOFF passage that appears in no
+committed version of HANDOFF.md. Section 10 lists ondansetron as a
+negative-control exposure, separately from its list of exposures.
