@@ -38,7 +38,11 @@ def defined(protocol: str) -> tuple[set, set, set]:
 
 def citations(text: str):
     for n, line in enumerate(text.replace("\r\n", "\n").split("\n"), 1):
+        # An entry's own defining heading ("**D6.0f [...]") is not a citation of it.
+        defining = re.match(r"\*\*(D\d+\.\d+[a-z]?)\b", line)
         for m in ENTRY.finditer(line):
+            if defining and m.start() == 2:
+                continue
             yield n, "entry", m.group(0)
         for m in SERIES.finditer(line):
             yield n, "series", m.group(0)
@@ -70,3 +74,10 @@ def test_the_check_catches_a_missing_entry_series_and_section(tmp_path):
     assert sorted(unresolved([f], protocol, root=tmp_path)) == sorted([
         "x.py:1 cites entry D1.2", "x.py:1 cites series D7",
         "x.py:1 cites section 4", "x.py:1 cites section 9.1"])
+
+
+def test_a_new_entrys_own_heading_is_not_a_citation_but_its_references_are(tmp_path):
+    protocol = "## 1. One\n\n### D1 — date\n\n**D1.1 — x.** text\n"
+    f = tmp_path / "PREREGISTRATION.md"
+    f.write_text("**D1.2 [correction] New.** Refers to D1.1 and D1.9.\n", encoding="utf-8")
+    assert unresolved([f], protocol, root=tmp_path) == ["PREREGISTRATION.md:1 cites entry D1.9"]
