@@ -69,7 +69,58 @@ ioxaglate
 diatrizoate
 
 # == BRAND NAMES (owner) ==
-# To be filled in by the owner: one brand name per line between these markers.
-# Empty = screen on generic names only. Any change must be committed before
-# the screen is re-run.
+# Template for the owner (D5.14). One slot per generic; write brand aliases
+# after '=', separated by ';'. Leave a slot empty if there is none.
+# Commit the completed file ALONE before running screen B.
+# Format:  <generic> = <alias>; <alias>
+vancomycin =
+piperacillin =
+tazobactam =
+furosemide =
+ondansetron =
+bumetanide =
+torsemide =
+ethacrynic acid =
+lisinopril =
+enalapril =
+enalaprilat =
+captopril =
+ramipril =
+benazepril =
+quinapril =
+fosinopril =
+trandolapril =
+moexipril =
+perindopril =
+losartan =
+valsartan =
+irbesartan =
+olmesartan =
+telmisartan =
+candesartan =
+azilsartan =
+eprosartan =
+ibuprofen =
+ketorolac =
+naproxen =
+meloxicam =
+celecoxib =
+indomethacin =
+diclofenac =
+nabumetone =
+etodolac =
+sulindac =
+piroxicam =
+gentamicin =
+tobramycin =
+amikacin =
+streptomycin =
+neomycin =
+iohexol =
+iopamidol =
+iodixanol =
+ioversol =
+iopromide =
+ioxaglate =
+diatrizoate =
 # == END BRAND NAMES ==
