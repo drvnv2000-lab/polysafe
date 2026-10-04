@@ -194,4 +194,54 @@ Any departure from this plan is appended below with the date, the reason, and
 whether it was decided before or after seeing results. An empty section at
 publication means none occurred.
 
-*(none yet)*
+### D1 — 2026-10-04, before any model was trained
+
+**D1.1 — Section 3, "1,238 usable stays": definition was ambiguous, not wrong.**
+The figure reproduces exactly under this definition, which is now stated:
+ICU LOS >= 24 h **and** a serum creatinine in [0, T] **and** any serum creatinine
+after T — computed *before* the ESRD and AKI-by-T exclusions and *without* the
+7-day / ICU-discharge censoring. For comparison, applying the censored outcome
+window gives 1,124 with a post-T value and 1,056 meeting both conditions.
+
+**D1.2 — Section 9, prevalence 22-25%: this was wrong.** It was carried over
+from the provisional DATA_REPORT estimate and general ICU literature rather than
+measured. Measured incidence under the project's own labelling is **16.1%**
+(baseline A, uncensored) and **12.9%** with ICU-discharge censoring. All power
+statements below use the measured values. The earlier figure made the design
+look better powered than it is.
+
+**D1.3 — Analysis cohort is smaller than section 9 assumed.** Requiring both an
+observable baseline and an observable outcome leaves **868 stays**, of which
+**671** are at medication-recording sites (the primary estimand). Section 9
+assumed ~1,037.
+
+**D1.4 — Consequence: the primary endpoint is re-specified.** Recomputed with
+the measured prevalence and cohort size, the minimum detectable paired dAUROC
+is:
+
+| cohort | prevalence | r=0.75 | r=0.90 | r=0.95 |
+|---|---|---|---|---|
+| n=671 (primary) | 12.9% | 0.063 | 0.040 | 0.028 |
+| n=671 (primary) | 16.1% | 0.056 | 0.036 | 0.025 |
+| n=868 (all sites) | 12.9% | 0.055 | 0.035 | 0.025 |
+
+Adding medication features to an ICU AKI model plausibly moves AUROC by
+0.01-0.03. **This design cannot reliably detect an effect of that size.**
+Rather than run a test that is predestined to be uninformative and then
+rationalise the result, the endpoint structure is changed here, before any
+model is trained:
+
+- **Primary becomes an estimation, not a test.** Report dAUROC with a
+  patient-level bootstrap 95% CI. The pre-specified conclusion is the interval
+  itself. A CI containing 0 is reported as "this design cannot resolve an effect
+  of this magnitude", never as evidence of no effect.
+- **Co-primary: the exposure-ascertainment sensitivity analysis** (section 6).
+  Comparing four ascertainment strategies on the same patients is a
+  within-sample methods comparison and does not suffer the small-effect power
+  problem. It is also the component that depends on pharmacological knowledge.
+- **Drug-specific associations (section 10) remain secondary but are the
+  best-powered substantive question**: minimum detectable OR ~1.6-2.0 against
+  published nephrotoxin associations of roughly 2-3.
+
+This deviation was decided from power arithmetic alone. No outcome data,
+model output or association estimate had been examined.
