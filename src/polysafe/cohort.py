@@ -1,20 +1,24 @@
-"""Cohort construction with leakage-controlled exclusions (HANDOFF steps 1-2).
+"""Cohort construction with leakage-controlled exclusions (PREREGISTRATION sections 3-5, D1.3).
 
-Prediction time T = 24 h after ICU admission. Exclusions, applied in order:
+Prediction time T = 24 h after ICU admission. Outcome window (T, end], where
+end = min(T + 7 days, ICU discharge or death). Exclusions, applied in order:
 
 1. Stay shorter than T            (``unitdischargeoffset < T``)
 2. Chronic dialysis / ESRD        (AKI is not definable for these patients)
 3. AKI already present by T       (KDIGO stage >= 1 on creatinine drawn <= T)
 4. Acute RRT started by T         (prevalent KDIGO stage 3)
-5. No baseline creatinine         (ratio criterion cannot be evaluated)
-6. No serum creatinine after T    (outcome unobservable)
+5. No baseline creatinine         (D1.3: baseline must be observable)
+6. No observable outcome          (D1.3: no serum creatinine and no RRT start in the window)
 
 The KDIGO rules are evaluated once per creatinine draw (``kdigo_hits``). The
 exclusion at T and the outcome after T both read from that one table, so they
 cannot drift apart: a draw at or before T can only exclude, a draw after T can
 only label.
 
-Decisions not spelled out in HANDOFF.md are marked ``PI DECISION``.
+The primary estimand is further restricted at the *site* level to hospitals
+that record medication administration (``recording_hospitals``). That flag is a
+population filter only and must never be used as a predictor: it is a hospital
+proxy.
 """
 
 from __future__ import annotations
@@ -27,6 +31,7 @@ import pandas as pd
 from polysafe.tables import load
 
 T_MIN = 24 * 60  # prediction time, minutes after unit admission
+OUTCOME_WINDOW_MIN = 7 * 24 * 60  # outcome window (T, T + 7 d], censored at ICU discharge
 RISE_WINDOW_MIN = 48 * 60  # KDIGO: >= 0.3 mg/dL rise within 48 h
 RATIO_WINDOW_MIN = 7 * 24 * 60  # KDIGO: >= 1.5x baseline within 7 days
 RISE_MG_DL = 0.3
@@ -174,6 +179,28 @@ def rrt_start(treatment: pd.DataFrame) -> pd.Series:
     return rows.groupby("patientunitstayid")["treatmentoffset"].min()
 
 
+def outcome_end(patient: pd.DataFrame) -> pd.Series:
+    """End of the outcome window per stay: min(T + 7 d, ICU discharge or death). Index: stay."""
+    p = patient.set_index("patientunitstayid")["unitdischargeoffset"]
+    return p.clip(upper=T_MIN + OUTCOME_WINDOW_MIN)
+
+
+def in_window(offsets: pd.Series, end: pd.Series) -> pd.Series:
+    """True where T < offset <= end for that stay. ``offsets`` is indexed by stay."""
+    e = end.reindex(offsets.index)
+    return (offsets > T_MIN) & (offsets <= e)
+
+
+def recording_hospitals(patient: pd.DataFrame, medication: pd.DataFrame) -> set:
+    """Hospitals with at least one medication row for any stay (site-level, all stays).
+
+    A population filter for the primary estimand. Never a predictor.
+    """
+    stays = set(medication["patientunitstayid"])
+    has = patient["patientunitstayid"].isin(stays)
+    return set(patient.loc[has, "hospitalid"])
+
+
 # ---------------------------------------------------------------- cohort
 
 
@@ -210,8 +237,13 @@ def build_cohort(tables: dict[str, pd.DataFrame] | None = None,
          {"A": "no serum creatinine in the first 24 h",
           "C": "no serum creatinine before ICU admission"}[baseline],
          remaining - frozenset(base.index))
-    drop("No serum creatinine after T", "outcome cannot be observed",
-         remaining - frozenset(cr.loc[cr["offset"] > T_MIN, "patientunitstayid"]))
+    end = outcome_end(patient)
+    cr_seen = cr.loc[in_window(cr.set_index("patientunitstayid")["offset"], end).to_numpy(),
+                     "patientunitstayid"]
+    rrt_seen = rrt[in_window(rrt, end)].index
+    drop("No observable outcome",
+         "no serum creatinine and no RRT start in (T, min(T + 7 d, ICU discharge)]",
+         remaining - frozenset(cr_seen) - frozenset(rrt_seen))
 
     cohort = patient[patient["patientunitstayid"].isin(remaining)]
     return cohort.reset_index(drop=True), flow
@@ -226,4 +258,5 @@ def load_inputs() -> dict[str, pd.DataFrame]:
         "diagnosis": load("diagnosis"),
         "treatment": load("treatment"),
         "apacheApsVar": load("apacheApsVar", usecols=["patientunitstayid", "dialysis"]),
+        "medication": load("medication", usecols=["patientunitstayid"]),
     }

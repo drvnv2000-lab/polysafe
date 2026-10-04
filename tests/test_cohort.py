@@ -131,8 +131,8 @@ def test_flow_is_arithmetically_consistent(built):
 
 def test_flow_counts_regression(built):
     """Measured on the verified demo files; a change here means the logic changed."""
-    assert [len(s.remaining) for s in built["A"][1]] == [2520, 1627, 1565, 1397, 1394, 1248, 1034]
-    assert [len(s.remaining) for s in built["C"][1]] == [2520, 1627, 1565, 1394, 1391, 935, 779]
+    assert [len(s.remaining) for s in built["A"][1]] == [2520, 1627, 1565, 1397, 1394, 1248, 868]
+    assert [len(s.remaining) for s in built["C"][1]] == [2520, 1627, 1565, 1394, 1391, 935, 660]
 
 
 def test_acute_rrt_step_removes_the_three_pi_confirmed_stays(built):
@@ -164,7 +164,9 @@ def test_final_cohort_respects_every_exclusion(tables, cr, built, b):
     rrt = cohort.rrt_start(tables["treatment"])
     assert not ids & set(rrt[rrt <= T_MIN].index)
     assert ids <= set(base.index)
-    assert ids <= set(cr.loc[cr["offset"] > T_MIN, "patientunitstayid"])
+    end = cohort.outcome_end(tables["patient"])
+    seen = cr[cohort.in_window(cr.set_index("patientunitstayid")["offset"], end).to_numpy()]
+    assert ids <= set(seen["patientunitstayid"]) | set(rrt[cohort.in_window(rrt, end)].index)
 
 
 def test_creatinine_after_T_cannot_change_the_cohort(tables):
@@ -185,3 +187,18 @@ def test_creatinine_after_T_cannot_change_the_cohort(tables):
         before = set(cohort.build_cohort(tables, baseline=b)[0]["patientunitstayid"])
         after_ = set(cohort.build_cohort(perturbed, baseline=b)[0]["patientunitstayid"])
         assert before == after_
+
+
+def test_window_boundaries():
+    end = pd.Series({1: 3 * 24 * 60})
+    offsets = pd.Series([T_MIN, T_MIN + 1, 3 * 24 * 60, 3 * 24 * 60 + 1], index=[1, 1, 1, 1])
+    # T itself belongs to the feature window; the end of the window is included.
+    assert cohort.in_window(offsets, end).tolist() == [False, True, True, False]
+
+
+def test_outcome_end_is_capped_at_seven_days(tables):
+    end = cohort.outcome_end(tables["patient"])
+    assert end.max() == T_MIN + cohort.OUTCOME_WINDOW_MIN
+    discharge = tables["patient"].set_index("patientunitstayid")["unitdischargeoffset"]
+    short = discharge < T_MIN + cohort.OUTCOME_WINDOW_MIN
+    assert (end[short] == discharge[short]).all()
