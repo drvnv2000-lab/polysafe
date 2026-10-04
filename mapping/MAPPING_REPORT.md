@@ -26,7 +26,7 @@ Draft ingredient search terms, not a classification. Rows and stays are summed o
 | piperacillin-tazobactam | 6 | 532 | 312 | approximate, exact | piperacillin, tazobactam |
 | furosemide | 9 | 1,749 | 650 | exact | furosemide |
 | ondansetron (negative control) | 12 | 1,882 | 1,215 | approximate, exact | ondansetron |
-| NSAIDs | 22 | 1,154 | 785 | approximate, exact | aspirin, celecoxib, diclofenac, ibuprofen, indomethacin, ketorolac, meloxicam, naproxen |
+| NSAIDs (aspirin excluded, D4.1) | 11 | 128 | 105 | exact | celecoxib, diclofenac, ibuprofen, indomethacin, ketorolac, meloxicam, naproxen |
 | ACE inhibitors | 12 | 533 | 382 | exact | benazepril, captopril, enalapril, lisinopril, quinapril, ramipril |
 | ARBs | 7 | 144 | 109 | exact | irbesartan, losartan, olmesartan, telmisartan, valsartan |
 | aminoglycosides | 0 | 0 | 0 |  | none in the data |
