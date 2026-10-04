@@ -135,3 +135,15 @@ def test_ethnicity_is_not_a_feature(X):
 
 def test_lr_exclusions_are_real_columns(X):
     assert set(features.LR_EXCLUDED) <= set(X.columns)
+
+
+def test_primary_lr_spec_matches_d4(X):
+    """D4.4: 14 variables + 3 indicators = 17 parameters, none of them LR-excluded."""
+    assert len(features.PRIMARY_LR_FEATURES) == 14
+    assert set(features.PRIMARY_LR_FEATURES) <= set(X.columns)
+    assert not set(features.PRIMARY_LR_FEATURES) & set(features.LR_EXCLUDED)
+    flat = [c for group in features.PRIMARY_LR_INDICATORS for c in group]
+    assert set(flat) <= set(features.PRIMARY_LR_FEATURES)
+    assert len(features.PRIMARY_LR_FEATURES) + len(features.PRIMARY_LR_INDICATORS) == 17
+    hx = X[["hx_ckd", "hx_chf", "hx_diabetes"]].isna()
+    assert (hx.nunique(axis=1) == 1).all()  # the merged indicator is exact

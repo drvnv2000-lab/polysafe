@@ -36,8 +36,16 @@ from polysafe.tables import load
 
 PRE_ICU_LOOKBACK_MIN = 7 * 24 * 60  # D3.7
 
-# D3.6: above 40% missing across all 868 stays; kept for LightGBM, not for LR.
-LR_EXCLUDED = ("lactate", "ph", "phos")
+# D3.6 as amended by D4.2-D4.3: above 40% missing in the primary cohort, plus
+# temperature. Kept for LightGBM; left out of every logistic regression.
+LR_EXCLUDED = ("lactate", "ph", "phos", "inr", "temp_max")
+
+# D4.4: the pre-specified primary logistic regression (14 variables / 17 parameters).
+PRIMARY_LR_FEATURES = ("age", "cr_baseline", "cr_max", "bun", "hco3", "albumin", "hgb", "wbc",
+                       "map_min", "urine_ml_kg_h", "hx_ckd", "hx_chf", "hx_diabetes",
+                       "dx_operative")
+# Missingness indicators in the primary LR: one each, plus one merged for the hx_* flags.
+PRIMARY_LR_INDICATORS = (("urine_ml_kg_h",), ("albumin",), ("hx_ckd", "hx_chf", "hx_diabetes"))
 
 # Most recent value at or before T. Panel: AKI-relevant labs available at T for
 # >= 40% of the cohort.
@@ -241,7 +249,8 @@ def dictionary(X: pd.DataFrame, primary: pd.Index) -> str:
              "All features use only data with offset <= T = 24 h; pre-ICU measured values "
              "look back at most 7 days (D3.7). Missing = not measured by T; it is never "
              "filled with a normal value here. APACHE scores are excluded (D3.1). "
-             f"Left out of the logistic regression only (D3.6): {', '.join(LR_EXCLUDED)}.", "",
+             "Left out of the logistic regression only (D3.6, D4.2-D4.3): "
+             f"{', '.join(LR_EXCLUDED)}.", "",
              f"Cohort: baseline A, all sites n = {len(X):,}; primary sites n = {len(primary):,}.",
              "", "| Feature | Missing (all sites) | Missing (primary) | Median | IQR |",
              "|---|---:|---:|---:|---|"]
