@@ -526,10 +526,6 @@ agents and all pre-specified class variables enter the primary model
 regardless of exposure frequency. The resulting EPV is reported as an observed
 consequence and is not used to drop variables. This rule was committed before
 events among exposed were computed; verifiable from commit order.
-At this commit, exposed-stay counts and tier-3 candidate counts were already
-known; events among exposed, events among unexposed and all model results were
-not. The rule admits no frequency-dependent exclusion of any pre-specified
-exposure, so prior knowledge of exposed-stay counts cannot have shaped it.
 
 Analyst note (statement of fact about the committed text; not part of the
 rule): no committed document defines the set of pre-specified class
