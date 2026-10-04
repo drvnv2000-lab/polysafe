@@ -94,6 +94,10 @@ P1_CATS = ("parenteral_iv", "parenteral_im", "parenteral_sc", "parenteral_other"
 P2_CATS = ("topical", "transdermal", "ophthalmic", "otic", "oral_local", "inhaled", "intranasal")
 NO_DETERMINATION = "no determination made; no rows present in the data"
 NSAID = "NSAIDs (aspirin excluded, D4.1)"
+P4 = ("P4 - enteral_tube inherits the enteral_oral determination for the same exposure. Tube "
+      "delivery places drug in the same gastrointestinal tract as oral delivery; the absorption "
+      "pathway is identical and the delivery device does not alter it. This is not a separate "
+      "determination.")
 # The project owner's determinations, recorded verbatim (2026-10-05).
 OWNER = {
     ("vancomycin", "enteral_oral"): ("no", "bioavailability <5%; the oral product treats "
@@ -136,6 +140,8 @@ def test_cells_follow_the_principles_and_the_owner_determinations():
     t = routes.read_systemic()
     for r in t.itertuples():
         pair = (r.exposure, r.route_category)
+        if r.route_category == "enteral_tube":
+            continue  # P4, tested below
         if pair in OWNER:
             assert (r.systemic_status, r.basis) == OWNER[pair], pair
         elif r.route_category in P1_CATS:
@@ -146,7 +152,31 @@ def test_cells_follow_the_principles_and_the_owner_determinations():
             assert (r.systemic_status, r.basis[:4]) == ("unknown", "P3: "), pair
         else:
             assert (r.systemic_status, r.basis) == ("unknown", NO_DETERMINATION), pair
-    assert (t["basis"] == NO_DETERMINATION).sum() == 13
+    assert (t["basis"] == NO_DETERMINATION).sum() == 12
+
+
+def test_enteral_tube_inherits_enteral_oral_by_p4():
+    t = routes.read_systemic().set_index(["exposure", "route_category"])
+    for e in routes.EXPOSURES:
+        tube, oral = t.loc[(e, "enteral_tube")], t.loc[(e, "enteral_oral")]
+        assert tube["systemic_status"] == oral["systemic_status"], e
+        assert tube["basis"].startswith(P4), e
+        if (e, "enteral_tube") in OWNER:  # the owner's first basis is kept after P4
+            assert tube["basis"] == f"{P4} Basis as first recorded: {OWNER[(e, 'enteral_tube')][1]}"
+    assert t.loc[(NSAID, "enteral_tube"), "systemic_status"] == "yes"
+
+
+def test_the_p1_basis_matches_the_route_table():
+    t = routes.read_systemic()
+    assert t.loc[t["route_category"].isin(P1_CATS), "basis"].nunique() == 1
+    table = routes.read_table().assign(raw=lambda d: d["raw_value"].str.rstrip())
+    category = table.set_index("raw")["route_category"]
+    # "every raw value it contains (INJ, Injection, INF, IMV, IM-V, RADINJ)"
+    assert set(table.loc[table["route_category"] == "parenteral_unspecified", "raw"]) == {
+        "INJ", "Injection", "INF", "IMV", "IM-V", "RADINJ"}
+    # "I-pleural, Intraductal, Intracatheter, Dwell, IC Dwell - and are classified unknown"
+    for raw in ("I-pleural", "Intraductal", "Intracatheter", "Dwell", "IC Dwell"):
+        assert category[raw] == "unknown", raw
 
 
 @pytest.mark.parametrize("damage, message", [
