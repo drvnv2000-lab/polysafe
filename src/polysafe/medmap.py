@@ -43,8 +43,9 @@ from polysafe.tables import load
 RXNAV = "https://rxnav.nlm.nih.gov/REST"
 MAPPING_DIR = Path(__file__).resolve().parents[2] / "mapping"
 
-# Review checklist only: draft ingredient search terms for the pre-specified agents and
-# classes (sections 6 and 10). NOT a classification; the PI classifies. ATC from RxClass
+# Review checklist only: draft ingredient search terms for the agents (section 10) and the
+# classes (named in D4.1/D4.5; defined by D6.0c, which places ACEi/ARB and loop diuretics
+# outside the pre-specified set). NOT a classification; the PI classifies. ATC from RxClass
 # is not used here because it includes the classes of combination products containing an
 # ingredient (e.g. diphenhydramine is returned under M01A NSAIDs via ibuprofen combinations).
 CHECKLIST = {

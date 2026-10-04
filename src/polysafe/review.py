@@ -62,9 +62,13 @@ AGENTS = {
     "furosemide": ("furosemide",),
     "ondansetron": ("ondansetron",),
 }
-# Pre-specified class variables (HANDOFF: NSAIDs, ACEi/ARB, aminoglycosides, vancomycin,
-# loop diuretics, contrast; D4.1 removes aspirin from NSAIDs). Classes D4.1/D4.5 say cannot
-# be analysed individually are still reviewed: reviewing more is the safe side.
+# Class variables reviewed in tier 2. Provenance of this list: no committed protocol source
+# defined it (PREREGISTRATION D6.0c). The NSAID class (aspirin excluded), aminoglycosides and
+# iodinated contrast are named in PREREGISTRATION D4.1 and D4.5; under D6.0c these are the
+# pre-specified class set. "ACEi/ARB" appears only in DATA_REPORT.md, a data report, not the
+# protocol; loop diuretics appear in no committed document. Both are reviewed here but are
+# post-hoc exposures under D6.0c, outside the primary model. Member ingredients are the
+# analyst's draft (medmap.CHECKLIST). Reviewing more keys is the safe side.
 CLASSES = {
     "loop diuretics": CHECKLIST["loop diuretics"],
     "ACE inhibitors / ARBs": CHECKLIST["ACE inhibitors"] + CHECKLIST["ARBs"],
