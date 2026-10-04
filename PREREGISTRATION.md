@@ -547,8 +547,19 @@ this file; nothing is inserted inside an earlier entry's block and no existing
 line is deleted or modified. 067ee23 committed D6.0. d972c0c inserted a
 sentence inside D6.0's block, which this property forbids. That insertion was
 reverted and the sentence re-appended as D6.0a, so it visibly post-dates the
-rule it qualifies. The property applies from the revert commit onward; the
-revert itself is the one disclosed deletion.
+rule it qualifies. Two one-time modifications are disclosed: the revert, which
+deleted the inserted sentence; and the line-ending commit, which adds
+.gitattributes ("*.md text eol=lf") and renormalises the tracked markdown
+files. Every committed markdown file was already stored with LF endings, so
+the line-ending commit changed no committed line; it fixes working-copy line
+endings on every platform. This entry's own text was amended in that same
+line-ending commit to add this disclosure. Earlier history also contains two
+changes this property would forbid, both made before it was in force and
+recorded here rather than relaxed: 29a66d8 deleted the placeholder line
+"*(none yet)*" when D1 was added, and 46c9f9c inserted the section 9.1
+appendix inside section 9, as section 9 instructed. The append-only property
+is baselined from the later of the two one-time modifications, the
+line-ending commit, and applies to every commit after it.
 
 **D6.0c [protocol addition] Definition of the pre-specified class set.** D6.0
 refers to "all pre-specified class variables"; no committed text defined that
