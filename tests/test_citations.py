@@ -4,10 +4,17 @@ Deliberately simple (PREREGISTRATION D6.0e): existence of ids and sections, not
 quotation matching. The protocol is read from git HEAD, so a citation to an
 entry that has not been committed fails. tests/ is not scanned: test fixtures
 use synthetic ids on purpose.
+
+Committed CSVs are scanned cell by cell in the columns that carry protocol text
+(CSV_SCANNED). Columns holding verbatim eICU drug strings are exempt by name
+(CSV_SOURCE_TEXT): "VITAMIN D3" or "D50" (dextrose 50%) there is a drug name, not
+a citation. Any other committed CSV column containing citation-like text fails
+until it is classified as one or the other.
 """
 
 from __future__ import annotations
 
+import csv
 import re
 import subprocess
 from pathlib import Path
@@ -20,6 +27,13 @@ ENTRY = re.compile(r"\bD\d+\.\d+[a-z]?\b")
 SERIES = re.compile(r"\bD\d+\b(?![.\d])")
 NUMBER = r"\d+(?:\.\d+)?"
 SECTION = re.compile(rf"(?:[Ss]ections?|§)\s*({NUMBER}(?:\s*(?:-|–|,|and)\s*{NUMBER})*)")
+CSV_SCANNED = {
+    "mapping/systemic_routes.csv": ("exposure", "basis"),
+    "mapping/route_normalization.csv": ("note",),
+    "mapping/review/tier2_classes.csv": ("class",),
+}
+CSV_SOURCE_TEXT = ("top_names", "drugnames_medication", "drugnames_admissiondrug",
+                   "hit_strings", "raw_value")
 
 
 def committed_protocol() -> str:
@@ -59,6 +73,20 @@ def unresolved(files, protocol: str, root: Path = ROOT) -> list[str]:
             if ref not in known[kind]]
 
 
+def read_csv(path: Path) -> list[dict]:
+    with open(path, encoding="utf-8", newline="") as f:
+        return list(csv.DictReader(f))
+
+
+def csv_unresolved(specs: dict, protocol: str, root: Path = ROOT) -> list[str]:
+    ids, series, sections = defined(protocol)
+    known = {"entry": ids, "series": series, "section": sections}
+    return [f"{rel} row {i} [{col}] cites {kind} {ref}"
+            for rel, cols in specs.items()
+            for i, row in enumerate(read_csv(root / rel), 1) for col in cols
+            for _, kind, ref in citations(row[col]) if ref not in known[kind]]
+
+
 def test_every_citation_resolves_in_the_committed_protocol():
     files = sorted({p for pattern in SCANNED for p in ROOT.glob(pattern)})
     assert files, "nothing scanned"
@@ -81,3 +109,33 @@ def test_a_new_entrys_own_heading_is_not_a_citation_but_its_references_are(tmp_p
     f = tmp_path / "PREREGISTRATION.md"
     f.write_text("**D1.2 [correction] New.** Refers to D1.1 and D1.9.\n", encoding="utf-8")
     assert unresolved([f], protocol, root=tmp_path) == ["PREREGISTRATION.md:1 cites entry D1.9"]
+
+
+def test_every_csv_citation_resolves_in_the_committed_protocol():
+    bad = csv_unresolved(CSV_SCANNED, committed_protocol())
+    assert not bad, "unresolved protocol citations in CSVs:\n" + "\n".join(bad)
+
+
+def test_every_committed_csv_column_with_citation_text_is_classified():
+    files = subprocess.run(["git", "ls-files", "*.csv"], cwd=ROOT, capture_output=True,
+                           text=True, check=True).stdout.split()
+    assert set(CSV_SCANNED) <= set(files)
+    unclassified = []
+    for rel in files:
+        rows = read_csv(ROOT / rel)
+        for col in rows[0] if rows else []:
+            if col in CSV_SCANNED.get(rel, ()) or col in CSV_SOURCE_TEXT:
+                continue
+            if any(next(citations(row[col] or ""), None) for row in rows):
+                unclassified.append(f"{rel} [{col}]")
+    assert not unclassified, ("CSV columns with citation-like text, neither scanned nor "
+                              "source text:\n" + "\n".join(unclassified))
+
+
+def test_the_csv_check_catches_a_missing_entry(tmp_path):
+    protocol = "## 1. One\n\n### D1 — date\n\n**D1.1 — x.** text\n"
+    (tmp_path / "t.csv").write_text(
+        'exposure,basis\nx,"P3: D1.1 rule"\ny,"P3: D9.9 rule, see section 4"\n',
+        encoding="utf-8")
+    assert csv_unresolved({"t.csv": ("basis",)}, protocol, root=tmp_path) == [
+        "t.csv row 2 [basis] cites entry D9.9", "t.csv row 2 [basis] cites section 4"]
