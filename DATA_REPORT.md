@@ -113,8 +113,10 @@ the Open Database License (ODbL). All 14 tables verified by SHA-256 against the
 distribution's own `SHA256SUMS.txt`. The full 130 MB zip was not used: the
 needed tables were fetched individually because PhysioNet's on-the-fly zip
 endpoint served at ~22 KB/s against ~95 KB/s for static file URLs.
-`hospital.csv.gz` is empty in the demo. `vitalPeriodic` and `nurseCharting`
-were deliberately not downloaded.
+`hospital.csv.gz` is empty in the demo. `nurseCharting` was deliberately not
+downloaded. `vitalPeriodic` was not downloaded for this report; it was fetched
+later, when PREREGISTRATION D3.2 added it, and is verified with the others under
+Integrity.
 
 ## Integrity
 
@@ -146,8 +148,7 @@ Medication table (`medication.csv.gz`):
 | `vitalPeriodic.csv.gz` | `04dc093a2e77cd4c52ac7f2a47a8356fbb7456c7f15deb20d5abb1ca4303231d` |
 
 The first fourteen are the tables this report was measured from. `vitalPeriodic`
-was fetched later, when PREREGISTRATION D3.2 added it; the "not downloaded" note
-under Data provenance predates that.
+was fetched later, when PREREGISTRATION D3.2 added it.
 
 ## Computation provenance
 
@@ -188,6 +189,27 @@ drives and user folders, editor histories and the working-session transcripts.
      results files and in `PREREGISTRATION.md`. The complement - baseline A stays
      at non-recording sites, 29 events in 197 stays - was printed in no file
      before this section; it follows from those figures by subtraction.
+- **The stay-level and hospital-level partitions differ** (added 2026-10-05,
+  parent b35d556; counted from the patient and medication tables, no outcome
+  read). A hospital is a recording hospital if it has a medication row for any
+  stay: 186 hospitals in total, 144 recording, 42 non-recording. Stays with no
+  medication record of their own: 663 of all 2,520 demo stays, of which 142 are
+  at recording hospitals and 521 at non-recording ones. Within the baseline-A
+  cohort of 868: 217 with no record, of which 20 fall inside the restricted 671
+  and 197 are at non-recording hospitals. The 1,034-stay universe behind D5.5's
+  figure used superseded labels and its exact split cannot be reconstructed
+  without re-running the old labelling; a note made at the time put 78.6% of
+  record-less stays at non-recording hospitals, consistent with 521 of 663.
+- **On generalizability:** the site-level comparison, not D5.5's stay-level
+  figure, is what shows the restricted cohort has lower crude AKI than the
+  excluded stays - 11.6% in the 671 against 29 events in the 197
+  non-recording-hospital stays (14.7%). D5.5's figure does not establish this on
+  its own.
+- **Open question, recorded not resolved:** 20 stays inside the restricted 671
+  have no medication record of their own. Section 6 states that absence of a
+  record is never coded as "unexposed" and that genuinely missing values are
+  preserved as missing. How those 20 stays' medication features are handled is
+  not yet specified and must be settled before the feature builder runs.
 - **Editor and tool caches outside the repository retain superseded content.**
   - Claude Code's edit-history store under the Windows temporary folder holds the
     discarded exploratory review build (PREREGISTRATION D5.14), including its
