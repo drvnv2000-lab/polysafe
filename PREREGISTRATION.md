@@ -741,3 +741,19 @@ edit-history store outside this repository. Nothing there is
 redistributed and no repository-scoped claim in D5.14 is affected. The
 computation provenance section of DATA_REPORT.md records the full
 position.
+
+**D5.5a [correction] Direction and partition of the medication-record AKI
+comparison.**
+D5.5 reports the comparison as "between stays with and without any
+medication record (19.2% vs 15.1%)", which reads as 19.2% among stays
+WITH a record. The computed values are the reverse: 19.2% among stays
+WITHOUT a medication record (48 of 250) and 15.1% among stays WITH one
+(118 of 784), over a universe of 1,034 stays under the superseded outcome
+definition noted in D5.5. Read D5.5 with that direction.
+The partition is at STAY level - whether that stay carries any medication
+record - and is not the partition used by the site-level cohort
+restriction, which includes a stay if its hospital recorded medications
+for any patient. The two overlap but differ: stays with no medication
+record of their own occur at recording hospitals and are therefore inside
+the restricted cohort. No inference about cohort selection or confounding
+is drawn from this figure here.
