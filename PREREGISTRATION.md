@@ -731,3 +731,13 @@ the citation defects found in this repair. de873fd IS the medmap.py
 one of them twice. The count is two, both of the semantic kind - a cited
 source that exists but does not support the claim made. No statement in
 D6.0j(c) is false; the list is redundant and invites a miscount.
+
+**D5.14a [correction] Meaning of "discarded" in D5.14.**
+D5.14 states that the exploratory screen's output was discarded. That
+means it was not adopted and never committed, both of which hold. It does
+not mean deleted from the machine: the superseded build, including its
+brand-like token list and key diagnostic table, persists in Claude Code's
+edit-history store outside this repository. Nothing there is
+redistributed and no repository-scoped claim in D5.14 is affected. The
+computation provenance section of DATA_REPORT.md records the full
+position.
