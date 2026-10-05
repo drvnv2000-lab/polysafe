@@ -757,3 +757,60 @@ for any patient. The two overlap but differ: stays with no medication
 record of their own occur at recording hospitals and are therefore inside
 the restricted cohort. No inference about cohort selection or confounding
 is drawn from this figure here.
+
+**D6.2 [substantive change] Route and systemic-exposure requirement.**
+Exposure under this protocol requires a systemically absorbed route.
+Ingredient identity alone does not establish exposure.
+
+The determination is made at the medication ROW level, not at the key
+level. A single HICL or name key may carry rows of several different
+routes - systemically eligible, locally acting and route-unknown
+together - so no key is classified as systemic or non-systemic as a
+whole. Each row is classified by its own route evidence.
+
+Route evidence is the source row's routeadmin field, mapped to a
+normalized route category by mapping/route_normalization.csv (committed
+edacf88, amended 0a6c3ef). Route is not inferred from an agent's usual
+clinical route, and is not manufactured where the source row does not
+support it.
+
+Systemic eligibility for an (exposure, route category) pair is recorded
+in mapping/systemic_routes.csv (committed f382149, corrected 4003219),
+one row per pair with a stated basis, covering every pair exhaustively.
+The rules themselves live in that table and not in this entry, so that a
+correction to a rule is made in one place rather than creating a
+discrepancy between the protocol text and the artifact. Where a route
+category is not governed by a universal principle, the table carries an
+exposure-specific determination; those determinations are part of the
+protocol artifact and are not derived from exposure frequency or from
+outcome data.
+
+Classification and its consequence, applied per row:
+  systemic = yes      -> contributes to the primary ascertainment
+  systemic = no       -> not an exposure
+  systemic = unknown  -> EXCLUDED from the primary ascertainment,
+                         INCLUDED in a pre-specified sensitivity variant
+The sensitivity variant distinguishes and separately counts two sources
+of unknown: route unknown (no interpretable routeadmin value), and route
+known but systemic absorption for that exposure not determined. Key, row
+and stay counts are reported for each.
+
+This narrows the exposure definition and is therefore a substantive
+change, not a clarification. It is committed before any adjudication
+decision is recorded: every decision cell in the five review-packet
+files is empty at this commit. The route and systemic tables were
+committed earlier; that ordering - implementation before protocol text -
+is disclosed here rather than concealed.
+
+The rule was prompted by the committed mapping draft, in which HICL:4042
+maps to vancomycin, together with that key carrying rows whose route
+normalizes to enteral_oral alongside its intravenous rows: 42 among
+non-cancelled orders and 44 including cancelled ones, with 5 such rows
+under HICL:8466. Oral vancomycin has bioavailability under approximately
+5% and is given for C. difficile colitis. Ingredient identity alone does
+not distinguish those rows from the intravenous rows of the same key, and
+that is the gap this rule closes.
+
+The state of medication-exposure computation at this commit is recorded
+in the computation provenance section of DATA_REPORT.md rather than
+restated here.
