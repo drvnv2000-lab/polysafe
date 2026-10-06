@@ -897,3 +897,57 @@ D6.1 states.
 
 This entry is appended out of numeric order. The number records the
 amendment's subject, not its position.
+
+**D6.3 [protocol addition] Review-corrected HICL-based ascertainment as a fifth arm.**
+Section 10 lists vancomycin, piperacillin-tazobactam and furosemide as
+exposures. Section 6 names four ascertainment strategies: generic-string
+only, generic + brand, HICL-based, HICL + gtc. The HICL-based strategy
+derives exposure from each HICL key's ingredient mapping; the
+generic-string and generic + brand strategies derive it from drugname
+strings and do not depend on that mapping. A HICL key whose drugname
+strings name a pre-specified agent while its proposed mapping does not
+is therefore missed by the HICL-based strategy, and the defect is
+differential across the strategies being compared.
+
+The committed mapping draft contains such keys. In tier3_screen.csv,
+HICL:37442's drugname strings name vancomycin and its
+proposed_ingredients field reads "ilex paraguariensis leaf extract";
+HICL:10093's drugname strings name vancomycin and its
+proposed_ingredients field is empty.
+
+D5.4 provides no operation for adding a key to an already pre-specified
+agent exposure, and this entry does not add one. The four strategies
+named in section 6 are unchanged, including the HICL-based strategy with
+these keys missed.
+
+Add a fifth ascertainment arm, review-corrected HICL-based. It is
+constructed from the HICL-based strategy by reassigning a HICL key when
+and only when all of the following hold as recorded in the review
+files:
+  - mapping_wrong is true for that key, per D6.1, or the key's
+    proposed_ingredients field is empty;
+  - reviewer_note names the correct ingredient;
+  - that ingredient is an already pre-specified agent or a member of an
+    already pre-specified class;
+  - every string in the key's drugnames_medication and
+    drugnames_admissiondrug fields names that ingredient.
+Such a key is reassigned to that agent's exposure or that class
+variable. No other key is reassigned. No exposure or class is created.
+The field corrected_name is not used in this construction. In every
+other respect the fifth arm is constructed exactly as the HICL-based
+strategy is.
+
+For a key whose proposed_ingredients field is empty, the reviewer
+records the correct ingredient in reviewer_note. This entry does not
+change the meaning of mapping_wrong or any estimate defined by D6.1 or
+REVIEW_PACKET.md.
+
+The fifth arm is secondary and exploratory. The comparison of the
+HICL-based strategy against it is the quantity of interest: it measures
+how much a mapping-correctness review changes exposure ascertainment.
+
+This arm is added before any review cell has been filled and before any
+estimate of the association between a pre-specified exposure and the
+outcome has been computed under any ascertainment arm. It was added on
+the basis of mapping correctness alone; no outcome was examined in
+deciding to add it.
