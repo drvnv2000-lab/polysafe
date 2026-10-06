@@ -44,7 +44,7 @@ from polysafe.tables import load
 SEED = 20261004
 REVIEW_DIR = MAPPING_DIR / "review"
 DECISIONS = ("keep", "reject", "unsure")
-DECISION_COLUMNS = ("decision", "wrong_strings", "corrected_name", "reviewer_note")
+DECISION_COLUMNS = ("decision", "wrong_strings", "corrected_name", "reviewer_note", "mapping_wrong")
 RECONCILE_SHARE = 0.90  # D5.8, fixed before review
 HEAD_COVERAGE = 0.80  # a convention, not a derived threshold
 HEAD_CAP = 60
