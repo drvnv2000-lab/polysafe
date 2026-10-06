@@ -422,8 +422,19 @@ def error_rows(row: pd.Series, mapping_errors: bool = False) -> int:
     return sum(med.get(w, 0) for w in wrong)
 
 
-def audit_estimate(head_errors, tail_errors, N: int, R: int, seed: int = SEED) -> dict:
-    """Combined row-level error rate over the tier-4 approximate stratum (REVIEW_PACKET.md)."""
+def is_error_key(row: pd.Series, mapping_errors: bool = False) -> bool:
+    """Key-level error: any wrong string (REVIEW_PACKET.md); with ``mapping_errors``,
+    also mapping_wrong true (D6.1)."""
+    return bool(_wrong(row.get("wrong_strings", ""))) or (mapping_errors and mapping_wrong(row))
+
+
+def audit_estimate(head_errors, tail_errors, N: int, R: int, seed: int = SEED,
+                   tail_error_keys=None) -> dict:
+    """Combined row-level error rate over the tier-4 approximate stratum (REVIEW_PACKET.md).
+
+    ``tail_error_keys`` flags the tail keys that count in the key-level proportion
+    ("keys with any wrong string"); by default, keys with any error rows.
+    """
     head_errors = np.asarray(head_errors, dtype=float)
     tail_errors = np.asarray(tail_errors, dtype=float)
     n = len(tail_errors)
@@ -436,7 +447,8 @@ def audit_estimate(head_errors, tail_errors, N: int, R: int, seed: int = SEED) -
         ci = tuple(float(x) for x in np.percentile(boot, [2.5, 97.5]))
     else:
         ci = (rate, rate)  # census: exact, no sampling error
-    k = int((tail_errors > 0).sum())
+    flags = tail_errors > 0 if tail_error_keys is None else np.asarray(tail_error_keys, bool)
+    k = int(flags.sum())
     return {"E_head": e_head, "E_tail": e_tail, "N": N, "n": n, "R": R, "rate": rate,
             "rate_ci": ci, "census": N == n,
             "tail_keys_with_error": k, "tail_key_proportion": k / n if n else float("nan"),
@@ -455,9 +467,11 @@ def estimate_from_review(review_dir: Path = REVIEW_DIR) -> dict:
     tail = pd.read_csv(review_dir / "audit_tail.csv", dtype=str, keep_default_na=False)
     for _, r in pd.concat([head, tail]).iterrows():
         mapping_wrong(r)
-    return {version: audit_estimate([error_rows(r, flag) for _, r in head.iterrows()],
-                                    [error_rows(r, flag) for _, r in tail.iterrows()],
-                                    N=design["N"], R=design["R"])
+    return {version: audit_estimate(
+                [error_rows(r, flag) for _, r in head.iterrows()],
+                [error_rows(r, flag) for _, r in tail.iterrows()],
+                N=design["N"], R=design["R"],
+                tail_error_keys=[is_error_key(r, flag) for _, r in tail.iterrows()])
             for version, flag in (("as_defined", False), ("with_mapping_errors", True))}
 
 

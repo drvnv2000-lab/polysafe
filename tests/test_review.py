@@ -315,6 +315,22 @@ def test_estimate_from_review_rejects_a_blank_mapping_wrong(tmp_path):
         review.estimate_from_review(tmp_path)
 
 
+def test_key_level_proportion_counts_any_wrong_string(tmp_path):
+    # tail key 2: its only wrong string is an admission-drug name with 0 medication rows
+    df = pd.DataFrame({"key": ["HICL:1", "HICL:2", "HICL:3"], "n_rows": ["10", "10", "10"],
+                       "drugnames_medication": ["C (10)", "C (10)", "C (10)"],
+                       "drugnames_admissiondrug": ["", "X (2)", ""],
+                       "wrong_strings": ["", "X", ""],
+                       "mapping_wrong": ["false", "false", "true"]})
+    df.iloc[[0]].to_csv(tmp_path / "audit_head.csv", index=False)
+    df.iloc[[1, 2]].to_csv(tmp_path / "audit_tail.csv", index=False)
+    (tmp_path / "audit_design.json").write_text('{"N": 2, "R": 30}')
+    r = review.estimate_from_review(tmp_path)
+    assert r["as_defined"]["E_tail"] == 0
+    assert r["as_defined"]["tail_keys_with_error"] == 1
+    assert r["with_mapping_errors"]["tail_keys_with_error"] == 2
+
+
 # ---------------------------------------------------------------- reliability hook
 
 
