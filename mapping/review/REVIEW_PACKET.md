@@ -78,6 +78,7 @@ Reported separately: the key-level error proportion in the tail sample (keys wit
 - `decision`: `keep` | `reject` | `unsure` (below).
 - `wrong_strings`: the exact drugname strings that are wrong, separated by ` | `, copied from `drugnames_medication` / `drugnames_admissiondrug` without the row count.
 - `corrected_name`, `reviewer_note`: free text.
+- `mapping_wrong`: `true` or `false`, required on every key given a decision (D6.1). `true` only when the proposed ingredient mapping is wrong for every row of the key; a key marked `true` lists no `wrong_strings`. When `mapping_wrong` is `true`, or `proposed_ingredients` is empty, record the correct ingredient in `reviewer_note` (D6.1, D6.3). Every audit estimate is reported both ways: as defined above, and with each `true` key contributing all of its rows, including rows with no drugname.
 
 ## Decisions
 

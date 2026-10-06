@@ -44,6 +44,7 @@ from polysafe.tables import load
 SEED = 20261004
 REVIEW_DIR = MAPPING_DIR / "review"
 DECISIONS = ("keep", "reject", "unsure")
+MAPPING_WRONG_VALUES = ("true", "false")  # D6.1; required on every reviewed key
 DECISION_COLUMNS = ("decision", "wrong_strings", "corrected_name", "reviewer_note", "mapping_wrong")
 RECONCILE_SHARE = 0.90  # D5.8, fixed before review
 HEAD_COVERAGE = 0.80  # a convention, not a derived threshold
@@ -385,12 +386,29 @@ def audit_sample(t4: pd.DataFrame):
     return head.index, tail.index, design
 
 
-def error_rows(row: pd.Series) -> int:
+def mapping_wrong(row: pd.Series) -> bool:
+    """D6.1 whole-key mapping verdict: ``true`` or ``false`` (any case), never blank."""
+    value = str(row.get("mapping_wrong", "")).strip().lower()
+    if value not in MAPPING_WRONG_VALUES:
+        raise ValueError(f"{row['key']}: mapping_wrong must be true or false, "
+                         f"got {row.get('mapping_wrong', '')!r}")
+    if value == "true" and _wrong(row.get("wrong_strings", "")):
+        raise ValueError(f"{row['key']}: a key with mapping_wrong true lists no "
+                         "wrong_strings (D6.1)")
+    return value == "true"
+
+
+def error_rows(row: pd.Series, mapping_errors: bool = False) -> int:
     """Rows of the drugname strings within the key that the reviewer marked wrong.
 
     A key named only through admissiondrug has no per-string medication rows: all of its
     rows carry the borrowed name, so any wrong string makes all of them error rows.
+
+    With ``mapping_errors`` (D6.1), a key whose mapping_wrong is true contributes ALL of
+    its rows, including rows with no drugname.
     """
+    if mapping_errors and mapping_wrong(row):
+        return int(row["n_rows"])
     wrong = _wrong(row.get("wrong_strings", ""))
     if not wrong:
         return 0
@@ -426,13 +444,21 @@ def audit_estimate(head_errors, tail_errors, N: int, R: int, seed: int = SEED) -
 
 
 def estimate_from_review(review_dir: Path = REVIEW_DIR) -> dict:
-    """Apply the estimator to the filled audit CSVs, using the frozen design."""
+    """Apply the estimator to the filled audit CSVs, using the frozen design.
+
+    Reported both ways (D6.1): ``as_defined`` is the estimator as REVIEW_PACKET.md
+    defines it; ``with_mapping_errors`` adds keys whose mapping_wrong is true.
+    mapping_wrong must be filled on every audit key.
+    """
     design = json.loads((review_dir / "audit_design.json").read_text())
     head = pd.read_csv(review_dir / "audit_head.csv", dtype=str, keep_default_na=False)
     tail = pd.read_csv(review_dir / "audit_tail.csv", dtype=str, keep_default_na=False)
-    return audit_estimate([error_rows(r) for _, r in head.iterrows()],
-                          [error_rows(r) for _, r in tail.iterrows()],
-                          N=design["N"], R=design["R"])
+    for _, r in pd.concat([head, tail]).iterrows():
+        mapping_wrong(r)
+    return {version: audit_estimate([error_rows(r, flag) for _, r in head.iterrows()],
+                                    [error_rows(r, flag) for _, r in tail.iterrows()],
+                                    N=design["N"], R=design["R"])
+            for version, flag in (("as_defined", False), ("with_mapping_errors", True))}
 
 
 # ---------------------------------------------------------------- packet
@@ -680,7 +706,14 @@ def packet_markdown(draft, tier, source, generics, brands, zero_hit, d, sha,
               "- `wrong_strings`: the exact drugname strings that are wrong, separated by "
               "` | `, copied from `drugnames_medication` / `drugnames_admissiondrug` "
               "without the row count.",
-              "- `corrected_name`, `reviewer_note`: free text.", "",
+              "- `corrected_name`, `reviewer_note`: free text.",
+              "- `mapping_wrong`: `true` or `false`, required on every key given a "
+              "decision (D6.1). `true` only when the proposed ingredient mapping is wrong "
+              "for every row of the key; a key marked `true` lists no `wrong_strings`. When "
+              "`mapping_wrong` is `true`, or `proposed_ingredients` is empty, record the "
+              "correct ingredient in `reviewer_note` (D6.1, D6.3). Every audit estimate is "
+              "reported both ways: as defined above, and with each `true` key contributing "
+              "all of its rows, including rows with no drugname.", "",
               "## Decisions", "",
               "### Reconciliation (D5.8)", "",
               "Adjudication is at HICL-key level; the review never invents a row-level mapping "

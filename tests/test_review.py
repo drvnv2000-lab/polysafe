@@ -257,6 +257,64 @@ def test_error_rows_count_only_wrong_strings():
     assert review.error_rows(adm_only) == 40
 
 
+# ---------------------------------------------------------------- mapping_wrong (D6.1)
+
+
+def _audit_row(**kw) -> pd.Series:
+    row = {"key": "HICL:1", "n_rows": 60, "wrong_strings": "", "mapping_wrong": "false",
+           "drugnames_medication": "A (20) | B (5)", "drugnames_admissiondrug": ""}
+    row.update(kw)
+    return pd.Series(row)
+
+
+def test_mapping_wrong_must_be_true_or_false():
+    for bad in ("", " ", "yes", "1", "t"):
+        with pytest.raises(ValueError, match="mapping_wrong must be true or false"):
+            review.mapping_wrong(_audit_row(mapping_wrong=bad))
+    for good, expected in (("true", True), ("TRUE", True), (" false ", False),
+                           ("FALSE", False)):
+        assert review.mapping_wrong(_audit_row(mapping_wrong=good)) is expected
+
+
+def test_mapping_wrong_true_lists_no_wrong_strings():
+    with pytest.raises(ValueError, match="D6.1"):
+        review.mapping_wrong(_audit_row(mapping_wrong="true", wrong_strings="B"))
+
+
+def test_mapping_error_counts_all_rows_only_in_the_d61_version():
+    whole = _audit_row(mapping_wrong="true")
+    assert review.error_rows(whole) == 0
+    assert review.error_rows(whole, mapping_errors=True) == 60  # includes unnamed rows
+    partial = _audit_row(wrong_strings="B")
+    assert review.error_rows(partial) == review.error_rows(partial, mapping_errors=True) == 5
+
+
+def test_estimate_from_review_reports_both_versions(tmp_path):
+    df = pd.DataFrame({"key": ["HICL:1", "HICL:2"], "n_rows": ["60", "10"],
+                       "drugnames_medication": ["A (20) | B (5)", "C (10)"],
+                       "drugnames_admissiondrug": ["", ""], "wrong_strings": ["", "C"],
+                       "mapping_wrong": ["true", "false"]})
+    df.iloc[[0]].to_csv(tmp_path / "audit_head.csv", index=False)
+    df.iloc[[1]].to_csv(tmp_path / "audit_tail.csv", index=False)
+    (tmp_path / "audit_design.json").write_text('{"N": 1, "R": 100}')
+    r = review.estimate_from_review(tmp_path)
+    assert r["as_defined"]["E_head"] == 0
+    assert r["with_mapping_errors"]["E_head"] == 60
+    assert r["as_defined"]["E_tail"] == r["with_mapping_errors"]["E_tail"] == 10
+    assert r["with_mapping_errors"]["rate"] == pytest.approx(70 / 100)
+
+
+def test_estimate_from_review_rejects_a_blank_mapping_wrong(tmp_path):
+    df = pd.DataFrame({"key": ["HICL:1"], "n_rows": ["10"], "drugnames_medication": ["C (10)"],
+                       "drugnames_admissiondrug": [""], "wrong_strings": [""],
+                       "mapping_wrong": [""]})
+    df.to_csv(tmp_path / "audit_head.csv", index=False)
+    df.to_csv(tmp_path / "audit_tail.csv", index=False)
+    (tmp_path / "audit_design.json").write_text('{"N": 1, "R": 10}')
+    with pytest.raises(ValueError, match="mapping_wrong must be true or false"):
+        review.estimate_from_review(tmp_path)
+
+
 # ---------------------------------------------------------------- reliability hook
 
 
