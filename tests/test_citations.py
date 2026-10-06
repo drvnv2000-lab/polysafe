@@ -30,7 +30,11 @@ SECTION = re.compile(rf"(?:[Ss]ections?|§)\s*({NUMBER}(?:\s*(?:-|–|,|and)\s*{
 CSV_SCANNED = {
     "mapping/systemic_routes.csv": ("exposure", "basis"),
     "mapping/route_normalization.csv": ("note",),
-    "mapping/review/tier2_classes.csv": ("class",),
+    "mapping/review/tier1_agents.csv": ("reviewer_note",),
+    "mapping/review/tier2_classes.csv": ("class", "reviewer_note"),
+    "mapping/review/tier3_screen.csv": ("reviewer_note",),
+    "mapping/review/audit_head.csv": ("reviewer_note",),
+    "mapping/review/audit_tail.csv": ("reviewer_note",),
 }
 CSV_SOURCE_TEXT = ("top_names", "drugnames_medication", "drugnames_admissiondrug",
                    "hit_strings", "raw_value")
