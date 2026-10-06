@@ -872,3 +872,28 @@ proportion applies to both versions of that proportion.
 
 This entry is appended after D6.2 and is therefore out of numeric order.
 The number records the amendment's subject, not its position.
+
+**D6.1a [correction] Scope of D6.1's statement on corrected_name and agent exposures.**
+D6.1 states that corrected_name stays empty for a key whose correct
+ingredient is an already pre-specified agent. That holds only for a key
+assigned to no exposure. Read generally it is wrong.
+
+The governing rule is simpler than D6.1's two cases suggest:
+corrected_name records whichever of D5.4's three permitted operations
+applies to the key, and stays empty when none of them does. In
+particular, where a key is assigned to one already pre-specified agent
+exposure and its correct ingredient is a different already pre-specified
+agent, D5.4's second operation applies and corrected_name records that
+move. D6.1's sentence must not be read as forbidding it.
+
+The case D6.1 identifies as uncovered is narrower than its wording: a
+key assigned to no exposure whose correct ingredient is an already
+pre-specified agent. D5.4 provides no operation for that case, so
+corrected_name stays empty, and whether the key is added to that
+exposure remains unsettled.
+
+In every case the correct ingredient is recorded in reviewer_note, as
+D6.1 states.
+
+This entry is appended out of numeric order. The number records the
+amendment's subject, not its position.
