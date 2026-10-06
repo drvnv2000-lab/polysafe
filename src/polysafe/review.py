@@ -27,6 +27,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import re
 import shutil
@@ -45,6 +46,8 @@ SEED = 20261004
 REVIEW_DIR = MAPPING_DIR / "review"
 DECISIONS = ("keep", "reject", "unsure")
 MAPPING_WRONG_VALUES = ("true", "false")  # D6.1; required on every reviewed key
+REVIEW_FILES = ("tier1_agents.csv", "tier2_classes.csv", "tier3_screen.csv",
+                "audit_head.csv", "audit_tail.csv")
 DECISION_COLUMNS = ("decision", "wrong_strings", "corrected_name", "reviewer_note", "mapping_wrong")
 RECONCILE_SHARE = 0.90  # D5.8, fixed before review
 HEAD_COVERAGE = 0.80  # a convention, not a derived threshold
@@ -774,6 +777,41 @@ def packet_markdown(draft, tier, source, generics, brands, zero_hit, d, sha,
 # ---------------------------------------------------------------- reliability
 
 
+def merge_decisions(edited: Path, target: Path) -> int:
+    """Copy ONLY the decision columns from an edited copy (e.g. saved by Excel as
+    "CSV UTF-8") into a committed review CSV, matched by ``key``.
+
+    Every other cell of ``target`` is left exactly as committed, whatever the editor did
+    to it. Returns the number of keys with any decision cell filled.
+    """
+    with open(target, encoding="utf-8", newline="") as f:
+        rows = list(csv.reader(f))
+    header, body = rows[0], rows[1:]
+    ed = pd.read_csv(edited, dtype=str, keep_default_na=False, encoding="utf-8-sig")
+    missing = [c for c in ("key", *DECISION_COLUMNS) if c not in ed.columns]
+    if missing:
+        raise ValueError(f"{edited}: missing columns {missing}")
+    keys = [r[header.index("key")] for r in body]
+    if not ed["key"].is_unique or sorted(ed["key"]) != sorted(keys):
+        raise ValueError(f"{edited}: keys differ from {target.name} (added, lost or renamed)")
+    ed = ed.set_index("key")
+    filled = 0
+    for r in body:
+        key = r[header.index("key")]
+        new = {c: str(ed.at[key, c]).strip() for c in DECISION_COLUMNS}
+        new["mapping_wrong"] = new["mapping_wrong"].lower()
+        if new["decision"] not in ("", *DECISIONS):
+            raise ValueError(f"{key}: decision must be one of {DECISIONS}")
+        if new["mapping_wrong"] not in ("", *MAPPING_WRONG_VALUES):
+            raise ValueError(f"{key}: mapping_wrong must be true or false")
+        for c, v in new.items():
+            r[header.index(c)] = v
+        filled += any(new.values())
+    with open(target, "w", encoding="utf-8", newline="") as f:
+        csv.writer(f, lineterminator="\n").writerows([header, *body])
+    return filled
+
+
 def _tiers_1_2(review: Path) -> pd.DataFrame:
     return pd.concat([pd.read_csv(review / f, dtype=str, keep_default_na=False).assign(tier=t)
                       for f, t in (("tier1_agents.csv", "1"), ("tier2_classes.csv", "2"))],
@@ -829,7 +867,17 @@ def main(argv: list[str] | None = None) -> int:
                    help="freeze filled pass 1 and draw the blind pass-2 sample")
     g.add_argument("--screen-b", action="store_true",
                    help="run screen B with the owner's committed brand aliases")
+    g.add_argument("--merge", nargs="+", metavar="EDITED_CSV",
+                   help="copy the decision columns from edited copies into the committed "
+                        "review CSVs of the same file name")
     args = p.parse_args(argv)
+    if args.merge:
+        for path in map(Path, args.merge):
+            if path.name not in REVIEW_FILES:
+                raise SystemExit(f"{path.name} is not one of {REVIEW_FILES}")
+            n = merge_decisions(path, REVIEW_DIR / path.name)
+            print(f"{path.name}: {n} keys with decisions merged")
+        return 0
     if args.screen_b:
         print(build_screen_b()["per_group"].to_string(index=False))
         return 0

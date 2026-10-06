@@ -331,6 +331,48 @@ def test_key_level_proportion_counts_any_wrong_string(tmp_path):
     assert r["with_mapping_errors"]["tail_keys_with_error"] == 2
 
 
+# ---------------------------------------------------------------- merge (Excel-edited copies)
+
+_COMMITTED = ("key,drugnames_medication,decision,wrong_strings,corrected_name,"
+              "reviewer_note,mapping_wrong\n"
+              'HICL:1,"VANC 1 G, IV (3)",,,,,\n'
+              "HICL:2,ONDANSETRON (5),,,,,\n")
+
+
+def test_merge_copies_only_decision_columns(tmp_path):
+    target = tmp_path / "audit_head.csv"
+    target.write_text(_COMMITTED, encoding="utf-8")
+    edited = tmp_path / "edited.csv"
+    # what Excel produces: BOM, CRLF, rows re-sorted, a source cell mangled, TRUE
+    edited.write_bytes(("\ufeffkey,drugnames_medication,decision,wrong_strings,"
+                        "corrected_name,reviewer_note,mapping_wrong\r\n"
+                        "HICL:2,MANGLED,keep,,,,FALSE\r\n"
+                        "HICL:1,MANGLED, reject ,,,ilex not vancomycin; per D6.1,TRUE\r\n"
+                        ).encode("utf-8"))
+    assert review.merge_decisions(edited, target) == 2
+    assert target.read_text(encoding="utf-8") == (
+        "key,drugnames_medication,decision,wrong_strings,corrected_name,"
+        "reviewer_note,mapping_wrong\n"
+        'HICL:1,"VANC 1 G, IV (3)",reject,,,ilex not vancomycin; per D6.1,true\n'
+        "HICL:2,ONDANSETRON (5),keep,,,,false\n")
+
+
+def test_merge_rejects_changed_keys_and_bad_values(tmp_path):
+    target = tmp_path / "audit_head.csv"
+    head = ("key,drugnames_medication,decision,wrong_strings,corrected_name,"
+            "reviewer_note,mapping_wrong\n")
+    for body, match in (("HICL:1,x,,,,,\n", "keys differ"),
+                        ("HICL:1,x,,,,,\nHICL:3,x,,,,,\n", "keys differ"),
+                        ("HICL:1,x,maybe,,,,\nHICL:2,x,,,,,\n", "decision"),
+                        ("HICL:1,x,keep,,,,yes\nHICL:2,x,,,,,\n", "mapping_wrong")):
+        target.write_text(_COMMITTED, encoding="utf-8")
+        edited = tmp_path / "edited.csv"
+        edited.write_text(head + body, encoding="utf-8")
+        with pytest.raises(ValueError, match=match):
+            review.merge_decisions(edited, target)
+        assert target.read_text(encoding="utf-8") == _COMMITTED  # untouched on error
+
+
 # ---------------------------------------------------------------- reliability hook
 
 
