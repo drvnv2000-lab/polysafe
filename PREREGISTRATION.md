@@ -814,3 +814,61 @@ that is the gap this rule closes.
 The state of medication-exposure computation at this commit is recorded
 in the computation provenance section of DATA_REPORT.md rather than
 restated here.
+
+**D6.1 [protocol addition] Mapping-level errors in the audit estimator.**
+D5.2 adopts the audit design and estimator in
+mapping/review/REVIEW_PACKET.md. Every estimate that design defines is
+built either from error_rows_i or from the key-level proportion of keys
+with any wrong string. A key whose drugname strings are all correct
+while the automated ingredient mapping is wrong therefore contributes no
+error rows and is not a key with any wrong string, so no estimate can
+represent it.
+
+The committed mapping draft contains such cases, neither yet
+adjudicated. HICL:11528 is an audit-head key whose proposed mapping
+names insulin lispro protamine while its drugname strings name insulin
+lispro, including the brand name Humalog. HICL:37442 was found by the
+tier-3 screen and is in no audit stratum; its proposed mapping names
+ilex paraguariensis while its drugname strings name vancomycin.
+
+Add a per-key field mapping_wrong (boolean).
+  - mapping_wrong is true only when the key's proposed ingredient
+    mapping is wrong for every row in the key. Then error_rows_i is ALL
+    of key i's rows, including rows with no drugname, and key i counts
+    as an error key in the key-level proportion.
+  - mapping_wrong is false in every other case, including a key whose
+    proposed mapping is correct for some of its drugname strings and
+    wrong for others. Such a key records the affected strings in
+    wrong_strings with the reason in reviewer_note, and error_rows_i and
+    the key-level proportion are as REVIEW_PACKET.md defines them,
+    unchanged, including its rule for keys named only through
+    admissiondrug.
+A key with mapping_wrong true records no wrong_strings, because the
+error is not string-specific.
+
+mapping_wrong does not require corrected_name. D5.4 permits
+corrected_name only to remove a key from an exposure, to move it between
+two already pre-specified agent exposures, or to add or move it to an
+already pre-specified class variable. So where a key with a wrong
+mapping is currently assigned to an exposure it does not belong in,
+corrected_name records that removal; where the key is assigned to no
+exposure and the correct ingredient is not a pre-specified exposure,
+corrected_name stays empty. These two cases do not exhaust the
+possibilities. D5.4 provides no operation for adding a key to an already
+pre-specified agent exposure, so for a key whose correct ingredient is
+such an agent corrected_name stays empty as well, and whether that key
+is added to that exposure is a question this entry does not settle. In
+every case the correct ingredient is recorded in reviewer_note.
+
+REVIEW_PACKET.md scopes its combined estimate to the tier-4 approximate
+stratum and states that it says nothing about the exhaustively reviewed
+tiers. A mapping error recorded in one of those tiers therefore does not
+enter that estimate, whether or not mapping_wrong records it.
+
+Report every estimate both ways - as REVIEW_PACKET.md defines it, and
+with mapping-level errors included - so the effect of this amendment is
+visible. D5.2's restriction of Wilson intervals to the key-level
+proportion applies to both versions of that proportion.
+
+This entry is appended after D6.2 and is therefore out of numeric order.
+The number records the amendment's subject, not its position.
