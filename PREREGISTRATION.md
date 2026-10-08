@@ -989,3 +989,20 @@ systemic = no. Under D6.2 the class therefore has no row that counts
 toward exposure and still contributes no variable. D4.5 and D6.0c are
 read as statements about systemic exposure. Any later change that gives
 the class a counting row needs its own entry.
+
+**D6.6 [protocol addition] Exposures missed by an empty mapping in the audit sample.**
+The audit estimator counts error_rows_i from wrong_strings and, in the
+D6.1 version, from mapping_wrong. A key whose proposed_ingredients is
+empty but whose correct ingredient belongs to a pre-specified agent or
+class contributes no error rows under either version, although the
+automated mapping missed an exposure. The review recorded two such keys
+in the audit sample, both in audit_tail.csv: HICL:4703, corrected_name
+"iodinated contrast", and HICL:33356, corrected_name "aminoglycosides".
+
+The estimator is not changed. Alongside every audit estimate, the number
+of audit keys with an empty proposed_ingredients whose corrected_name
+assigns them to a pre-specified agent or class is reported, with their
+row counts.
+
+This entry was written after the review was complete and after these two
+keys were seen.
