@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from polysafe import integrity, lab
+from polysafe import integrity, lab, review
 
 ROOT = integrity.ROOT
 ARTIFACTS = ["PREREGISTRATION.md", "results/cohort_flow.md", "results/aki_labels.md",
@@ -24,6 +24,19 @@ def fixture_root(tmp_path):
         (tmp_path / a).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy(ROOT / a, tmp_path / a)
     return tmp_path
+
+
+REVIEW_FILES = ("tier1_agents.csv", "tier2_classes.csv", "tier3_screen.csv", "audit_head.csv",
+                "audit_tail.csv")
+
+
+def _blank_review(root):
+    """Reset the copied review files to the pre-review state these tests describe."""
+    for name in REVIEW_FILES:
+        f = root / "mapping/review" / name
+        df = pd.read_csv(f, dtype=str, keep_default_na=False)
+        df[[c for c in review.DECISION_COLUMNS if c in df]] = ""
+        df.to_csv(f, index=False)
 
 
 def _report(root):
@@ -116,11 +129,11 @@ def test_missing_preregistration_is_not_available(fixture_root):
 
 
 def test_review_not_started_is_not_zero_unsure(fixture_root):
+    _blank_review(fixture_root)
     r = _report(fixture_root)
     assert r["review_decisions"]["status"] == "not_started"
     assert "unsure" not in r["review_decisions"]
-    for name in ("tier1_agents.csv", "tier2_classes.csv", "tier3_screen.csv", "audit_head.csv",
-                 "audit_tail.csv"):
+    for name in REVIEW_FILES:
         f = fixture_root / "mapping/review" / name
         pd.read_csv(f, dtype=str, keep_default_na=False).assign(decision="keep").to_csv(
             f, index=False)
@@ -129,6 +142,7 @@ def test_review_not_started_is_not_zero_unsure(fixture_root):
 
 
 def test_timeline_states_not_fitted_plainly(fixture_root):
+    _blank_review(fixture_root)
     stages = {t["stage"]: t["status"] for t in _report(fixture_root)["timeline"]}
     assert stages["Model fitting"] == "not fitted"
     assert stages["Medication QC"] == "packet built; review not started"
@@ -156,6 +170,7 @@ def test_section_without_its_artifact_is_not_rendered(fixture_root):
 
 
 def test_page_has_no_placeholders_and_shows_gaps_plainly(fixture_root):
+    _blank_review(fixture_root)
     _report(fixture_root)
     page = lab.render(fixture_root).lower()
     for banned in ("coming soon", "placeholder", "lorem", "todo"):
