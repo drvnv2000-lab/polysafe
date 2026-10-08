@@ -1041,3 +1041,25 @@ review was complete; no outcome was examined.
 
 This entry is appended out of numeric order. The number records the
 amendment's subject, not its position.
+
+**D6.7 [protocol addition] Which rows and keys the HICL-based arms read.**
+Section 6 states that exposure "is derived from `drughiclseqno` (HICL),
+not `drugname`". In the HICL-based strategy, the HICL + gtc strategy and
+the review-corrected HICL-based arm (D6.3), a row is ascertained through
+the reviewed mapping only if it has a drughiclseqno. Rows without one are
+not ascertained through their NAME: key in those arms; the generic-string
+and generic + brand strategies read every named row by its drugname.
+
+In the HICL-based and HICL + gtc strategies, review decisions are applied
+only to keys in tiers 1-3. Tier-4 keys, including those in
+audit_head.csv and audit_tail.csv, feed no exposure in those two
+strategies (D5.1). Their adjudication is used by the audit estimator, by
+D6.6, and by the fifth arm through D6.3.
+
+In medication.csv.gz every row without a drughiclseqno (4,441 rows) has
+gtc = 0, so on this dataset the HICL + gtc strategy produces the same
+exposure ascertainment as the HICL-based strategy. This is a property of
+the data, not a rule.
+
+Decided by the PI before any ascertainment code is committed and before
+any drug-outcome association has been computed.
