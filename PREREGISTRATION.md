@@ -1006,3 +1006,19 @@ row counts.
 
 This entry was written after the review was complete and after these two
 keys were seen.
+
+**D5.14b [clarification] The brand alias list was committed on 2026-10-08.**
+D5.14 states that the brand alias list "was authored after an uncommitted
+exploratory screen". Before 2026-10-08 no committed version of
+mapping/review/search_terms.txt contained any brand alias: every slot in
+its brand section was empty, and screen B had not been run. The list is
+committed now, alone, as that file's header requires. It was written on
+2026-10-08 with an AI assistant proposing aliases from drug references;
+the PI approved each alias, and added Zosyn under piperacillin after a
+check. It was written after the PI's review of the 171 keys, in which
+brand strings such as TORADOL, OPTIRAY and NEOSPORIN were seen, and after
+the exploratory brand counts recorded in DATA_REPORT.md. No drug-outcome
+association had been computed.
+
+This entry is appended out of numeric order. The number records the
+amendment's subject, not its position.
