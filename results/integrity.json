@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-10-04T15:44:27+00:00",
+ "generated_utc": "2026-10-08T10:08:04+00:00",
  "preregistration": {
   "path": "PREREGISTRATION.md",
   "sections": [
@@ -375,6 +375,76 @@
      "sha": "664d9b04c8bfff4600d7daf45264db326604b7fd",
      "utc": "2026-10-04T15:38:08+00:00"
     }
+   },
+   {
+    "id": "D6.0",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "Primary-model exposure set",
+    "introduced_in": {
+     "sha": "067ee2347943fed5c3133f762749c9c5492e7395",
+     "utc": "2026-10-04T15:53:26+00:00"
+    }
+   },
+   {
+    "id": "D6.2",
+    "tag": "substantive change",
+    "date": "2026-10-04",
+    "title": "Route and systemic-exposure requirement",
+    "introduced_in": {
+     "sha": "f5eae7387b4403a1ba2776dc7b624fcba313280f",
+     "utc": "2026-10-05T17:47:45+00:00"
+    }
+   },
+   {
+    "id": "D6.1",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "Mapping-level errors in the audit estimator",
+    "introduced_in": {
+     "sha": "3cf10e3ff374c79bb7d63f13490a0541a2f4ecdc",
+     "utc": "2026-10-06T07:32:59+00:00"
+    }
+   },
+   {
+    "id": "D6.3",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "Review-corrected HICL-based ascertainment as a fifth arm",
+    "introduced_in": {
+     "sha": "c90c68a9f79c8070480423f0e6b748e0543c9a64",
+     "utc": "2026-10-06T09:09:36+00:00"
+    }
+   },
+   {
+    "id": "D6.4",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "Medication exposure window, cancelled orders and gtc precedence",
+    "introduced_in": {
+     "sha": "70a6051b6e6dd856ba488fc7568dc70f74ed2119",
+     "utc": "2026-10-08T10:06:48+00:00"
+    }
+   },
+   {
+    "id": "D6.5",
+    "tag": "clarification",
+    "date": "2026-10-04",
+    "title": "The aminoglycoside class after review",
+    "introduced_in": {
+     "sha": "c89f8a00bf2453141e7ccdcdd251ef9d614497c3",
+     "utc": "2026-10-08T10:06:49+00:00"
+    }
+   },
+   {
+    "id": "D6.6",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "Exposures missed by an empty mapping in the audit sample",
+    "introduced_in": {
+     "sha": "9aab4349b74c1543ee36652d61a4e50747b41102",
+     "utc": "2026-10-08T10:06:50+00:00"
+    }
    }
   ]
  },
@@ -442,6 +512,181 @@
  ],
  "commits": [
   {
+   "sha": "769878bdb9ae6465f71c9fbecd5c8255728caef9",
+   "utc": "2026-10-08T10:07:14+00:00",
+   "subject": "review: four reviewer notes state the correct ingredient (D6.3a)"
+  },
+  {
+   "sha": "c67734af5beff17de016bcb4bfb7a22aaf703c6d",
+   "utc": "2026-10-08T10:07:04+00:00",
+   "subject": "protocol: D6.3a how arm 5 reads the correct ingredient (clarification)"
+  },
+  {
+   "sha": "f8b85676dfacd64aed82adbdad3092b8b004c3d5",
+   "utc": "2026-10-08T10:07:03+00:00",
+   "subject": "review: brand alias list (D5.14, D5.14b)"
+  },
+  {
+   "sha": "cad16faa07480d42798c671c65447cb467dcde6b",
+   "utc": "2026-10-08T10:06:50+00:00",
+   "subject": "protocol: D5.14b the brand alias list was committed on 2026-10-08 (clarification)"
+  },
+  {
+   "sha": "9aab4349b74c1543ee36652d61a4e50747b41102",
+   "utc": "2026-10-08T10:06:50+00:00",
+   "subject": "protocol: D6.6 exposures missed by an empty mapping in the audit sample (protocol addition)"
+  },
+  {
+   "sha": "c89f8a00bf2453141e7ccdcdd251ef9d614497c3",
+   "utc": "2026-10-08T10:06:49+00:00",
+   "subject": "protocol: D6.5 the aminoglycoside class after review (clarification)"
+  },
+  {
+   "sha": "70a6051b6e6dd856ba488fc7568dc70f74ed2119",
+   "utc": "2026-10-08T10:06:48+00:00",
+   "subject": "protocol: D6.4 medication exposure window, cancelled orders and gtc precedence (protocol addition)"
+  },
+  {
+   "sha": "50ceede3c6e8d14fa0e12656ef2d6343e71ca733",
+   "utc": "2026-10-06T11:02:56+00:00",
+   "subject": "review: PI adjudication of the 171 review-packet keys"
+  },
+  {
+   "sha": "664329332f1811f2f79d2b1f04ac4d4fdf3fd432",
+   "utc": "2026-10-06T09:25:49+00:00",
+   "subject": "review: implement D6.1 mapping_wrong in the audit estimator"
+  },
+  {
+   "sha": "ad158fd2910de3bc6c0756ab13a4258435539c71",
+   "utc": "2026-10-06T09:15:20+00:00",
+   "subject": "review: add empty mapping_wrong column to the five review packet files (D6.1)"
+  },
+  {
+   "sha": "c90c68a9f79c8070480423f0e6b748e0543c9a64",
+   "utc": "2026-10-06T09:09:36+00:00",
+   "subject": "protocol: D6.3 review-corrected HICL-based ascertainment as a fifth arm (protocol addition)"
+  },
+  {
+   "sha": "86b3c46f368302363f0ec43cd9bfa28accdf4df6",
+   "utc": "2026-10-06T07:40:09+00:00",
+   "subject": "protocol: D6.1a scope of D6.1's statement on corrected_name and agent exposures (correction)"
+  },
+  {
+   "sha": "3cf10e3ff374c79bb7d63f13490a0541a2f4ecdc",
+   "utc": "2026-10-06T07:32:59+00:00",
+   "subject": "protocol: D6.1 mapping-level errors in the audit estimator (protocol addition)"
+  },
+  {
+   "sha": "f5eae7387b4403a1ba2776dc7b624fcba313280f",
+   "utc": "2026-10-05T17:47:45+00:00",
+   "subject": "protocol: D6.2 route and systemic-exposure requirement (substantive change)"
+  },
+  {
+   "sha": "db0aa2ebefcf9e606e5543a1f10b0be7f729644c",
+   "utc": "2026-10-05T17:44:13+00:00",
+   "subject": "protocol: D5.5a direction and partition of the medication-record AKI comparison (correction)"
+  },
+  {
+   "sha": "b35d55683280481b25bf48e6d783d13d4d97dd45",
+   "utc": "2026-10-05T17:38:35+00:00",
+   "subject": "protocol: D5.14a meaning of \"discarded\" in D5.14 (correction)"
+  },
+  {
+   "sha": "400321970885f9b75fc7a15fae2d1f8ac93c6879",
+   "utc": "2026-10-04T20:37:09+00:00",
+   "subject": "mapping: systemic table - P4 for enteral_tube, NSAID tube cell, new P1 basis"
+  },
+  {
+   "sha": "f38214962a020db8cec815ab00f8c542165dbd8e",
+   "utc": "2026-10-04T20:30:04+00:00",
+   "subject": "mapping: systemic-route table (exposure x route category), loader and tests"
+  },
+  {
+   "sha": "0a6c3ef5437032ec3eda8b708b0e11f001873c16",
+   "utc": "2026-10-04T20:28:05+00:00",
+   "subject": "mapping: RADINJ -> parenteral_unspecified (route table amendment)"
+  },
+  {
+   "sha": "edacf88277105a84eefdbea05d161855890ccfb6",
+   "utc": "2026-10-04T20:18:14+00:00",
+   "subject": "mapping: route normalization table for routeadmin, loader and tests"
+  },
+  {
+   "sha": "939e8653fe00f9ff9ba2b226a0a89c3fecb65358",
+   "utc": "2026-10-04T17:09:37+00:00",
+   "subject": "protocol: D6.0k count of citation defects in D6.0j(c) (correction)"
+  },
+  {
+   "sha": "63a8a9c5fc1844b6e4d6569d091e6bc37768bf7f",
+   "utc": "2026-10-04T16:59:19+00:00",
+   "subject": "protocol: D6.0j repair-process disclosures (clarification)"
+  },
+  {
+   "sha": "6bd3e2ffe0566efe9f487b0694246f28650adfc5",
+   "utc": "2026-10-04T16:59:18+00:00",
+   "subject": "protocol: D6.0i scope of \"named nowhere in PREREGISTRATION.md\" (correction)"
+  },
+  {
+   "sha": "883f0ae28b6178c1a4aae38b4cd043b8306f855f",
+   "utc": "2026-10-04T16:59:05+00:00",
+   "subject": "protocol: D6.0h provenance of the two excluded code-only classes (clarification)"
+  },
+  {
+   "sha": "f6c2e19c7252dc7865f96952f0049144773879c0",
+   "utc": "2026-10-04T16:52:40+00:00",
+   "subject": "protocol: D6.0g definition of \"committed protocol\" (protocol addition)"
+  },
+  {
+   "sha": "6f1519989afb78fb6e63271967fcf472cb586919",
+   "utc": "2026-10-04T16:50:53+00:00",
+   "subject": "protocol: D6.0f scope of commit 9635d73 and the append-only baseline (correction)"
+  },
+  {
+   "sha": "9635d732055cd925548f4f16ee066c4d64d4c015",
+   "utc": "2026-10-04T16:34:13+00:00",
+   "subject": "chore: pin markdown line endings (LF) and renormalise; amend D6.0b to disclose both one-time modifications"
+  },
+  {
+   "sha": "2e3e8b4ef9e51bb3471d264e8acacf878f25e645",
+   "utc": "2026-10-04T16:32:55+00:00",
+   "subject": "protocol: D6.0e false citation removed and full citation audit (correction)"
+  },
+  {
+   "sha": "7cb5c393c5e0b5246bd05e0849c2e24d3a57f3d9",
+   "utc": "2026-10-04T16:29:56+00:00",
+   "subject": "protocol: D6.0d ondansetron's role (clarification)"
+  },
+  {
+   "sha": "64a50277a80f47310661c3786a994630a6bc60fa",
+   "utc": "2026-10-04T16:29:55+00:00",
+   "subject": "protocol: D6.0c definition of the pre-specified class set (protocol addition)"
+  },
+  {
+   "sha": "8230b37d8eae103382d642472be1357f5bf7e77b",
+   "utc": "2026-10-04T16:26:16+00:00",
+   "subject": "protocol: D6.0b append-only property and the repaired commit (clarification)"
+  },
+  {
+   "sha": "cf6a3e6ea4bffb03e105a2b49f14f32fd4011b52",
+   "utc": "2026-10-04T16:26:15+00:00",
+   "subject": "protocol: D6.0a provenance scope of D6.0 (correction)"
+  },
+  {
+   "sha": "50792b08624afff207de9a1bc33728d55ac76ab0",
+   "utc": "2026-10-04T16:25:54+00:00",
+   "subject": "revert: restore D6.0 to its committed text; added sentence moves to its own entry"
+  },
+  {
+   "sha": "d972c0c03583c934585c7eb05d3e8e731376c977",
+   "utc": "2026-10-04T16:02:16+00:00",
+   "subject": "protocol: resolve primary medication feature inclusion"
+  },
+  {
+   "sha": "067ee2347943fed5c3133f762749c9c5492e7395",
+   "utc": "2026-10-04T15:53:26+00:00",
+   "subject": "Pre-registration deviation D6.0: primary-model exposure set (before any events among exposed were computed)"
+  },
+  {
    "sha": "664d9b04c8bfff4600d7daf45264db326604b7fd",
    "utc": "2026-10-04T15:38:08+00:00",
    "subject": "Pre-registration: D5.12-D5.15 (unnamed-row sensitivity, unsure row rule correction, brand alias provenance, unascertainable rows)"
@@ -508,8 +753,8 @@
   }
  ],
  "tests": {
-  "collected": 137,
-  "passed": 137,
+  "collected": 180,
+  "passed": 180,
   "failed": 0,
   "skipped": 0,
   "junit": "results\\integrity_pytest.xml"
@@ -712,8 +957,12 @@
   "search_terms_sha": "aaef7a99e175e4875abf667ab2667744f60b4dbc"
  },
  "review_decisions": {
-  "status": "not_started",
-  "keys_to_review": 171
+  "status": "complete",
+  "keys_to_review": 171,
+  "adjudicated": 171,
+  "keep": 79,
+  "reject": 91,
+  "unsure": 1
  },
  "cohort": {
   "primary": {
@@ -792,7 +1041,7 @@
   },
   {
    "stage": "Medication QC",
-   "status": "packet built; review not started",
+   "status": "review complete",
    "artifacts": [
     "mapping/review/REVIEW_PACKET.md"
    ]
