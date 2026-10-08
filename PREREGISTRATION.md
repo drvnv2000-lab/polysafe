@@ -1022,3 +1022,22 @@ association had been computed.
 
 This entry is appended out of numeric order. The number records the
 amendment's subject, not its position.
+
+**D6.3a [clarification] How arm 5 reads the correct ingredient and when a string names it.**
+D6.3 reassigns a key only if "reviewer_note names the correct
+ingredient" and "every string in the key's drugnames_medication and
+drugnames_admissiondrug fields names that ingredient".
+  - reviewer_note names the correct ingredient when it begins
+    "Correct ingredient: " followed by the ingredient, which ends at the
+    first full stop. A note in any other form names no ingredient for
+    this purpose and the key is not reassigned; such keys are listed
+    when the arm is built.
+  - A string names an ingredient when, under the matching of D5.10, it
+    contains that ingredient's generic name or one of its brand aliases
+    in the committed brand section of mapping/review/search_terms.txt.
+After the review, the PI rewrote four reviewer notes into this form:
+HICL:37442, HICL:5175, HICL:4703 and HICL:33356. Decided after the
+review was complete; no outcome was examined.
+
+This entry is appended out of numeric order. The number records the
+amendment's subject, not its position.
