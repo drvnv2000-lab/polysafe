@@ -164,6 +164,12 @@ drives and user folders, editor histories and the working-session transcripts.
   never written out. Report-only scripts assigned real medication rows to
   exposures in memory to produce the aggregate counts below; none wrote a row- or
   stay-level file.
+  - *Superseded 2026-10-08.* `polysafe.ascertain` now builds stay × exposure tables
+    in memory for the 671 primary-cohort stays (five ascertainment arms × four
+    variants). It writes only aggregate counts (exposed stays per arm, variant and
+    exposure, with the cohort denominator) to `results/exposure_prevalence.csv` and
+    `results/ascertainment.md`: no stay identifiers and no outcome. No stay-level
+    exposure file is written.
 - **Aggregate exposure counts do exist** (keys, rows or stays per key, agent, class
   or route; no stay identifiers, no outcome).
   - Committed: `mapping/MAPPING_REPORT.md`, `mapping/hicl_draft.csv`, the
