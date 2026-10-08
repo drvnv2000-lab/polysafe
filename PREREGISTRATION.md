@@ -951,3 +951,28 @@ estimate of the association between a pre-specified exposure and the
 outcome has been computed under any ascertainment arm. It was added on
 the basis of mapping correctness alone; no outcome was examined in
 deciding to add it.
+
+**D6.4 [protocol addition] Medication exposure window, cancelled orders and gtc precedence.**
+Section 3 restricts features to data with offset <= T. For every
+ascertainment strategy, a medication row counts toward exposure only if
+all of the following hold:
+  - drugstartoffset <= T, with T = 1440 minutes;
+  - drugstopoffset >= 0;
+  - drugordercancelled is not "Yes".
+A row that started before ICU admission and had not stopped by admission
+therefore counts; a row that both started and stopped before admission
+does not. A drugstopoffset of 0 is taken at face value.
+
+In the HICL + gtc strategy, gtc is used only for rows with no
+drughiclseqno. Rows with a drughiclseqno are ascertained exactly as in
+the HICL-based strategy, whatever their gtc.
+
+A stay is exposed to an agent or class when at least one of its rows
+counts toward it.
+
+Decided by the PI before any ascertainment code exists and before any
+drug-outcome association has been computed. Earlier exploratory exposure
+counts recorded in DATA_REPORT.md predate this rule. Disclosed: when
+choosing, the PI saw whole-table counts of medication rows starting
+before admission, stopping before admission and cancelled; no outcome
+was examined.
