@@ -976,3 +976,16 @@ counts recorded in DATA_REPORT.md predate this rule. Disclosed: when
 choosing, the PI saw whole-table counts of medication rows starting
 before admission, stopping before admission and cancelled; no outcome
 was examined.
+
+**D6.5 [clarification] The aminoglycoside class after review.**
+D4.5 states that aminoglycosides are "absent from the data", and D6.0c
+that they "contribute no variable - an empty set, not an exclusion."
+The review assigned one key to the class through corrected_name:
+HICL:33356, in audit_tail.csv, named only through admissiondrug as
+NEOSPORIN. Its 7 medication rows have routeadmin "Topical" or "TP",
+which mapping/route_normalization.csv maps to topical, and
+mapping/systemic_routes.csv classifies aminoglycosides by that route as
+systemic = no. Under D6.2 the class therefore has no row that counts
+toward exposure and still contributes no variable. D4.5 and D6.0c are
+read as statements about systemic exposure. Any later change that gives
+the class a counting row needs its own entry.
