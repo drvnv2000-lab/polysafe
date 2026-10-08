@@ -35,6 +35,7 @@ CSV_SCANNED = {
     "mapping/review/tier3_screen.csv": ("corrected_name", "reviewer_note"),
     "mapping/review/audit_head.csv": ("corrected_name", "reviewer_note"),
     "mapping/review/audit_tail.csv": ("corrected_name", "reviewer_note"),
+    "results/exposure_prevalence.csv": ("exposure",),
 }
 CSV_SOURCE_TEXT = ("top_names", "drugnames_medication", "drugnames_admissiondrug",
                    "hit_strings", "raw_value")
