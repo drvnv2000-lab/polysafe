@@ -1,0 +1,141 @@
+arm,variant,exposure,exposed_stays,cohort_stays
+generic_string,primary,vancomycin,64,671
+generic_string,primary,piperacillin-tazobactam,31,671
+generic_string,primary,furosemide,94,671
+generic_string,primary,ondansetron,231,671
+generic_string,primary,"NSAIDs (aspirin excluded, D4.1)",8,671
+generic_string,primary,iodinated contrast,6,671
+generic_string,primary,aminoglycosides,0,671
+generic_string,route_unknown,vancomycin,78,671
+generic_string,route_unknown,piperacillin-tazobactam,32,671
+generic_string,route_unknown,furosemide,95,671
+generic_string,route_unknown,ondansetron,234,671
+generic_string,route_unknown,"NSAIDs (aspirin excluded, D4.1)",8,671
+generic_string,route_unknown,iodinated contrast,6,671
+generic_string,route_unknown,aminoglycosides,0,671
+generic_string,unsure,vancomycin,64,671
+generic_string,unsure,piperacillin-tazobactam,31,671
+generic_string,unsure,furosemide,94,671
+generic_string,unsure,ondansetron,231,671
+generic_string,unsure,"NSAIDs (aspirin excluded, D4.1)",8,671
+generic_string,unsure,iodinated contrast,6,671
+generic_string,unsure,aminoglycosides,0,671
+generic_string,named_only,vancomycin,64,671
+generic_string,named_only,piperacillin-tazobactam,31,671
+generic_string,named_only,furosemide,94,671
+generic_string,named_only,ondansetron,231,671
+generic_string,named_only,"NSAIDs (aspirin excluded, D4.1)",8,671
+generic_string,named_only,iodinated contrast,6,671
+generic_string,named_only,aminoglycosides,0,671
+generic_brand,primary,vancomycin,75,671
+generic_brand,primary,piperacillin-tazobactam,54,671
+generic_brand,primary,furosemide,127,671
+generic_brand,primary,ondansetron,295,671
+generic_brand,primary,"NSAIDs (aspirin excluded, D4.1)",10,671
+generic_brand,primary,iodinated contrast,8,671
+generic_brand,primary,aminoglycosides,0,671
+generic_brand,route_unknown,vancomycin,83,671
+generic_brand,route_unknown,piperacillin-tazobactam,55,671
+generic_brand,route_unknown,furosemide,127,671
+generic_brand,route_unknown,ondansetron,295,671
+generic_brand,route_unknown,"NSAIDs (aspirin excluded, D4.1)",10,671
+generic_brand,route_unknown,iodinated contrast,8,671
+generic_brand,route_unknown,aminoglycosides,0,671
+generic_brand,unsure,vancomycin,75,671
+generic_brand,unsure,piperacillin-tazobactam,54,671
+generic_brand,unsure,furosemide,127,671
+generic_brand,unsure,ondansetron,295,671
+generic_brand,unsure,"NSAIDs (aspirin excluded, D4.1)",10,671
+generic_brand,unsure,iodinated contrast,8,671
+generic_brand,unsure,aminoglycosides,0,671
+generic_brand,named_only,vancomycin,75,671
+generic_brand,named_only,piperacillin-tazobactam,54,671
+generic_brand,named_only,furosemide,127,671
+generic_brand,named_only,ondansetron,295,671
+generic_brand,named_only,"NSAIDs (aspirin excluded, D4.1)",10,671
+generic_brand,named_only,iodinated contrast,8,671
+generic_brand,named_only,aminoglycosides,0,671
+hicl,primary,vancomycin,106,671
+hicl,primary,piperacillin-tazobactam,93,671
+hicl,primary,furosemide,141,671
+hicl,primary,ondansetron,314,671
+hicl,primary,"NSAIDs (aspirin excluded, D4.1)",24,671
+hicl,primary,iodinated contrast,9,671
+hicl,primary,aminoglycosides,0,671
+hicl,route_unknown,vancomycin,112,671
+hicl,route_unknown,piperacillin-tazobactam,93,671
+hicl,route_unknown,furosemide,142,671
+hicl,route_unknown,ondansetron,314,671
+hicl,route_unknown,"NSAIDs (aspirin excluded, D4.1)",24,671
+hicl,route_unknown,iodinated contrast,10,671
+hicl,route_unknown,aminoglycosides,0,671
+hicl,unsure,vancomycin,106,671
+hicl,unsure,piperacillin-tazobactam,93,671
+hicl,unsure,furosemide,141,671
+hicl,unsure,ondansetron,314,671
+hicl,unsure,"NSAIDs (aspirin excluded, D4.1)",24,671
+hicl,unsure,iodinated contrast,9,671
+hicl,unsure,aminoglycosides,0,671
+hicl,named_only,vancomycin,69,671
+hicl,named_only,piperacillin-tazobactam,51,671
+hicl,named_only,furosemide,122,671
+hicl,named_only,ondansetron,289,671
+hicl,named_only,"NSAIDs (aspirin excluded, D4.1)",10,671
+hicl,named_only,iodinated contrast,6,671
+hicl,named_only,aminoglycosides,0,671
+hicl_gtc,primary,vancomycin,106,671
+hicl_gtc,primary,piperacillin-tazobactam,93,671
+hicl_gtc,primary,furosemide,141,671
+hicl_gtc,primary,ondansetron,314,671
+hicl_gtc,primary,"NSAIDs (aspirin excluded, D4.1)",24,671
+hicl_gtc,primary,iodinated contrast,9,671
+hicl_gtc,primary,aminoglycosides,0,671
+hicl_gtc,route_unknown,vancomycin,112,671
+hicl_gtc,route_unknown,piperacillin-tazobactam,93,671
+hicl_gtc,route_unknown,furosemide,142,671
+hicl_gtc,route_unknown,ondansetron,314,671
+hicl_gtc,route_unknown,"NSAIDs (aspirin excluded, D4.1)",24,671
+hicl_gtc,route_unknown,iodinated contrast,10,671
+hicl_gtc,route_unknown,aminoglycosides,0,671
+hicl_gtc,unsure,vancomycin,106,671
+hicl_gtc,unsure,piperacillin-tazobactam,93,671
+hicl_gtc,unsure,furosemide,141,671
+hicl_gtc,unsure,ondansetron,314,671
+hicl_gtc,unsure,"NSAIDs (aspirin excluded, D4.1)",24,671
+hicl_gtc,unsure,iodinated contrast,9,671
+hicl_gtc,unsure,aminoglycosides,0,671
+hicl_gtc,named_only,vancomycin,69,671
+hicl_gtc,named_only,piperacillin-tazobactam,51,671
+hicl_gtc,named_only,furosemide,122,671
+hicl_gtc,named_only,ondansetron,289,671
+hicl_gtc,named_only,"NSAIDs (aspirin excluded, D4.1)",10,671
+hicl_gtc,named_only,iodinated contrast,6,671
+hicl_gtc,named_only,aminoglycosides,0,671
+hicl_reviewed,primary,vancomycin,125,671
+hicl_reviewed,primary,piperacillin-tazobactam,93,671
+hicl_reviewed,primary,furosemide,141,671
+hicl_reviewed,primary,ondansetron,314,671
+hicl_reviewed,primary,"NSAIDs (aspirin excluded, D4.1)",24,671
+hicl_reviewed,primary,iodinated contrast,14,671
+hicl_reviewed,primary,aminoglycosides,0,671
+hicl_reviewed,route_unknown,vancomycin,132,671
+hicl_reviewed,route_unknown,piperacillin-tazobactam,93,671
+hicl_reviewed,route_unknown,furosemide,142,671
+hicl_reviewed,route_unknown,ondansetron,314,671
+hicl_reviewed,route_unknown,"NSAIDs (aspirin excluded, D4.1)",24,671
+hicl_reviewed,route_unknown,iodinated contrast,15,671
+hicl_reviewed,route_unknown,aminoglycosides,0,671
+hicl_reviewed,unsure,vancomycin,125,671
+hicl_reviewed,unsure,piperacillin-tazobactam,93,671
+hicl_reviewed,unsure,furosemide,141,671
+hicl_reviewed,unsure,ondansetron,314,671
+hicl_reviewed,unsure,"NSAIDs (aspirin excluded, D4.1)",24,671
+hicl_reviewed,unsure,iodinated contrast,14,671
+hicl_reviewed,unsure,aminoglycosides,0,671
+hicl_reviewed,named_only,vancomycin,75,671
+hicl_reviewed,named_only,piperacillin-tazobactam,51,671
+hicl_reviewed,named_only,furosemide,122,671
+hicl_reviewed,named_only,ondansetron,289,671
+hicl_reviewed,named_only,"NSAIDs (aspirin excluded, D4.1)",10,671
+hicl_reviewed,named_only,iodinated contrast,8,671
+hicl_reviewed,named_only,aminoglycosides,0,671
