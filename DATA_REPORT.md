@@ -221,3 +221,44 @@ drives and user folders, editor histories and the working-session transcripts.
     before `HANDOFF.md` was first committed (ec81281, 17:16 IST).
   - Nothing in these caches is redistributed, and none of it alters any
     repository-scoped claim.
+
+## Review adjudication (2026-10-06)
+
+- **What was reviewed:** all 171 keys of the five review-packet files
+  (tier1_agents 33, tier2_classes 36, tier3_screen 7, audit_head 45,
+  audit_tail 50), merged in commit 50ceede.
+- **How:** Claude built a workbook from the committed packet files, one tab per
+  file, with the five decision columns as inputs. The PI filled it with an AI
+  assistant proposing values; the PI approved or changed each value. The
+  adjudication is the PI's; it is AI-assisted and is described as such.
+- **Checks before merging:** every value was validated against the committed
+  rules (allowed vocabulary, mapping_wrong on every decided key, wrong_strings
+  present among the key's strings, corrected_name a pre-specified agent or
+  class, reviewer_note required where the mapping is wrong or empty, cited
+  entries exist). Seven corrected_name cells added a key to an agent exposure,
+  which D5.4 and D6.1a do not allow (HICL:10093, HICL:37442, four vancomycin
+  `NAME:` keys and `NAME:ZOSYN 3.375 GRAM in NS 100 mL IVPB`); the PI chose to
+  blank them. HICL:10093 and HICL:37442 reach vancomycin only through arm 5
+  (D6.3).
+- **Decisions:** tier1 33 keep; tier2 36 keep; tier3 7 keep; audit_head 45
+  reject; audit_tail 3 keep, 46 reject, 1 unsure. mapping_wrong is true for
+  HICL:37442 and HICL:11528 only. corrected_name adds HICL:5175 to NSAIDs,
+  HICL:4703 to iodinated contrast and HICL:33356 to aminoglycosides (see D6.5).
+- **Audit misses (D6.6):** 2 of 95 audit keys (HICL:4703, HICL:33356) had an
+  empty proposed_ingredients while their correct ingredient belongs to a
+  pre-specified class; the estimator does not count them.
+- **Reliability:** no second pass has been done; D5.7's optional intra-rater
+  pass remains optional and unreported.
+- **Note rewrite (2026-10-08):** the PI rewrote the reviewer_note of
+  HICL:37442, HICL:5175, HICL:4703 and HICL:33356 to begin "Correct
+  ingredient: <name>." so that arm 5 can read them (D6.3a).
+
+## Brand alias list (2026-10-08)
+
+The brand section of `mapping/review/search_terms.txt` was empty in every
+committed version until 2026-10-08 (D5.14b). The list committed that day was
+proposed by an AI assistant from drug references and approved alias by alias by
+the PI, who added Zosyn under piperacillin. It contains single-product brands
+plus Neosporin, a combination product; the rows of HICL:33356 (NEOSPORIN) are
+topical and not systemic under D6.2 (D6.5). Ophthalmic (Acular, Acuvail) and oral-contrast (Gastrografin) aliases are
+included; D6.2 decides by route whether their rows count.
