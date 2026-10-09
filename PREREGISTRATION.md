@@ -1063,3 +1063,69 @@ the data, not a rule.
 
 Decided by the PI before any ascertainment code is committed and before
 any drug-outcome association has been computed.
+
+**D2.1a [substantive change] How the BCa interval is computed and how its coverage is measured.**
+D2.1 replaces the percentile interval with "a patient-level BCa
+(bias-corrected and accelerated) bootstrap CI" and states "Measured
+coverage will be reported alongside every interval." D2.1 does not
+specify the number of resamples or the procedure for measuring coverage;
+this entry specifies both.
+
+Computation:
+  - Every BCa interval is a two-sided 95% interval.
+  - A resample draws patients (`uniquepid`) with replacement and keeps
+    every stay of a drawn patient. The acceleration is estimated by the
+    leave-one-patient-out jackknife.
+  - Every interval reported for the real cohort uses 10,000 resamples.
+    Section 9.1 simulated 1,000 resamples under a design it describes as
+    "identical to the analysis"; the real intervals depart from it in
+    using 10,000.
+  - Resamples reuse the out-of-fold predictions; no model is refitted
+    within a resample, so the interval does not include the variation from
+    refitting the models.
+  - A resample on which the statistic is undefined (for example, one
+    without both outcome classes) is dropped, not redrawn. Each interval
+    is reported with the number of resamples attempted, used and dropped.
+  - If the bias correction, the acceleration or an adjusted percentile is
+    not finite, no interval is reported for that statistic and the failure
+    is reported. No other interval method is substituted.
+
+Coverage simulation:
+  - Before any model is fitted, the section 9.1 simulation is re-run with
+    BCa intervals: the same cohorts, grid, seed and simulated studies, with
+    2,000 resamples per simulated study. Section 9.1 and its result files
+    are not changed; the re-run writes its own files.
+  - For a simulation cell, coverage is the share of its simulated 95%
+    intervals that contain the corresponding true value. It is measured for
+    the dAUROC and for the AUROCs of the simulation's clinical-only and
+    combined scores, whose true values are the grid dAUROC, A0, and A0 plus
+    the grid dAUROC. At a true dAUROC of 0 the share of dAUROC intervals
+    whose lower bound is above 0 is also reported, and dropped resamples
+    are counted per cell.
+
+Reporting:
+  - Next to each real AUROC or dAUROC interval: the coverage in the cell for
+    the primary cohort at its measured prevalence whose A0, rho and true
+    dAUROC are the grid points nearest to the realised clinical-only AUROC,
+    the realised correlation of D2.4 and the observed dAUROC estimate, with
+    that cell's coordinates; and the minimum and maximum coverage over all
+    cells of that cohort and prevalence.
+  - Any other bootstrap interval, including AUPRC, is reported with
+    "coverage not measured".
+  - "Detected" remains "lower bound > 0". The simulated detectable effect in
+    section 9's null statement is the 80%-power threshold of the BCa re-run
+    for the primary cohort at its measured prevalence, at the A0 and rho grid
+    points nearest to the realised clinical-only AUROC and the realised
+    correlation of D2.4, found by linear interpolation between grid dAUROC
+    values as in section 9.1. The section 9.1 percentile threshold for the
+    same cohort, prevalence, A0 and rho is reported beside it.
+  - The BCa interval stays the primary interval whatever coverage the re-run
+    shows. Poor coverage is reported as a limitation; the interval method is
+    not changed after the coverage is seen.
+
+Decided by the PI after the section 9.1 simulation and before any
+prediction model is fitted to the cohort's data. No drug-outcome
+association has been computed.
+
+This entry is appended out of numeric order. The number records the
+amendment's subject, not its position.
