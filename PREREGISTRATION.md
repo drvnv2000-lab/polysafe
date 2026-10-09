@@ -1129,3 +1129,92 @@ association has been computed.
 
 This entry is appended out of numeric order. The number records the
 amendment's subject, not its position.
+
+### D7 — 2026-10-09, before any model was fitted
+
+**D7.1 [substantive change] Medication features of stays without a medication record.**
+Section 6 states that "Absence of a record is never coded as "unexposed""
+and that "`medication_data_available` will NOT be used as a predictor".
+D3.6 imputes the logistic regression with "median plus missingness
+indicator". In the primary cohort 20 of the 671 stays have no medication
+record of their own. For those stays every medication feature is missing:
+the feature builder gives them no 0 or 1, only a missing value.
+  - In every logistic regression each medication feature of those stays is
+    filled with the share of exposed stays among the training fold's stays
+    that have a medication record. No missingness indicator is added for the
+    medication features. This departs from D3.6 for these features only:
+    the median of a binary exposure held by fewer than half of the stays is
+    0, which would code the 20 stays as unexposed, and an indicator would
+    flag exactly the stays without a medication record.
+  - In LightGBM the medication features of those stays stay missing.
+  - The 20 stays remain in the primary cohort.
+Decided by the PI before any model was fitted.
+
+**D7.2 [protocol addition] Model specification fixed before the first fit.**
+  - Primary estimand: the paired dAUROC between the clinical + medication
+    and the clinical-only L2-penalised logistic regressions on D4.4's
+    reduced feature set. The same comparison with LightGBM is secondary;
+    with the full penalised logistic regression it is a sensitivity
+    analysis (D4.4).
+  - Medication features: vancomycin, piperacillin-tazobactam, furosemide,
+    NSAIDs (aspirin excluded) and iodinated contrast (D6.0, D6.0c). Each is
+    1 if the stay is exposed by T under D6.4 in the HICL + gtc strategy,
+    primary variant, and 0 otherwise, except as D7.1 states.
+    Aminoglycosides contribute no variable (D6.0c, D6.5) and ondansetron is
+    not a feature (D6.0d). The clinical + medication model adds these five
+    to its clinical-only counterpart and changes nothing else.
+  - Full penalised logistic regression: every clinical feature except the
+    five that D3.6 and D4.2-D4.3 leave out of the logistic regression
+    (lactate, pH, phosphate, INR, temperature): 69 of the 74 clinical
+    features in `results/features_clinical.csv`. D4.4 calls it the "full
+    74-feature" model.
+  - Folds: `polysafe.cv.patient_folds`, 5-fold StratifiedGroupKFold by
+    `uniquepid`, stratified on AKI, 10 repeats with random states 0-9. Both
+    models of a comparison use identical folds.
+  - Pooling: each stay's 10 out-of-fold predicted probabilities are
+    averaged. Every metric, the paired dAUROC and every bootstrap interval
+    is computed on that one averaged prediction per stay; per-repeat
+    metrics are not averaged.
+  - Logistic regression: imputation as D3.6 and D4.4 state, except as
+    D7.1 states, fitted on the training fold; then every column is
+    standardised with the training fold's mean and standard deviation (a
+    column with zero standard deviation is set to 0). scikit-learn
+    LogisticRegression, lbfgs solver, intercept not penalised, no class
+    weights, at most 10,000 iterations. C is chosen from 13 values,
+    10^-3 to 10^3 in steps of 10^0.5, by the lowest mean log loss in an
+    inner 5-fold patient-grouped, AKI-stratified split of the training
+    fold (`patient_folds` with one repeat and random state 1000 + 5r + k
+    for outer repeat r and fold k); ties go to the smaller C. The model
+    is then refitted on the whole training fold.
+  - LightGBM: all clinical features plus the medication features, all
+    numeric, no categorical handling, missing values left missing.
+    Fixed: binary objective, learning rate 0.05, no row or column
+    subsampling, no L1 or L2 penalty, random seed 20261004,
+    deterministic mode, one thread. Tuned in the same inner split by the
+    lowest mean binary log loss on the inner validation folds over
+    num_leaves {4, 8, 16} x min_child_samples {10, 20, 40} x
+    n_estimators {100, 300}; ties go to fewer leaves, then more samples
+    per leaf, then fewer trees. Then refitted on the whole training
+    fold.
+  - Metrics on the pooled predictions: AUROC (ties counted half); AUPRC as
+    average precision; for both, the D2.1a BCa interval. Before any logit
+    is taken, predictions are clipped to [10^-6, 1 - 10^-6]. Calibration
+    intercept (an intercept-only logistic regression of AKI with the logit
+    of the prediction as offset) and slope (logistic regression of AKI on
+    that logit), point estimates only. Calibration curve: mean prediction
+    against observed AKI proportion in 10 quantile bins of the pooled
+    predictions (duplicate bin edges dropped). Decision curve: a stay is
+    treated when its prediction is at or above the threshold; net benefit
+    = TP/n - FP/n x t/(1 - t), for both models, treat-all and treat-none,
+    at thresholds t from 0.02 to 0.40 in steps of 0.01, one grid for all.
+  - D2.4: "The realised correlation between the clinical-only and
+    clinical+medication predictions will be measured and reported, to
+    identify which correlation (rho) in the power table applies." Section
+    9.1's rho is the "Pearson correlation rho between the two models' risk
+    scores", and in `polysafe.power` the simulated predictions are logistic
+    recalibrations of those scores. The realised rho used for D2.1a's
+    matched cell is therefore the Pearson correlation between the logits of
+    the two models' pooled predictions; the Pearson correlation between the
+    pooled predicted probabilities is reported beside it.
+Drafted by the analyst and approved by the PI before any model was
+fitted; no model output had been seen.
