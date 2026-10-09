@@ -1218,3 +1218,52 @@ Decided by the PI before any model was fitted.
     pooled predicted probabilities is reported beside it.
 Drafted by the analyst and approved by the PI before any model was
 fitted; no model output had been seen.
+
+### D8 — 2026-10-09, while the primary model run was in progress
+
+**D8.1 [protocol addition] How the pre-registered sensitivity analyses are run and reported.**
+  - Model: each analysis below repeats only the primary comparison of D7.2
+    (the clinical-only and clinical + medication reduced L2 logistic
+    regressions, with every D7.2 setting) and reports both AUROCs, the
+    paired dAUROC with its D2.1a BCa interval and the D2.4 correlation.
+    LightGBM is not repeated.
+  - Ascertainment (section 6, D5.9, D6.3): the medication features are
+    taken from each of the five arms (generic-string, generic + brand,
+    HICL-based, HICL + gtc, review-corrected HICL-based) under each of the
+    four variants (primary; systemic = unknown included, D6.2; unsure keys
+    included, D5.13; unnamed rows excluded, D5.12), on the primary cohort:
+    20 analyses, one of which (HICL + gtc, primary variant) is the primary
+    analysis. The review-corrected arm is labelled exploratory (D6.3). All
+    20 are reported together in one table.
+  - Full cohort (section 6): the 868 baseline-A stays at all hospitals.
+    Every stay without a medication record of its own (217 stays) is
+    handled as D7.1 states for the 20 record-less stays of the primary
+    cohort. Simulated coverage is read from the n = 868 cohort's cells at
+    its measured prevalence instead of the primary cohort's.
+  - Follow-up (section 3, D2.2): the primary cohort restricted to the 314
+    stays with at least 48 h of post-T follow-up; the outcome is unchanged.
+    D2.2's "fixed-window" is read as this restriction.
+  - Baseline C (section 4): the cohort, exclusions and AKI labels built
+    with baseline C, at medication-recording hospitals (497 stays). The
+    clinical features are built by `polysafe.features` for those stays.
+    Simulated coverage: not measured.
+  - Hospital clusters (section 7): a cluster is a connected set of stays
+    linked through a shared hospital or a shared patient (`uniquepid`), so
+    no hospital and no patient spans two folds. The outer folds, the inner
+    tuning splits and the BCa resampling all use these clusters in place of
+    the patient; otherwise as D7.2 (5 folds, 10 repeats, random states
+    0-9). If any outer test fold contains no AKI event, the analysis stops
+    and the PI decides how to proceed. Simulated coverage: not measured.
+  - Ethnicity (D3.4): on the primary analysis's pooled predictions, both
+    AUROCs and the dAUROC within each ethnicity group, with its stays and
+    events; missing ethnicity is its own group. A BCa interval is reported
+    only for groups with at least 10 AKI events; other groups get point
+    estimates only, and a group with no event gets no AUROC. No test
+    between groups; descriptive only.
+  - Section 6's "movement in the conclusion": each analysis's dAUROC and
+    interval are reported beside the primary result, with the difference
+    between the two point estimates and whether each interval excludes 0.
+    No test between analyses; no sensitivity analysis replaces the primary
+    result.
+Decided by the PI while the primary model run was in progress; no model
+output had been seen by the PI or the analyst when these choices were made.
