@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-10-08T10:08:04+00:00",
+ "generated_utc": "2026-10-10T12:30:34+00:00",
  "preregistration": {
   "path": "PREREGISTRATION.md",
   "sections": [
@@ -445,6 +445,86 @@
      "sha": "9aab4349b74c1543ee36652d61a4e50747b41102",
      "utc": "2026-10-08T10:06:50+00:00"
     }
+   },
+   {
+    "id": "D6.7",
+    "tag": "protocol addition",
+    "date": "2026-10-04",
+    "title": "Which rows and keys the HICL-based arms read",
+    "introduced_in": {
+     "sha": "e245db8e17429405219758c8f24c07df21975a86",
+     "utc": "2026-10-08T10:33:46+00:00"
+    }
+   },
+   {
+    "id": "D7.1",
+    "tag": "substantive change",
+    "date": "2026-10-09",
+    "title": "Medication features of stays without a medication record",
+    "introduced_in": {
+     "sha": "1757f5c8867dd1691d6ecca10d8691f76b8b152a",
+     "utc": "2026-10-09T09:38:06+00:00"
+    }
+   },
+   {
+    "id": "D7.2",
+    "tag": "protocol addition",
+    "date": "2026-10-09",
+    "title": "Model specification fixed before the first fit",
+    "introduced_in": {
+     "sha": "1757f5c8867dd1691d6ecca10d8691f76b8b152a",
+     "utc": "2026-10-09T09:38:06+00:00"
+    }
+   },
+   {
+    "id": "D8.1",
+    "tag": "protocol addition",
+    "date": "2026-10-09",
+    "title": "How the pre-registered sensitivity analyses are run and reported",
+    "introduced_in": {
+     "sha": "0241278d91b6bfd7ea0644604d440d2df2687c44",
+     "utc": "2026-10-09T09:58:31+00:00"
+    }
+   },
+   {
+    "id": "D9.1",
+    "tag": "correction",
+    "date": "2026-10-10",
+    "title": "Who made the decisions this document attributes to the PI",
+    "introduced_in": {
+     "sha": "9f6557e36dc826a85a3d71d1dfa3a7218089e3be",
+     "utc": "2026-10-10T11:23:34+00:00"
+    }
+   },
+   {
+    "id": "D9.2",
+    "tag": "correction",
+    "date": "2026-10-10",
+    "title": "When D8.1 was decided",
+    "introduced_in": {
+     "sha": "a86f228ad71280df9410e0054662719aa611c873",
+     "utc": "2026-10-10T11:33:40+00:00"
+    }
+   },
+   {
+    "id": "D10.1",
+    "tag": "exploratory addition",
+    "date": "2026-10-10",
+    "title": "Does a record-process marker explain the medication gain?",
+    "introduced_in": {
+     "sha": "564138bc746e4230e96ab3fee3ddf06753fed4b6",
+     "utc": "2026-10-10T12:08:46+00:00"
+    }
+   },
+   {
+    "id": "D11.1",
+    "tag": "protocol addition",
+    "date": "2026-10-10",
+    "title": "How the section 10 secondary analysis is run",
+    "introduced_in": {
+     "sha": "3932eed57db1a16e6f36b95d2a3a91561578679e",
+     "utc": "2026-10-10T12:15:51+00:00"
+    }
    }
   ]
  },
@@ -511,6 +591,46 @@
   }
  ],
  "commits": [
+  {
+   "sha": "3932eed57db1a16e6f36b95d2a3a91561578679e",
+   "utc": "2026-10-10T12:15:51+00:00",
+   "subject": "protocol: D11.1 how the section 10 secondary analysis is run (protocol addition)"
+  },
+  {
+   "sha": "564138bc746e4230e96ab3fee3ddf06753fed4b6",
+   "utc": "2026-10-10T12:08:46+00:00",
+   "subject": "protocol: D10.1 exploratory record-process analysis (exploratory addition)"
+  },
+  {
+   "sha": "a86f228ad71280df9410e0054662719aa611c873",
+   "utc": "2026-10-10T11:33:40+00:00",
+   "subject": "protocol: D9.2 when D8.1 was decided (correction)"
+  },
+  {
+   "sha": "9f6557e36dc826a85a3d71d1dfa3a7218089e3be",
+   "utc": "2026-10-10T11:23:34+00:00",
+   "subject": "protocol: D9.1 who made the decisions attributed to the PI (correction); HANDOFF: state as of 2026-10-10"
+  },
+  {
+   "sha": "0241278d91b6bfd7ea0644604d440d2df2687c44",
+   "utc": "2026-10-09T09:58:31+00:00",
+   "subject": "protocol: D8.1 how the pre-registered sensitivity analyses are run and reported (protocol addition)"
+  },
+  {
+   "sha": "1757f5c8867dd1691d6ecca10d8691f76b8b152a",
+   "utc": "2026-10-09T09:38:06+00:00",
+   "subject": "protocol: D7.1 medication features of record-less stays (substantive change), D7.2 model specification (protocol addition)"
+  },
+  {
+   "sha": "e77d875c60db3a9047be1c9304ec26f2aebc255a",
+   "utc": "2026-10-09T06:43:49+00:00",
+   "subject": "protocol: D2.1a how the BCa interval is computed and how its coverage is measured (substantive change)"
+  },
+  {
+   "sha": "e245db8e17429405219758c8f24c07df21975a86",
+   "utc": "2026-10-08T10:33:46+00:00",
+   "subject": "protocol: D6.7 which rows and keys the HICL-based arms read (protocol addition)"
+  },
   {
    "sha": "769878bdb9ae6465f71c9fbecd5c8255728caef9",
    "utc": "2026-10-08T10:07:14+00:00",
@@ -753,8 +873,8 @@
   }
  ],
  "tests": {
-  "collected": 180,
-  "passed": 180,
+  "collected": 240,
+  "passed": 240,
   "failed": 0,
   "skipped": 0,
   "junit": "results\\integrity_pytest.xml"
@@ -1048,23 +1168,37 @@
   },
   {
    "stage": "Model fitting",
-   "status": "not fitted",
+   "status": "fitted",
    "artifacts": [
-    "results/models"
+    "results/models.md"
    ]
   },
   {
    "stage": "Validation",
-   "status": "not started",
+   "status": "done",
    "artifacts": [
-    "results/validation.json"
+    "results/model_metrics.csv"
    ]
   },
   {
    "stage": "Robustness",
-   "status": "not started",
+   "status": "done",
    "artifacts": [
-    "results/robustness.json"
+    "results/sensitivity.md"
+   ]
+  },
+  {
+   "stage": "Exploratory check",
+   "status": "done",
+   "artifacts": [
+    "results/exploratory_d10.md"
+   ]
+  },
+  {
+   "stage": "Secondary analysis",
+   "status": "done",
+   "artifacts": [
+    "results/secondary.md"
    ]
   }
  ]
