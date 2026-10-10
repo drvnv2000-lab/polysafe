@@ -15,7 +15,7 @@
 
 <p align="center">
 <a href="https://github.com/drvnv2000-lab/polysafe/actions/workflows/protocol.yml"><img alt="CI" src="https://github.com/drvnv2000-lab/polysafe/actions/workflows/protocol.yml/badge.svg"></a>
-<img alt="244 tests" src="https://img.shields.io/badge/tests-244%20passing-2ec4ae">
+<img alt="243 tests" src="https://img.shields.io/badge/tests-243%20passing-2ec4ae">
 <img alt="Pre-registered" src="https://img.shields.io/badge/pre--registered-append--only-3e5c76">
 <img alt="Python 3.12" src="https://img.shields.io/badge/python-3.12-3e5c76">
 <a href="LICENSE"><img alt="MIT" src="https://img.shields.io/badge/code-MIT-3e5c76"></a>

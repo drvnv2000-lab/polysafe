@@ -7,7 +7,7 @@
 <title>PolySafe: drugs and kidney injury in the ICU</title>
 <meta name="description" content="A pre-registered study on 2,520 ICU stays: does knowing a patient's drugs improve prediction of acute kidney injury?">
 <meta property="og:title" content="PolySafe: do a patient's drugs help predict kidney injury in the ICU?">
-<meta property="og:description" content="A pre-registered study of 2,520 ICU stays from 186 US hospitals, with every drug exposure classified by a pharmacist.">
+<meta property="og:description" content="A pre-registered study of 2,520 ICU stays from 186 US hospitals, and drug-order codes for the five study drugs checked by a pharmacist.">
 <meta property="og:image" content="https://drvnv2000-lab.github.io/polysafe/og.png">
 <meta property="og:url" content="https://drvnv2000-lab.github.io/polysafe/">
 <meta name="twitter:card" content="summary_large_image">
@@ -100,7 +100,7 @@ ol.time .id{font-weight:600;margin-right:8px}ol.time .tg{font-size:13px;color:va
 max-width:260px;opacity:0;transition:opacity .12s;z-index:9}
 footer{padding:40px 0 64px;border-top:1px solid var(--rule);font-size:14px;color:var(--muted)}
 @media (max-width:820px){.cols{grid-template-columns:1fr}#card{top:auto;bottom:14px;transform:none;padding:18px 20px}
-#card .big{font-size:64px}#card ol{display:none}.bar nav a:not(:last-child){display:none}section{padding:56px 0}
+#card .big{font-size:64px}#card ol{display:none}.bar nav a{font-size:13px}.bar nav{gap:12px}.bar .tag{display:none}section{padding:56px 0}
 ol.time:before{left:72px}ol.time li{grid-template-columns:62px 22px 1fr}.range div{grid-template-columns:100px 1fr 80px}}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
 </style>
@@ -108,7 +108,7 @@ ol.time:before{left:72px}ol.time li{grid-template-columns:62px 22px 1fr}.range d
 <body>
 <canvas id="stage" aria-hidden="true"></canvas>
 <header class="bar"><div><b>Poly<i>Safe</i></b><span class="mono tag">pre-registered</span></div>
-<nav><a href="report.html">Full report</a><a href="https://github.com/drvnv2000-lab/polysafe">Code</a></nav></header>
+<nav><a href="#after">Skip intro</a><a href="report.html">Full report</a><a href="https://github.com/drvnv2000-lab/polysafe">Code</a></nav></header>
 <noscript><p style="position:relative;z-index:9;padding:90px 20px">PolySafe is a pre-registered study of 2,520 ICU stays. Adding five drugs to a
 pre-specified logistic regression raised AUROC by 0.036 (95% CI 0.006 to 0.071); a flexible model gained nothing.
 See the <a href="report.html">full report</a>.</p></noscript>
@@ -296,10 +296,10 @@ const stage = (function () {
   let shown = "";
   function html(act, t, k) {
     if (act === 0) return `<div class="mono">A pre-registered study</div><h1>Do a patient's drugs help predict kidney injury?</h1>
-      <p class="lede">${first.stays.toLocaleString()} ICU stays from 186 US hospitals, with every drug exposure classified by a pharmacist.</p>
+      <p class="lede">${first.stays.toLocaleString()} ICU stays from 186 US hospitals, and the drug-order codes for five study drugs adjudicated by a pharmacist.</p>
       <span class="mono hint">Scroll</span>`;
     if (act === 1) return `<div class="mono">The database</div><div class="big">${first.stays.toLocaleString()}</div>
-      <div class="what">ICU stays from 186 hospitals</div><div class="why">One dot is one stay. Some hospitals record the drugs patients receive. Most do not.</div>`;
+      <div class="what">ICU stays from 186 hospitals</div><div class="why">One dot is one stay. Positions are schematic: they show the scale, not real hospital sizes. Some hospitals record drug orders. Most do not.</div>`;
     if (act === 2) { const f = D.flow[k];
       return `<div class="mono">Who is analysed · step ${k + 1} of ${D.flow.length}</div><div class="big t">${f.stays.toLocaleString()}</div>
       <div class="what">${f.step}</div><div class="why">${f.reason || ""}</div>
@@ -315,7 +315,7 @@ const stage = (function () {
         <circle cx="${X(m.d)}" cy="11" r="3.2" fill="${m.lo > 0 ? "#2ec4ae" : "#8fb0cc"}"/></svg><span>${fmt(m.d)}</span></div>`; };
     return `<div class="mono">The answer</div><div class="big t">${fmt(v)}</div>
       <div class="what">AUROC gain from adding five drugs to the planned model</div>
-      <div class="why">95% interval ${fmt(m0.lo)} to ${fmt(m0.hi)}. A more flexible model, LightGBM, gained ${fmt(m1.d)}: nothing.</div>
+      <div class="why">95% interval ${fmt(m0.lo)} to ${fmt(m0.hi)}. A more flexible model, LightGBM, gained ${fmt(m1.d)}: nothing. Drugs here are orders, not confirmed administrations, and the result is internally validated only: a signal that needs external validation.</div>
       <div class="range">${D.models.map(row).join("")}</div><span class="mono hint">Keep reading</span>`;
   }
   const prog = $("prog");
