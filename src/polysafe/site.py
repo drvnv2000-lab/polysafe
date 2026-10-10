@@ -64,6 +64,8 @@ def payload(results: Path = RESULTS) -> dict:
              "utc": d["introduced_in"].get("utc", "") if isinstance(d["introduced_in"], dict)
              else ""} for d in integ["preregistration"]["deviations"]]
     tests = integ.get("tests", {})
+    dca = pd.read_csv(results / "model_decision_curve.csv")
+    show = json.loads((results / "showcase.json").read_text(encoding="utf-8"))
     return {
         "flow": [{"step": r.step, "removed": None if pd.isna(r.removed) else int(r.removed),
                   "stays": int(r.stays), "patients": int(r.patients), "events": int(r.events),
@@ -85,6 +87,9 @@ def payload(results: Path = RESULTS) -> dict:
         "results_utc": "2026-10-09T09:54:50+00:00",  # a713fd2, the section 8 results commit
         "tests": tests.get("passed") if isinstance(tests, dict) else None,
         "repo": REPO,
+        "dca": [{"t": _f(r.threshold), "all": _f(r.treat_all), "clin": _f(r.lr_reduced_clinical),
+                 "med": _f(r.lr_reduced_medication)} for r in dca.itertuples()],
+        "show": show["exposures"],
     }
 
 

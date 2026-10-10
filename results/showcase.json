@@ -1,0 +1,200 @@
+{
+ "cohort_stays": 671,
+ "exposures": [
+  {
+   "exposure": "vancomycin",
+   "stays": {
+    "generic_string": 64,
+    "generic_brand": 75,
+    "hicl_gtc": 106
+   },
+   "strings": [
+    {
+     "label": "No drug name, HICL code 4042",
+     "rows": 46,
+     "text_finds": false
+    },
+    {
+     "label": "VANCOMYCIN HCL 1000 MG IV SOLR",
+     "rows": 14,
+     "text_finds": true
+    },
+    {
+     "label": "VANCOCIN",
+     "rows": 12,
+     "text_finds": false
+    },
+    {
+     "label": "VANCOMYCIN HCL 1 GM VIAL",
+     "rows": 11,
+     "text_finds": true
+    },
+    {
+     "label": "VANCOMYCIN",
+     "rows": 9,
+     "text_finds": true
+    },
+    {
+     "label": "No drug name, HICL code 8466",
+     "rows": 8,
+     "text_finds": false
+    }
+   ]
+  },
+  {
+   "exposure": "piperacillin-tazobactam",
+   "stays": {
+    "generic_string": 31,
+    "generic_brand": 54,
+    "hicl_gtc": 93
+   },
+   "strings": [
+    {
+     "label": "No drug name, HICL code 8738",
+     "rows": 39,
+     "text_finds": false
+    },
+    {
+     "label": "No drug name, HICL code 32900",
+     "rows": 19,
+     "text_finds": false
+    },
+    {
+     "label": "ZOSYN",
+     "rows": 17,
+     "text_finds": false
+    },
+    {
+     "label": "PIPERACILLIN SOD-TAZOBACTAM SO 3-0.375 G IV SOLR",
+     "rows": 11,
+     "text_finds": true
+    },
+    {
+     "label": "PIPERACILLIN-TAZOBACTAM 3.375 G MINI-BAG PLUS",
+     "rows": 7,
+     "text_finds": true
+    },
+    {
+     "label": "PIPERACILLIN/TAZOBACTAM SOD 3.375 GM  VIAL",
+     "rows": 6,
+     "text_finds": true
+    }
+   ]
+  },
+  {
+   "exposure": "furosemide",
+   "stays": {
+    "generic_string": 94,
+    "generic_brand": 127,
+    "hicl_gtc": 141
+   },
+   "strings": [
+    {
+     "label": "FUROSEMIDE",
+     "rows": 28,
+     "text_finds": true
+    },
+    {
+     "label": "No drug name, HICL code 3660",
+     "rows": 24,
+     "text_finds": false
+    },
+    {
+     "label": "LASIX",
+     "rows": 21,
+     "text_finds": false
+    },
+    {
+     "label": "Lasix",
+     "rows": 17,
+     "text_finds": false
+    },
+    {
+     "label": "4 ml vial : furosemide 10 mg/ml ij soln",
+     "rows": 12,
+     "text_finds": true
+    },
+    {
+     "label": "FUROSEMIDE 10 MG/1 ML 4ML SDV INJ",
+     "rows": 11,
+     "text_finds": true
+    }
+   ]
+  },
+  {
+   "exposure": "NSAIDs",
+   "stays": {
+    "generic_string": 8,
+    "generic_brand": 10,
+    "hicl_gtc": 24
+   },
+   "strings": [
+    {
+     "label": "No drug name, HICL code 5175",
+     "rows": 8,
+     "text_finds": false
+    },
+    {
+     "label": "No drug name, HICL code 3723",
+     "rows": 7,
+     "text_finds": false
+    },
+    {
+     "label": "KETOROLAC TROMETHAMINE",
+     "rows": 5,
+     "text_finds": true
+    },
+    {
+     "label": "No drug name, HICL code 12181",
+     "rows": 3,
+     "text_finds": false
+    },
+    {
+     "label": "IBUPROFEN",
+     "rows": 2,
+     "text_finds": true
+    },
+    {
+     "label": "KETOROLAC INJ",
+     "rows": 2,
+     "text_finds": true
+    }
+   ]
+  },
+  {
+   "exposure": "iodinated contrast",
+   "stays": {
+    "generic_string": 6,
+    "generic_brand": 8,
+    "hicl_gtc": 9
+   },
+   "strings": [
+    {
+     "label": "100 ML GLASS CONT : IOPAMIDOL 76 % IV SOLN",
+     "rows": 4,
+     "text_finds": true
+    },
+    {
+     "label": "IOHEXOL 350 MG IODINE/ML IV SOLN",
+     "rows": 2,
+     "text_finds": true
+    },
+    {
+     "label": "No drug name, HICL code 151",
+     "rows": 2,
+     "text_finds": false
+    },
+    {
+     "label": "30 ML  -  IOPAMIDOL 61 % IV SOLN",
+     "rows": 1,
+     "text_finds": true
+    },
+    {
+     "label": "No drug name, HICL code 150",
+     "rows": 1,
+     "text_finds": false
+    }
+   ]
+  }
+ ]
+}

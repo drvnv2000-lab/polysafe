@@ -1,5 +1,11 @@
 # PolySafe
 
+[![Live study page](https://img.shields.io/badge/live-study%20page-0b8a7a)](https://drvnv2000-lab.github.io/polysafe/)
+[![protocol-integrity](https://github.com/drvnv2000-lab/polysafe/actions/workflows/protocol.yml/badge.svg)](https://github.com/drvnv2000-lab/polysafe/actions/workflows/protocol.yml)
+![Pre-registered](https://img.shields.io/badge/pre--registered-append--only-3e5c76)
+![Python 3.12](https://img.shields.io/badge/python-3.12-3e5c76)
+[![License: MIT](https://img.shields.io/badge/code-MIT-3e5c76)](LICENSE)
+
 **Does knowing which drugs an ICU patient is on improve prediction of acute kidney
 injury?** An internally validated prediction study on the eICU Collaborative Research
 Database (Demo v2.0.1, 186 US hospitals), with a pre-registered primary analysis, disclosed
@@ -111,6 +117,13 @@ plausible explanation.
 | Software | Python 3.12; pandas 2.3.3, numpy 1.26.4, scikit-learn 1.9.1, lightgbm 4.7.0 (`requirements.txt`) |
 | Pre-registration | [`PREREGISTRATION.md`](PREREGISTRATION.md), committed before any model was fitted; changes only by appended Deviations (D1-D12), enforced by a test over every commit |
 
+**Reading the protocol.** [`PREREGISTRATION.md`](PREREGISTRATION.md) is append-only, so
+earlier text is never edited; corrections are later entries. Its header names a PI; D9.1
+corrects that: every decision was made by the author, Dr. Varad Vaidya (PharmD). D9.2
+records that the sensitivity-analysis details (D8.1) were fixed after the primary result was
+seen. [`DATA_REPORT.md`](DATA_REPORT.md) holds the measured data facts the protocol was
+built on.
+
 ## Limitations
 
 - 78 events (EPV 4.6): internal validation only, and an exploratory prediction study, not
@@ -151,6 +164,8 @@ docker build -t polysafe-lab . && docker run -p 8000:8000 polysafe-lab
 
 ## Authorship
 
-Designed, analysed and drug-classified by Dr. Varad Vaidya (PharmD). Code was written with
+Designed, analysed and drug-classified by Dr. Varad Vaidya (PharmD). Cite with
+[`CITATION.cff`](CITATION.cff). Code: MIT. Data: eICU-CRD Demo v2.0.1, ODbL, not
+redistributed here. Code was written with
 AI assistance (Claude); every analytic decision is recorded in the pre-registration with
 its date and whether results had been seen.

@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+title: "PolySafe: does medication exposure improve ICU acute kidney injury prediction? A pre-registered study on eICU-CRD Demo"
+authors:
+  - family-names: Vaidya
+    given-names: Varad
+type: software
+license: MIT
+repository-code: "https://github.com/drvnv2000-lab/polysafe"
+url: "https://drvnv2000-lab.github.io/polysafe/"
+date-released: "2026-10-10"
+keywords:
+  - acute kidney injury
+  - clinical prediction model
+  - pre-registration
+  - eICU
+  - pharmacoepidemiology
+references:
+  - type: data
+    title: "eICU Collaborative Research Database Demo (version 2.0.1)"
+    authors:
+      - name: "PhysioNet"
+    url: "https://physionet.org/content/eicu-crd-demo/2.0.1/"

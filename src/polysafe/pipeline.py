@@ -30,6 +30,8 @@ from polysafe import (
     power,
     secondary,
     sensitivity,
+    showcase,
+    site,
 )
 
 
@@ -45,8 +47,10 @@ def steps(workers: int, simulations: bool) -> list[tuple[str, object]]:
             ("exploratory", lambda: exploratory.main(w)),
             ("secondary", lambda: secondary.main([])),
             ("figures", lambda: figures.main([])),
+            ("showcase", lambda: showcase.main([])),
             ("integrity", integrity.main),
-            ("lab", lambda: (lab.build_lab(), 0)[1])]
+            ("lab", lambda: (lab.build_lab(), 0)[1]),
+            ("site", lambda: site.main([]))]
     return out
 
 
