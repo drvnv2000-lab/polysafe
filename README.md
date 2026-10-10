@@ -25,7 +25,7 @@
 injury?** An internally validated prediction study on the eICU Collaborative Research
 Database (Demo v2.0.1, 186 US hospitals), with a pre-registered primary analysis, disclosed
 post-result sensitivity specifications, and drug exposure classified from
-pharmacist-adjudicated HICL mappings.
+HICL mappings reviewed by a PharmD.
 
 ![Cohort flow](docs/fig/cohort_flow.svg)
 
@@ -123,7 +123,7 @@ plausible explanation.
 | Exclusions | Stay < 24 h; chronic dialysis/ESRD; AKI or RRT by T; no baseline; no observable outcome |
 | Estimand | Among ICU stays at hospitals that record medication orders (site-level restriction; record availability is never a predictor, and a missing record is never coded unexposed) |
 | Exposure | An active medication order in [0, T], not cancelled (D6.4). eICU records orders, not administrations |
-| Drug classification | HICL codes, adjudicated key by key by a PharmD (171 review-packet keys) |
+| Drug classification | HICL codes; mappings for the study agents and drug classes reviewed by a PharmD (reviewed and unreviewed tiers: `mapping/review/REVIEW_PACKET.md`) |
 | Predictors | 74 clinical features at T with their missingness ([`results/features_clinical.md`](results/features_clinical.md)); the primary model uses the reduced set of D4.4 with median imputation, missingness indicators and standardisation fitted in the training fold; medication features as D7.1-D7.2 |
 | Validation | Repeated stratified patient-grouped CV, 5 folds x 10 repeats; L2 strength (13 values) or LightGBM grid tuned by inner patient-grouped log loss; each stay's 10 out-of-fold predictions averaged; patient-level BCa, 10,000 resamples |
 | Software | Python 3.12; pandas 2.3.3, numpy 1.26.4, scikit-learn 1.9.1, lightgbm 4.7.0 (`requirements.txt`) |
