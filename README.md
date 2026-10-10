@@ -1,19 +1,30 @@
-# PolySafe
+<p align="center"><img src="docs/hero.svg" alt="PolySafe: 2,520 ICU stays, 671 analysed, 78 with kidney injury; +0.036 AUROC" width="100%"></p>
 
-[![Live study page](https://img.shields.io/badge/live-study%20page-0b8a7a)](https://drvnv2000-lab.github.io/polysafe/)
-[![protocol-integrity](https://github.com/drvnv2000-lab/polysafe/actions/workflows/protocol.yml/badge.svg)](https://github.com/drvnv2000-lab/polysafe/actions/workflows/protocol.yml)
-![Pre-registered](https://img.shields.io/badge/pre--registered-append--only-3e5c76)
-![Python 3.12](https://img.shields.io/badge/python-3.12-3e5c76)
-[![License: MIT](https://img.shields.io/badge/code-MIT-3e5c76)](LICENSE)
+<p align="center">
+<a href="https://drvnv2000-lab.github.io/polysafe/"><b>Live study page</b></a> ·
+<a href="PREREGISTRATION.md">Pre-registration</a> ·
+<a href="results/final_model.md">Final model</a> ·
+<a href="https://github.com/drvnv2000-lab/polysafe/releases/tag/v1.0.0">v1.0.0</a>
+</p>
+
+<p align="center">
+<a href="https://drvnv2000-lab.github.io/polysafe/"><img src="docs/tour.gif" alt="A 50 second tour of the study page" width="720"></a><br>
+<sub>50 second tour of the live page</sub>
+</p>
+
+<p align="center">
+<a href="https://github.com/drvnv2000-lab/polysafe/actions/workflows/protocol.yml"><img alt="CI" src="https://github.com/drvnv2000-lab/polysafe/actions/workflows/protocol.yml/badge.svg"></a>
+<img alt="244 tests" src="https://img.shields.io/badge/tests-244%20passing-2ec4ae">
+<img alt="Pre-registered" src="https://img.shields.io/badge/pre--registered-append--only-3e5c76">
+<img alt="Python 3.12" src="https://img.shields.io/badge/python-3.12-3e5c76">
+<a href="LICENSE"><img alt="MIT" src="https://img.shields.io/badge/code-MIT-3e5c76"></a>
+</p>
 
 **Does knowing which drugs an ICU patient is on improve prediction of acute kidney
 injury?** An internally validated prediction study on the eICU Collaborative Research
 Database (Demo v2.0.1, 186 US hospitals), with a pre-registered primary analysis, disclosed
 post-result sensitivity specifications, and drug exposure classified from
 pharmacist-adjudicated HICL mappings.
-
-**[Explore the study: live page](https://drvnv2000-lab.github.io/polysafe/)**: the cohort,
-the result, and how it moves when drugs are counted differently.
 
 ![Cohort flow](results/figures/cohort_flow.svg)
 
