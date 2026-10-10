@@ -1267,3 +1267,17 @@ fitted; no model output had been seen.
     result.
 Decided by the PI while the primary model run was in progress; no model
 output had been seen by the PI or the analyst when these choices were made.
+
+### D9 — 2026-10-10, after the section 8 results were seen
+
+**D9.1 [correction] Who made the decisions this document attributes to the PI.**
+  - The header line "PI: Vinay (Pharm D). All clinical definitions below are
+    his decisions." is wrong. Every clinical definition, the drug
+    classification (including the adjudication of the 171 review-packet keys
+    on 2026-10-06) and every decision in D1-D8 attributed to "the PI" was
+    made by Dr. Varad Vaidya (PharmD), who is also the analyst. Vinay had no
+    role in the study.
+  - The header line stays as written because this document is append-only;
+    read it, and every "PI" in sections 1-11, as Varad Vaidya.
+  - No definition, analysis or result changes.
+Recorded after the section 8 results were seen; it concerns attribution only.

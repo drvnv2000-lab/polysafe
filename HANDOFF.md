@@ -8,8 +8,39 @@ Read `DATA_REPORT.md` first: it has the measured counts this spec is built on.
 > pre-registration differ, the pre-registration wins. It may only change through
 > its append-only Deviations section.
 
-**Project owner / PI: Vinay (Pharm D).** He decides clinical definitions,
-drug classifications and final claims. Ask before changing any of them.
+**Analyst and drug-classification reviewer: Dr. Varad Vaidya (PharmD).** He
+built the project, adjudicated the HICL mapping (171 review-packet keys,
+2026-10-06) and made every decision the pre-registration attributes to "the
+PI" (D9.1). He decides clinical definitions, drug classifications and final claims.
+
+## State as of 2026-10-10 (rebuilt from git log and PREREGISTRATION D5-D8)
+
+Steps 1-6 are done. The primary comparison has run. What remains is step 7
+(sensitivity analyses, specified in D8.1, not run), step 8, step 9 and the
+three figures.
+
+**Primary result** (`results/models.md`, commit `a713fd2`, 2026-10-09).
+Primary cohort: 671 stays, 78 AKI, medication-recording hospitals, baseline A.
+Repeated patient-grouped CV (5 folds x 10 repeats), patient-level BCa, 10,000 resamples.
+
+| Spec | AUROC clinical | AUROC +medication | Paired dAUROC (95% BCa) |
+|---|---|---|---|
+| Reduced L2 LR (primary, D7.2) | 0.641 | 0.677 | **+0.036 (0.006 to 0.071)** |
+| LightGBM (secondary) | 0.657 | 0.659 | +0.002 (-0.009 to 0.015) |
+| Full penalised LR (sensitivity) | 0.624 | 0.640 | +0.016 (0.001 to 0.034) |
+
+80%-power threshold (section 9, D2.1a): dAUROC 0.031. Calibration slopes:
+LR 1.05 / 1.12, LightGBM 0.81 / 0.81. **The LR-vs-LightGBM disagreement is
+the first thing a reviewer will raise; the README must report both.**
+
+**Open items**
+- Step 7: D8.1 analyses not run (20 ascertainment analyses, full cohort n=868,
+  >=48 h follow-up n=314, baseline C n=497, hospital clusters, ethnicity).
+- `tests/test_review.py::test_end_to_end_decision_to_stay_level_exposure` still
+  has its TODO: the builder (`polysafe.ascertain`) exists but the test is not
+  yet re-pointed at it.
+- Figures not built: cohort flow (CONSORT), calibration curves, paired dAUROC.
+- Step 8 (pre-specified agents) and step 9 (FastAPI, Docker, CI, README) not started.
 
 ## The research question
 
@@ -124,11 +155,11 @@ event count at each step — as `results/cohort_flow.md`.
 | 2a | **Done.** Cohort with the RRT-at-T exclusion; report the flow. |
 | 2b | **Done** (`results/cohort_flow.md`, `results/aki_labels.md`). AKI labels for baselines A and C under the pre-registered outcome (7-day window censored at ICU discharge, RRT rule). Incidence for both, post-T follow-up distribution, comparison with DATA_REPORT's provisional 22.6%. |
 | 2c | **Done** (PREREGISTRATION 9.1, deviations D2-D3). **Power simulation** (pre-registration section 9) on the real cohort, real patient grouping and real fold structure. Append the result to PREREGISTRATION.md section 9 and commit — **before any model is trained.** |
-| 3 | **Draft ready for PI review** (`mapping/hicl_draft.csv`, `mapping/MAPPING_REPORT.md`). **Drug normalization** on HICL — see below. The PI does the clinical mapping. |
-| 4 | **Clinical part done** (`results/features_clinical.md`, 74 features; APACHE excluded per D3.1). Medication features wait for the reviewed mapping. |
-| 5 | Clinical-only model (logistic regression, then gradient boosting). |
-| 6 | Clinical + medication model. **The headline is the paired difference.** When the medication feature builder is written, re-point `tests/test_review.py::test_end_to_end_decision_to_stay_level_exposure` at the builder itself: a builder that bypasses `review.rows_counted` must fail it. |
-| 7 | Evaluation as in Validation design, plus the four exposure-ascertainment sensitivity analyses (pre-registration section 6). |
+| 3 | **Done.** HICL draft (`mapping/`); PI adjudication of the 171 review-packet keys (2026-10-06); brand alias list (D5.14b); review-corrected arm (D6.3). |
+| 4 | **Done.** Clinical features (74; APACHE excluded per D3.1). Medication exposure by `polysafe.ascertain`: five ascertainment arms (D6.2-D6.7), `results/exposure_prevalence.csv`. |
+| 5 | **Done** (2026-10-09). Clinical-only reduced L2 LR (D7.2), LightGBM, full penalised LR; patient-level BCa (D2.1a) and its coverage re-run. |
+| 6 | **Done** (2026-10-09, `results/models.md`). Paired dAUROC above. **Still open:** re-point `tests/test_review.py::test_end_to_end_decision_to_stay_level_exposure` at `polysafe.ascertain` so a builder that bypasses `review.rows_counted` fails it. |
+| 7 | **Specified, not run** (D8.1). Calibration and decision-curve data exist for the section 8 models; sensitivity analyses do not. |
 | 8 | Secondary: pre-specified agents (vancomycin, piperacillin-tazobactam, furosemide; ondansetron as negative control), propensity-adjusted, associational language only. |
 | 9 | FastAPI + Docker + README with real numbers. |
 
