@@ -13,7 +13,7 @@ built the project, adjudicated the HICL mapping (171 review-packet keys,
 2026-10-06) and made every decision the pre-registration attributes to "the
 PI" (D9.1). He decides clinical definitions, drug classifications and final claims.
 
-## State as of 2026-10-10
+## State as of 2026-10-10 (end of day)
 
 Rebuilt from the full git history, PREREGISTRATION D1-D9, and the complete
 Claude Code transcript of 2026-10-04 to 2026-10-09 (session `efe2395d`, 4,686
@@ -71,32 +71,22 @@ excluded), iodinated contrast; HICL + gtc arm, primary variant.
 **The LR-vs-LightGBM disagreement is the first thing a reviewer will raise;
 the README reports both.**
 
-### Integrity issue to resolve before anything else
-D8.1 ends: "Decided by the PI while the primary model run was in progress; no
-model output had been seen by the PI or the analyst when these choices were
-made." The executor flagged on 2026-10-09 that the record cannot confirm this:
-the run ended 15:24:34, the full `results/models.md` was printed shortly after,
-the prepared D8 files were written at 15:26:44, and D8.1 was committed at
-15:28:31, after the results commit (`a713fd2`, 15:24:50). Anyone reading the
-git log will see the order. It needs a factual correction entry stating this
-timeline; the PI states what he had seen.
+### Done on 2026-10-10
+- D9.1 (attribution), D9.2 (D8.1 was finalised after the primary result was seen).
+- Step 7: D8.1 sensitivity analyses (`results/sensitivity.md`); the primary arm
+  reproduces +0.036 exactly. Figures in `results/figures/` (`polysafe.figures`).
+- D10.1 exploratory record-process check (`results/exploratory_d10.md`): E1 -0.001,
+  E2 +0.035; marker present in 89% of stays, so the check is weak.
+- Step 8: D11.1 secondary analysis (`results/secondary.md`).
+- Step 9: Research Lab sections, FastAPI (`polysafe.app`), Dockerfile, CI lint + image
+  check, one-command `polysafe.pipeline`, README with every number tested
+  (`tests/test_readme.py`).
+- Two independent ChatGPT reviews; their edits adopted in the README.
 
-### Open items, in order
-1. Correction entry for the D8.1 timing (above).
-2. Step 7: write and run the D8.1 sensitivity analyses (20 ascertainment
-   analyses, full cohort n=868, >=48 h follow-up n=314, baseline C n=497,
-   hospital clusters, ethnicity). Primary LR comparison only; LightGBM is not
-   repeated.
-3. Re-point `tests/test_review.py::test_end_to_end_decision_to_stay_level_exposure`
-   at `polysafe.ascertain` (its TODO is still open).
-4. Figures from real output: cohort flow (CONSORT), calibration curves with
-   slope/intercept, paired dAUROC.
-5. Step 8: pre-specified agents, propensity-adjusted, associational language.
-6. Step 9 per `DEMO_SCOPE.md` (locked 2026-10-04): one app, the "PolySafe
-   Research Lab" (`python -m polysafe.lab` -> `results/lab/index.html`; today
-   Overview + Research Integrity). Add Measurement Lab, Conclusion Robustness
-   and Failure Injection only when their artifacts exist. **No per-patient
-   prediction card** (EPV 4.6). Then Docker, CI, README with real numbers.
+### Open, not blocking
+- No single final model with coefficients; calibration slope/intercept have no CIs.
+- Docker image is checked in CI only (not built on the laptop).
+- Failure Injection (DEMO_SCOPE) not built; its section stays hidden by design.
 
 ## The research question
 
