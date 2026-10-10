@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-10-10T12:30:34+00:00",
+ "generated_utc": "2026-10-10T13:11:40+00:00",
  "preregistration": {
   "path": "PREREGISTRATION.md",
   "sections": [
@@ -525,6 +525,16 @@
      "sha": "3932eed57db1a16e6f36b95d2a3a91561578679e",
      "utc": "2026-10-10T12:15:51+00:00"
     }
+   },
+   {
+    "id": "D12.1",
+    "tag": "protocol addition",
+    "date": "2026-10-10",
+    "title": "The reported final model and calibration intervals",
+    "introduced_in": {
+     "sha": "816a698953f6b2e1f44cb59f50aedb97a126472f",
+     "utc": "2026-10-10T12:37:42+00:00"
+    }
    }
   ]
  },
@@ -591,6 +601,11 @@
   }
  ],
  "commits": [
+  {
+   "sha": "816a698953f6b2e1f44cb59f50aedb97a126472f",
+   "utc": "2026-10-10T12:37:42+00:00",
+   "subject": "protocol: D12.1 the reported final model and calibration intervals (protocol addition)"
+  },
   {
    "sha": "3932eed57db1a16e6f36b95d2a3a91561578679e",
    "utc": "2026-10-10T12:15:51+00:00",
@@ -873,8 +888,8 @@
   }
  ],
  "tests": {
-  "collected": 240,
-  "passed": 240,
+  "collected": 243,
+  "passed": 243,
   "failed": 0,
   "skipped": 0,
   "junit": "results\\integrity_pytest.xml"
