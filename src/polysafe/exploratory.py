@@ -108,7 +108,8 @@ def run(results: Path, workers: int) -> int:
     for r in table.itertuples():
         md.append(f"| {r.analysis} | {r.comparison} | {r.auroc_without:.3f} | "
                   f"{r.auroc_with:.3f} | {r.dauroc:+.3f} ({r.lo:.3f} to {r.hi:.3f}) |")
-    md += ["", "## U by AKI status (stays)", "", md_table(by_aki.reset_index().rename(columns={"index": "U"})), "",
+    by_aki = by_aki.reset_index().rename(columns={"index": "U"})
+    md += ["", "## U by AKI status (stays)", "", md_table(by_aki), "",
            f"Hospitals in the primary cohort: {hosp.notna().sum()}; share of stays with U = 1 "
            f"by hospital: median {hosp.median():.2f}, hospitals with U = 1 in every stay "
            f"{int((hosp == 1).sum())}, in no stay {int((hosp == 0).sum())}.", "",

@@ -55,7 +55,7 @@ def test_preregistration_parser():
     tags = {d["id"]: d["tag"] for d in p["deviations"]}
     assert tags["D1.2"] == "correction" and tags["D5.13"] == "correction"
     assert set(tags.values()) <= {"clarification", "correction", "protocol addition",
-                                  "substantive change"}
+                                  "substantive change", "exploratory addition"}  # D10.1
 
 
 def test_every_correction_verifies_against_the_text():
