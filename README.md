@@ -27,7 +27,7 @@ Database (Demo v2.0.1, 186 US hospitals), with a pre-registered primary analysis
 post-result sensitivity specifications, and drug exposure classified from
 pharmacist-adjudicated HICL mappings.
 
-![Cohort flow](results/figures/cohort_flow.svg)
+![Cohort flow](docs/fig/cohort_flow.svg)
 
 ## The answer
 
@@ -53,9 +53,9 @@ improve: 0.216 (0.145-0.302) vs 0.213 (0.149-0.288) for the primary model. Sourc
 [`results/models.md`](results/models.md); the fitted model, with every coefficient, in
 [`results/final_model.md`](results/final_model.md).
 
-![Paired dAUROC](results/figures/dauroc.svg)
+![Paired dAUROC](docs/fig/dauroc.svg)
 
-![Calibration](results/figures/calibration.svg)
+![Calibration](docs/fig/calibration.svg)
 
 ## What moves the answer
 

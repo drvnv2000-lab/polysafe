@@ -34,6 +34,11 @@ padding:14px clamp(16px,3vw,32px);background:#070d12ee;backdrop-filter:blur(8px)
 .bar nav{display:flex;gap:18px;font-size:14px}
 .bar nav a{color:var(--ink);text-decoration:none;opacity:.8}.bar nav a:hover{opacity:1}
 .tag{border:1px solid var(--aki);color:var(--aki);border-radius:4px;padding:2px 8px;margin-left:12px;vertical-align:3px}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(60vw 50vh at 88% 8%,#2ec4ae18,transparent 70%),radial-gradient(55vw 55vh at 6% 96%,#3e5c7630,transparent 70%),radial-gradient(40vw 40vh at 50% 50%,#f2a94a08,transparent 70%)}
+#prog{position:fixed;top:0;left:0;height:2px;width:0;z-index:7;background:linear-gradient(90deg,#2ec4ae,#f2a94a);box-shadow:0 0 12px #2ec4ae99}
+.rv{opacity:0;transform:translateY(26px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}.rv.in{opacity:1;transform:none}
+#card{box-shadow:0 20px 70px #00000066,0 0 0 1px #ffffff0a inset}
+#card .big{text-shadow:0 0 38px currentColor}
 #spacer{position:relative;z-index:1;height:770vh}
 #card{position:fixed;z-index:3;left:clamp(16px,5vw,72px);top:50%;transform:translateY(-50%);width:min(500px,calc(100vw - 32px));
 padding:26px 28px;border:1px solid #ffffff14;border-radius:16px;background:#070d12b8;backdrop-filter:blur(12px);
@@ -108,6 +113,7 @@ ol.time:before{left:72px}ol.time li{grid-template-columns:62px 22px 1fr}.range d
 pre-specified logistic regression raised AUROC by 0.036 (95% CI 0.006 to 0.071); a flexible model gained nothing.
 See the <a href="report.html">full report</a>.</p></noscript>
 
+<div id="prog"></div>
 <div id="spacer" aria-hidden="true"></div>
 <div id="card" role="status" aria-live="polite"></div>
 
@@ -228,6 +234,10 @@ const stage = (function () {
   const hosp = new Uint8Array(N);
   for (let i = 0; i < N; i++) { ph[i] = rnd() * 6.283; gx[i] = (rnd() + rnd() + rnd() - 1.5); gy[i] = (rnd() + rnd() + rnd() - 1.5);
     hosp[i] = Math.floor(rnd() * 186); x[i] = rnd() * 1000; y[i] = rnd() * 800; al[i] = 0; }
+  const spr = c => { const k = document.createElement("canvas"); k.width = k.height = 64; const g = k.getContext("2d"), r = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+    r.addColorStop(0, c + "ff"); r.addColorStop(.25, c + "88"); r.addColorStop(1, c + "00"); g.fillStyle = r; g.fillRect(0, 0, 64, 64); return k; };
+  const glowA = spr("#f2a94a"), glowT = spr("#2ec4ae"); let mx = .5, my = .5, sx = .5, sy = .5;
+  addEventListener("pointermove", e => { mx = e.clientX / innerWidth; my = e.clientY / innerHeight; }, { passive: true });
   let key = "", mode = 0, k = 0, rad = 2, time = 0, fade = 1;
   function size() { dpr = Math.min(2, devicePixelRatio || 1); W = innerWidth; H = innerHeight;
     cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); narrow = W < 820;
@@ -256,18 +266,20 @@ const stage = (function () {
     time = now / 1000;
     const kk = mode + ":" + k + ":" + W + ":" + H;
     if (kk !== key) { key = kk; layout(); }
-    ctx.clearRect(0, 0, W, H);
+    ctx.clearRect(0, 0, W, H); sx += (mx - sx) * .05; sy += (my - sy) * .05; const rot = mode === 0 && !reduce ? time * .035 : 0, cr = Math.cos(rot), sr = Math.sin(rot);
     const spd = reduce ? 1 : .09, evAmber = mode >= 2 || (mode === 1 && false);
     const pulse = mode === 3 ? 1 + .55 * Math.sin(time * 3) : 1;
     for (let i = 0; i < N; i++) {
       x[i] += (tx[i] - x[i]) * spd; y[i] += (ty[i] - y[i]) * spd; al[i] += (ta[i] - al[i]) * spd;
-      const wob = reduce ? 0 : 1.2, px = x[i] + Math.sin(time * .8 + ph[i]) * wob, py = y[i] + Math.cos(time * .7 + ph[i]) * wob;
+      const wob = reduce ? 0 : 1.2, d = reduce ? 0 : 3 + (i % 5) * 3.2; let px = x[i] + Math.sin(time * .8 + ph[i]) * wob + (sx - .5) * d * 2, py = y[i] + Math.cos(time * .7 + ph[i]) * wob + (sy - .5) * d * 2;
+      if (rot) { const dx = px - cx, dy = py - cy; px = cx + dx * cr - dy * sr; py = cy + dx * sr + dy * cr; }
       const ev = isEv[i] && evAmber && al[i] > .3;
       ctx.globalAlpha = al[i] * fade;
       ctx.fillStyle = ev ? "#f2a94a" : (mode === 0 ? (i % 9 === 0 ? "#2ec4ae" : "#8fb0cc") : "#8fb0cc");
       const rr = rad * (ev ? pulse : 1);
       ctx.beginPath(); ctx.arc(px, py, rr, 0, 6.283); ctx.fill();
-      if (ev && mode === 3) { ctx.globalAlpha = .18 * fade * al[i]; ctx.beginPath(); ctx.arc(px, py, rr * 3, 0, 6.283); ctx.fill(); }
+      if (ev || (mode === 0 && i % 9 === 0)) { ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = (ev ? .32 : .38) * al[i] * fade; const g = rr * (ev ? 7 : 6); ctx.drawImage(ev ? glowA : glowT, px - g, py - g, 2 * g, 2 * g); ctx.globalCompositeOperation = "source-over"; }
+      if (false) { ctx.globalAlpha = .18 * fade * al[i]; ctx.beginPath(); ctx.arc(px, py, rr * 3, 0, 6.283); ctx.fill(); }
     }
     ctx.globalAlpha = 1;
     requestAnimationFrame(frame);
@@ -306,7 +318,9 @@ const stage = (function () {
       <div class="why">95% interval ${fmt(m0.lo)} to ${fmt(m0.hi)}. A more flexible model, LightGBM, gained ${fmt(m1.d)}: nothing.</div>
       <div class="range">${D.models.map(row).join("")}</div><span class="mono hint">Keep reading</span>`;
   }
+  const prog = $("prog");
   function onScroll() {
+    prog.style.width = (scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight) * 100) + "%";
     const p = scrollY / innerHeight; let act = 0;
     for (let i = 0; i < B.length - 1; i++) if (p >= B[i]) act = i;
     if (p >= B[B.length - 1]) act = 5;
@@ -319,6 +333,8 @@ const stage = (function () {
     const key = a + ":" + kk + (a === 4 ? ":" + Math.round(t * 60) : "");
     if (key !== shown) { shown = key; card.innerHTML = html(a, a === 4 ? (act === 5 ? 1 : t) : t, kk); }
   }
+  if (!reduce && "IntersectionObserver" in window) { const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: .12, rootMargin: "0px 0px -6% 0px" });
+    document.querySelectorAll("#after section h2, #after section .mono, #after section p, #after section .tabs, #after section svg, #after section .cols > *").forEach(n => { n.classList.add("rv"); io.observe(n); }); }
   addEventListener("scroll", onScroll, { passive: true }); addEventListener("resize", onScroll); onScroll();
 })();
 
