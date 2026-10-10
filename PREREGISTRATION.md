@@ -1356,3 +1356,23 @@ computed.
     inadequate (section 10).
 Specified on 2026-10-10 by the PI after the prediction results were seen
 and before any association estimate was computed.
+
+### D12 — 2026-10-10, after all model results were seen
+
+**D12.1 [protocol addition] The reported final model and calibration intervals.**
+For reporting only; no performance figure is computed from it.
+  - Final model: the D7.2 primary specification (reduced L2 logistic
+    regression, clinical-only and clinical + medication) fitted once on all
+    671 primary-cohort stays, with D4.4's median imputation, missingness
+    indicators and standardisation, and D7.1's filling of the medication
+    features, all fitted on those stays. Its penalty is the value of C chosen
+    most often across the 50 outer-fold tunings of that model in
+    `results/model_tuning.csv` (ties to the smaller C, as in D7.2).
+  - Reported: the intercept and every coefficient on the standardised
+    scale, the odds ratio per standard deviation, and the medians, means
+    and standard deviations needed to apply the model. Its apparent
+    performance is not reported.
+  - Calibration intercept and slope of the pooled out-of-fold predictions
+    of section 8 get D2.1a patient-level BCa intervals (10,000 resamples)
+    for the primary and secondary models. Their coverage is not measured.
+Specified on 2026-10-10 after all model results were seen.
