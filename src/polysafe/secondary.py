@@ -40,8 +40,8 @@ def severity_design(X: pd.DataFrame) -> np.ndarray:
 def odds_ratios(z: np.ndarray, a: np.ndarray, y: np.ndarray) -> tuple[float, float, np.ndarray]:
     """(crude OR, propensity-adjusted OR, propensity scores)."""
     ps = LogisticRegression(C=1.0, max_iter=10_000).fit(z, a).predict_proba(z)[:, 1]
-    crude = LogisticRegression(penalty=None, max_iter=10_000).fit(a[:, None], y)
-    adj = LogisticRegression(penalty=None, max_iter=10_000).fit(
+    crude = LogisticRegression(C=np.inf, max_iter=10_000).fit(a[:, None], y)
+    adj = LogisticRegression(C=np.inf, max_iter=10_000).fit(
         np.column_stack([a, models.logit(ps)]), y)
     return float(np.exp(crude.coef_[0][0])), float(np.exp(adj.coef_[0][0])), ps
 

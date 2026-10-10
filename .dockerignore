@@ -1,0 +1,7 @@
+data/
+.git/
+.jobs/
+**/__pycache__/
+.pytest_cache/
+.ruff_cache/
+results/*_raw.csv.gz

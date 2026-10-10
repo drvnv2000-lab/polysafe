@@ -104,9 +104,11 @@ STAGES = [
     ("Leakage audit", [JUNIT]),
     ("Feature specification", ["results/features_clinical.md"]),
     ("Medication QC", ["mapping/review/REVIEW_PACKET.md"]),
-    ("Model fitting", ["results/models"]),
-    ("Validation", ["results/validation.json"]),
-    ("Robustness", ["results/robustness.json"]),
+    ("Model fitting", ["results/models.md"]),
+    ("Validation", ["results/model_metrics.csv"]),
+    ("Robustness", ["results/sensitivity.md"]),
+    ("Exploratory check", ["results/exploratory_d10.md"]),
+    ("Secondary analysis", ["results/secondary.md"]),
 ]
 LEAKAGE_TESTS = CONTROLS[0][2] + CONTROLS[1][2]
 

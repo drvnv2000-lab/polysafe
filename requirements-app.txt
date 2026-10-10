@@ -1,0 +1,3 @@
+# The Research Lab web service needs only these (it reads committed results).
+fastapi>=0.110,<1
+uvicorn>=0.29,<1

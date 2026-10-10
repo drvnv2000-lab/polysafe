@@ -1,0 +1,5 @@
+# Versions the committed results were produced with (Python 3.12.10).
+pandas==2.3.3
+numpy==1.26.4
+scikit-learn==1.9.1
+lightgbm==4.7.0

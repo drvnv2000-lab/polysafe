@@ -12,6 +12,7 @@ Usage:
 
 from __future__ import annotations
 
+import csv
 import html
 import json
 from collections.abc import Callable
@@ -84,7 +85,8 @@ def render_overview(r: dict) -> str:
              f"{epv['events']} / {epv['parameters']} parameters, primary LR" if "epv" in epv
              else ""),
         stat("Medication review", _review_status(r["review_decisions"])),
-        stat("Model", _e(model.capitalize()), "No performance figure exists yet"),
+        stat("Model", _e(model.capitalize()),
+             "See Primary result" if model == "fitted" else "No performance figure exists yet"),
     ])
     pw_txt = (" / ".join(f"{m:.3f}" for m in pw["mde"]) + " at rho = "
               + " / ".join(f"{x:g}" for x in pw["rho"])) if "mde" in pw else _v(pw)
@@ -201,6 +203,160 @@ border-bottom:1px solid var(--line)}.stage{font-weight:500}
 """
 
 
+
+# ---------------------------------------------------------------- result sections
+# Added once the artifacts behind them existed (DEMO_SCOPE.md). Every number is read from a
+# committed results file; figures are the committed SVGs, inlined.
+
+
+def _load(root: Path, artifact: str) -> dict:
+    path = root / artifact
+    if path.suffix == ".json":
+        return json.loads(path.read_text("utf-8"))
+    with path.open(encoding="utf-8", newline="") as f:
+        return {"rows": list(csv.DictReader(f)), "root": str(root)}
+
+
+def _rows(root: str, rel: str) -> list[dict]:
+    path = Path(root) / rel
+    if not path.exists():
+        return []
+    with path.open(encoding="utf-8", newline="") as f:
+        return list(csv.DictReader(f))
+
+
+def _svg(root: str, rel: str) -> str:
+    path = Path(root) / rel
+    return f'<div class="fig">{path.read_text("utf-8")}</div>' if path.exists() else ""
+
+
+def _num(x, fmt="{:+.3f}") -> str:
+    try:
+        return fmt.format(float(x))
+    except (TypeError, ValueError):
+        return "n/a"
+
+
+def _ci(r: dict, lo="lo", hi="hi") -> str:
+    return f"{_num(r[lo], '{:.3f}')} to {_num(r[hi], '{:.3f}')}"
+
+
+SPEC_NAME = {"lr_reduced": "Primary: reduced L2 logistic regression",
+             "lgbm": "Secondary: LightGBM", "lr_full": "Sensitivity: full penalised LR"}
+
+
+def render_result(d: dict) -> str:
+    root = d["root"]
+    rows = [[f"<b>{_e(SPEC_NAME.get(r['spec'], r['spec']))}</b>" if r["spec"] == "lr_reduced"
+             else _e(SPEC_NAME.get(r["spec"], r["spec"])), _num(r["dauroc"]), _ci(r),
+             _num(r["rho_logit"], "{:.3f}")] for r in d["rows"]]
+    return ("<p>Paired difference in AUROC, clinical + medication minus clinical only, on the "
+            "same 671 stays (repeated patient-grouped CV, patient-level BCa). The gain is seen "
+            "with the pre-specified logistic regression, not with LightGBM.</p>"
+            + _table(["Model", "dAUROC", "95% BCa", "rho (logit)"], rows)
+            + _svg(root, "results/figures/cohort_flow.svg")
+            + _svg(root, "results/figures/dauroc.svg")
+            + _svg(root, "results/figures/calibration.svg"))
+
+
+ARM = {"generic_string": "Generic string", "generic_brand": "Generic + brand",
+       "hicl": "HICL-based", "hicl_gtc": "HICL + gtc (primary)",
+       "hicl_reviewed": "Review-corrected HICL (exploratory)"}
+
+
+def render_measurement(d: dict) -> str:
+    asc = [r for r in d["rows"] if r["group"] == "ascertainment"]
+    rows = [[_e(ARM.get(r["arm"], r["arm"])), _e(r["variant"]), _num(r["dauroc"]), _ci(r)]
+            for r in asc]
+    only = _rows(d["root"], "results/exploratory_d10.csv")
+    share = []
+    path = Path(d["root"]) / "results/exploratory_d10.md"
+    if path.exists():
+        lines = path.read_text("utf-8").split("## Exposed stays")[-1].splitlines()
+        share = [ln.strip("|").split("|") for ln in lines if ln.startswith("| ")][1:]
+    exp = ("<h3>Exposures reached only through rows with no drug name</h3>" + _table(
+        ["Exposure", "Exposed stays", "Only via unnamed rows"],
+        [[_e(c.strip()) for c in r] for r in share])) if share else ""
+    expl = ("<h3>Record-process check (exploratory, D10.1)</h3>" + _table(
+        ["Check", "Comparison", "dAUROC", "95% BCa"],
+        [[_e(r["analysis"]), _e(r["comparison"]), _num(r["dauroc"]), _ci(r)]
+         for r in only])) if only else ""
+    return ("<p>How the drug exposures are counted changes the answer. The same primary "
+            "comparison, rerun with each of five ascertainment strategies and four variants "
+            "(section 6, D8.1).</p>"
+            + _table(["Ascertainment", "Variant", "dAUROC", "95% BCa"], rows) + exp + expl)
+
+
+def _delta_hist(root: str) -> str:
+    preds = _rows(root, "results/model_predictions.csv")
+    if not preds:
+        return ""
+    delta = [float(r["p_lr_reduced_medication"]) - float(r["p_lr_reduced_clinical"])
+             for r in preds]
+    lo, hi, n_bins = -0.15, 0.25, 40
+    width = (hi - lo) / n_bins
+    counts = [0] * n_bins
+    for v in delta:
+        counts[min(n_bins - 1, max(0, int((v - lo) / width)))] += 1
+    w, h, top = 640, 180, max(counts)
+    bars = "".join(
+        f'<rect x="{40 + i * (w - 60) / n_bins:.1f}" y="{h - 30 - c / top * (h - 50):.1f}" '
+        f'width="{(w - 60) / n_bins - 2:.1f}" height="{c / top * (h - 50):.1f}" rx="2" '
+        f'fill="#2a78d6"><title>{lo + i * width:+.3f} to {lo + (i + 1) * width:+.3f}: {c} '
+        "stays</title></rect>" for i, c in enumerate(counts) if c)
+    zero = 40 + (0 - lo) / (hi - lo) * (w - 60)
+    ticks = "".join(f'<text x="{40 + (t - lo) / (hi - lo) * (w - 60):.1f}" y="{h - 12}" '
+                    f'font-size="11" text-anchor="middle" fill="currentColor">{t:+.2f}</text>'
+                    for t in (-0.1, 0.0, 0.1, 0.2))
+    moved = sum(abs(v) >= 0.05 for v in delta)
+    return (f'<div class="fig"><svg viewBox="0 0 {w} {h}" width="100%" role="img" '
+            'aria-label="Distribution of change in predicted risk">'
+            f'<line x1="{zero:.1f}" y1="10" x2="{zero:.1f}" y2="{h - 28}" stroke="#898781"/>'
+            f"{bars}{ticks}</svg></div><p class=\"muted\">Change in each stay's predicted "
+            "risk when the five medication features are added (primary model, pooled "
+            f"out-of-fold). {moved} of {len(delta)} stays move by 5 percentage points or more. "
+            "No single patient's risk is shown (EPV 4.6, DEMO_SCOPE.md).</p>")
+
+
+NAMES = {"full_cohort": "Full cohort, all hospitals", "followup_48h": ">= 48 h follow-up",
+         "baseline_c": "Baseline C", "hospital_clusters": "Hospital-cluster CV"}
+
+
+def render_robustness(d: dict) -> str:
+    other = [r for r in d["rows"] if r["group"] != "ascertainment"]
+    rows = [[_e(NAMES.get(r["analysis"], r["analysis"])), _e(r["n"]), _e(r["events"]),
+             _num(r["dauroc"]), _ci(r)] for r in other]
+    return ("<p>The primary comparison under other cohorts, baselines and grouping (D8.1). "
+            "How these were run was fixed after the primary result was seen (D9.2). None "
+            "replaces the primary result.</p>"
+            + _table(["Analysis", "Stays", "Events", "dAUROC", "95% BCa"], rows)
+            + "<h3>How much the medication features move predicted risk</h3>"
+            + _delta_hist(d["root"]))
+
+
+def render_secondary(d: dict) -> str:
+    rows = [[_e(r["agent"]), _e(r["role"]), f"{_e(r['exposed'])} ({_e(r['events_exposed'])})",
+             f"{_num(r['crude_or'], '{:.2f}')} ({_num(r['crude_lo'], '{:.2f}')}-"
+             f"{_num(r['crude_hi'], '{:.2f}')})",
+             f"{_num(r['adjusted_or'], '{:.2f}')} ({_num(r['adjusted_lo'], '{:.2f}')}-"
+             f"{_num(r['adjusted_hi'], '{:.2f}')})"] for r in d["rows"]]
+    return ("<p>Associational, not causal (section 10, D11.1). Propensity adjustment for "
+            "baseline severity; ondansetron is the negative control.</p>"
+            + _table(["Agent", "Role", "Exposed (AKI)", "Crude OR (95% CI)",
+                      "Adjusted OR (95% CI)"], rows))
+
+
+SECTIONS = [SECTIONS[0],
+    Section("result", "Primary result", "results/model_comparison.csv", render_result),
+    Section("measurement", "Measurement Lab", "results/sensitivity.csv", render_measurement),
+    Section("robustness", "Conclusion Robustness", "results/sensitivity.csv",
+            render_robustness),
+    Section("secondary", "Secondary associations", "results/secondary.csv",
+            render_secondary),
+    SECTIONS[1],
+]
+CSS += ".fig{margin:16px 0;overflow-x:auto}.fig svg{max-width:100%;height:auto}\n"
+
 def available_sections(root: Path, sections=SECTIONS) -> list[Section]:
     """Only the sections whose backing artifact exists. This IS the navigation."""
     return [s for s in sections if (Path(root) / s.artifact).exists()]
@@ -210,7 +366,7 @@ def render(root: Path = ROOT, sections=SECTIONS) -> str:
     present = available_sections(root, sections)
     cache: dict[str, dict] = {}
     for s in present:
-        cache.setdefault(s.artifact, json.loads((Path(root) / s.artifact).read_text("utf-8")))
+        cache.setdefault(s.artifact, _load(Path(root), s.artifact))
     nav = "".join(f'<a href="#{s.id}">{_e(s.title)}</a>' for s in present)
     body = "".join(f'<section id="{s.id}"><h2>{_e(s.title)}</h2>{s.render(cache[s.artifact])}'
                    "</section>" for s in present)
