@@ -1296,3 +1296,30 @@ Recorded after the section 8 results were seen; it concerns attribution only.
     reported as such wherever the D8.1 analyses are reported.
   - No definition, analysis or result changes.
 Recorded on 2026-10-10, after the section 8 results were seen.
+
+### D10 — 2026-10-10, after the section 8 and D8.1 results were seen
+
+**D10.1 [exploratory addition] Does a record-process marker explain the medication gain?**
+In the D8.1 results the primary gain appears only in the HICL-based arms
+and falls to +0.009 when unnamed rows are excluded (D5.12). Unnamed rows
+may mark a documentation process or site rather than drug exposure. One
+exploratory analysis, specified after all model results were seen,
+hypothesis-generating only, never replacing or re-labelling the primary
+result:
+  - U = 1 if the stay has at least one medication row with no drugname and
+    a drughiclseqno that counts under D6.4 (active in [0, T], not
+    cancelled), whatever its drug; 0 if the stay has medication rows but
+    none such; missing for stays with no medication record (median
+    imputation as for the clinical features, no indicator).
+  - On the primary cohort, with every D7.2 setting: (E1) the clinical-only
+    model plus U against the clinical-only model; (E2) the clinical +
+    medication model plus U against the clinical-only model plus U. Paired
+    dAUROC with the D2.1a BCa interval for each.
+  - Descriptive: U by AKI status and by hospital; for each of the five
+    exposures, the share of exposed stays that are exposed only through
+    unnamed rows.
+  - Reading, stated before running: if E2 stays near the primary gain, U
+    does not explain it; if E2 falls towards 0 while E1 carries the gain,
+    the record-process explanation is supported. Neither outcome is
+    confirmatory.
+Specified by the PI after the section 8 and D8.1 results were seen.
