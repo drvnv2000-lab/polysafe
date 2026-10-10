@@ -6,6 +6,9 @@ Database (Demo v2.0.1, 186 US hospitals), with a pre-registered primary analysis
 post-result sensitivity specifications, and drug exposure classified from
 pharmacist-adjudicated HICL mappings.
 
+**[Explore the study: live page](https://drvnv2000-lab.github.io/polysafe/)**: the cohort,
+the result, and how it moves when drugs are counted differently.
+
 ![Cohort flow](results/figures/cohort_flow.svg)
 
 ## The answer
