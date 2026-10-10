@@ -155,17 +155,18 @@ def test_string_level_filtering_drops_only_wrong_strings():
     assert not counted[med["drugname"] == "ENALAPRIL 5 MG TAB"].any()
 
 
-def test_end_to_end_decision_to_stay_level_exposure():
-    """review decision -> string-level inclusion -> exposure rows -> stay exposure -> dataset.
+def test_end_to_end_decision_to_stay_level_exposure(monkeypatch, tmp_path):
+    """review decision -> string-level inclusion -> exposure rows -> stay exposure -> dataset,
+    through the builder the models use (``polysafe.ascertain``: the HICL arms' row builder
+    and the stay table). A builder that bypasses review.rows_counted fails this test: it
+    would mark the enalapril-only stays 11-12 as exposed to furosemide."""
+    from polysafe import ascertain
 
-    TODO (owner instruction, item 7): when the medication feature builder is written,
-    re-point this test at the builder itself, so a builder that bypasses
-    review.rows_counted fails it.
-    """
     med, reviewed = _chain_fixture()
-    rows = review.exposure_rows(med, reviewed)
+    monkeypatch.setattr(ascertain, "read_review", lambda *a, **k: reviewed)
+    rows = ascertain.hicl_rows(med, tmp_path)
     assert (rows["exposure"] == "furosemide").sum() == 500
-    data = review.stay_exposure(rows, stays=range(1, 13))
+    data = ascertain.stay_table(rows, stays=range(1, 13))
     assert data.loc[1:10, "furosemide"].all()
     assert not data.loc[[11, 12], "furosemide"].any()  # the enalapril-only stays
     # A key-level builder would get this fixture wrong at stay level, not just in rows:
