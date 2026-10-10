@@ -1323,3 +1323,36 @@ result:
     the record-process explanation is supported. Neither outcome is
     confirmatory.
 Specified by the PI after the section 8 and D8.1 results were seen.
+
+### D11 — 2026-10-10, before any association estimate was computed
+
+**D11.1 [protocol addition] How the section 10 secondary analysis is run.**
+Section 10 fixes the agents, the negative control and "propensity-score
+adjustment for baseline illness severity, with overlap/positivity
+diagnostics reported. Adjusted odds ratios with 95% CIs." It does not fix
+the rest, which is fixed here. The section 8, D8.1 and D10.1 prediction
+results had been seen; no association between any agent and AKI had been
+computed.
+  - Cohort: the primary cohort, excluding the 20 stays with no medication
+    record of their own (their exposure is unknown, section 6): 651 stays.
+  - Exposures: vancomycin, piperacillin-tazobactam, furosemide; negative
+    control ondansetron. Each is 1 if the stay is exposed by T under D6.4
+    in the HICL + gtc strategy, primary variant (as D7.2), and 0
+    otherwise. Each agent is analysed separately.
+  - Propensity score: a logistic regression (L2, C = 1, fixed) of the
+    exposure on the D4.4 reduced clinical feature set, with D4.4's median
+    imputation, missingness indicators and standardisation, fitted on the
+    analysis stays.
+  - Estimates: the crude odds ratio (AKI on the exposure) and the
+    propensity-adjusted odds ratio (AKI on the exposure and the logit of
+    the propensity score, unpenalised). 95% intervals: patient-level
+    percentile bootstrap, 2,000 resamples, the propensity model refitted
+    in every resample.
+  - Overlap: the propensity-score distribution by exposure group, and the
+    number of exposed and unexposed stays outside the range of the other
+    group's scores. No trimming.
+  - Language: associational only. If ondansetron's adjusted odds ratio is
+    of similar magnitude to the agents', the adjustment is reported as
+    inadequate (section 10).
+Specified on 2026-10-10 by the PI after the prediction results were seen
+and before any association estimate was computed.
