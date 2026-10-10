@@ -2,14 +2,15 @@
 
 <p align="center">
 <a href="https://drvnv2000-lab.github.io/polysafe/"><b>Live study page</b></a> ·
+<a href="https://drvnv2000-lab.github.io/polysafe/report.html">Full report</a> ·
 <a href="PREREGISTRATION.md">Pre-registration</a> ·
 <a href="results/final_model.md">Final model</a> ·
 <a href="https://github.com/drvnv2000-lab/polysafe/releases/tag/v1.0.0">v1.0.0</a>
 </p>
 
 <p align="center">
-<a href="https://drvnv2000-lab.github.io/polysafe/"><img src="docs/tour.gif" alt="A 50 second tour of the study page" width="720"></a><br>
-<sub>50 second tour of the live page</sub>
+<a href="https://drvnv2000-lab.github.io/polysafe/"><img src="docs/tour.gif" alt="A scroll through the live story page" width="720"></a><br>
+<sub>Tour of the live story page</sub>
 </p>
 
 <p align="center">
