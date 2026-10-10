@@ -34,7 +34,7 @@ padding:14px clamp(16px,3vw,32px);background:#070d12ee;backdrop-filter:blur(8px)
 .bar nav{display:flex;gap:18px;font-size:14px}
 .bar nav a{color:var(--ink);text-decoration:none;opacity:.8}.bar nav a:hover{opacity:1}
 .tag{border:1px solid var(--aki);color:var(--aki);border-radius:4px;padding:2px 8px;margin-left:12px;vertical-align:3px}
-#spacer{position:relative;z-index:1;height:660vh}
+#spacer{position:relative;z-index:1;height:770vh}
 #card{position:fixed;z-index:3;left:clamp(16px,5vw,72px);top:50%;transform:translateY(-50%);width:min(500px,calc(100vw - 32px));
 padding:26px 28px;border:1px solid #ffffff14;border-radius:16px;background:#070d12b8;backdrop-filter:blur(12px);
 -webkit-backdrop-filter:blur(12px);transition:opacity .35s}
@@ -312,7 +312,7 @@ const stage = (function () {
     if (p >= B[B.length - 1]) act = 5;
     const t = act < 5 ? clamp((p - B[act]) / (B[act + 1] - B[act]), 0, 1) : 1;
     const k = act === 2 ? Math.min(D.flow.length - 1, Math.floor(t * D.flow.length)) : D.flow.length - 1;
-    const out = p > B[5] ? clamp(1 - (p - B[5]) / .6, 0, 1) : 1;
+    const out = clamp(($("after").getBoundingClientRect().top - innerHeight * .98) / (innerHeight * .12) + 1, 0, 1);
     stage.set(act === 0 ? 0 : act === 1 ? 1 : act === 2 ? 2 : act === 3 ? 3 : 2, act === 2 ? k : D.flow.length - 1, act === 4 ? .7 : act === 5 ? .12 * out : 1);
     const a = act === 5 ? 4 : act, kk = act === 2 ? k : 0;
     card.style.opacity = out; card.style.pointerEvents = out < .1 ? "none" : "auto";
