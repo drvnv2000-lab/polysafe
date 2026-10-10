@@ -1281,3 +1281,18 @@ output had been seen by the PI or the analyst when these choices were made.
     read it, and every "PI" in sections 1-11, as Varad Vaidya.
   - No definition, analysis or result changes.
 Recorded after the section 8 results were seen; it concerns attribution only.
+
+**D9.2 [correction] When D8.1 was decided.**
+  - The last sentence of D8.1 states that no model output had been seen when
+    its choices were made. That is wrong. The section 8 run ended at
+    15:24:34 on 2026-10-09; its results were committed as `a713fd2` at
+    15:24:50 and the full `results/models.md` was displayed; D8.1 was drafted
+    after that and committed as `0241278` at 15:28:31. The PI had seen the
+    section 8 results, including the primary paired dAUROC, before D8.1 was
+    finalised.
+  - Which sensitivity analyses are run was fixed before any model was fitted
+    (sections 3, 4, 6 and 7, D2.2, D3.4). How each one is run and reported,
+    as D8.1 states it, was fixed after the primary result was seen, and is
+    reported as such wherever the D8.1 analyses are reported.
+  - No definition, analysis or result changes.
+Recorded on 2026-10-10, after the section 8 results were seen.
