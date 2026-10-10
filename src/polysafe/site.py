@@ -93,9 +93,20 @@ def payload(results: Path = RESULTS) -> dict:
     }
 
 
+def _fill(template: str, results: Path) -> str:
+    pay = payload(results)
+    data = json.dumps(pay, separators=(",", ":"))
+    return template.replace("__DATA__", data.replace("</", "<\\/")).replace("__REPO__", pay["repo"])
+
+
 def build(results: Path = RESULTS) -> str:
-    data = json.dumps(payload(results), separators=(",", ":"))
-    return TEMPLATE.replace("__DATA__", data.replace("</", "<\\/"))
+    """The cinematic story page (docs/index.html)."""
+    return _fill(TEMPLATE, results)
+
+
+def build_report(results: Path = RESULTS) -> str:
+    """The full detailed report (docs/report.html)."""
+    return _fill(REPORT_TEMPLATE, results)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -104,6 +115,7 @@ def main(argv: list[str] | None = None) -> int:
     args = p.parse_args(argv)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(build(), encoding="utf-8")
+    (args.out.parent / "report.html").write_text(build_report(), encoding="utf-8")
     (args.out.parent / ".nojekyll").write_text("", encoding="utf-8")
     print(f"wrote {args.out}")
     return 0
@@ -111,6 +123,9 @@ def main(argv: list[str] | None = None) -> int:
 
 TEMPLATE = (Path(__file__).with_name("site_template.html")).read_text(encoding="utf-8") \
     if (Path(__file__).with_name("site_template.html")).exists() else "__DATA__"
+
+REPORT_TEMPLATE = (Path(__file__).with_name("report_template.html")).read_text(encoding="utf-8") \
+    if (Path(__file__).with_name("report_template.html")).exists() else "__DATA__"
 
 if __name__ == "__main__":
     raise SystemExit(main())
