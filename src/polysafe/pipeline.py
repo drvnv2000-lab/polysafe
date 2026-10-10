@@ -17,8 +17,20 @@ import argparse
 import os
 import time
 
-from polysafe import (ascertain, coverage, exploratory, features, figures, integrity, lab,
-                      labels, models, power, secondary, sensitivity)
+from polysafe import (
+    ascertain,
+    coverage,
+    exploratory,
+    features,
+    figures,
+    integrity,
+    lab,
+    labels,
+    models,
+    power,
+    secondary,
+    sensitivity,
+)
 
 
 def steps(workers: int, simulations: bool) -> list[tuple[str, object]]:
