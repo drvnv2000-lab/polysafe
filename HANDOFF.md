@@ -13,34 +13,90 @@ built the project, adjudicated the HICL mapping (171 review-packet keys,
 2026-10-06) and made every decision the pre-registration attributes to "the
 PI" (D9.1). He decides clinical definitions, drug classifications and final claims.
 
-## State as of 2026-10-10 (rebuilt from git log and PREREGISTRATION D5-D8)
+## State as of 2026-10-10
 
-Steps 1-6 are done. The primary comparison has run. What remains is step 7
-(sensitivity analyses, specified in D8.1, not run), step 8, step 9 and the
-three figures.
+Rebuilt from the full git history, PREREGISTRATION D1-D9, and the complete
+Claude Code transcript of 2026-10-04 to 2026-10-09 (session `efe2395d`, 4,686
+records, recovered from `C:\Users\drvnv\.claude\projects`). The planning
+chat that drafted the instructions (claude.ai) is not recoverable; every
+instruction it produced was pasted into that transcript verbatim, and every
+decision it produced is in the Deviations.
 
-**Primary result** (`results/models.md`, commit `a713fd2`, 2026-10-09).
-Primary cohort: 671 stays, 78 AKI, medication-recording hospitals, baseline A.
-Repeated patient-grouped CV (5 folds x 10 repeats), patient-level BCa, 10,000 resamples.
+### How the work has been run
+- A planner (Claude chat) drafted each change; the files were staged in
+  `.git/claude-*/` and an executor (Claude Code in AntiGravity) applied them
+  with a fixed checklist: STOP if anything is staged; copy the prepared file;
+  check the staged blob hash and `git diff --cached --stat`; verify every
+  quote an entry cites against the committed text; commit with the given
+  message; run `pytest` and `ruff check .`; **push only if both are green**;
+  delete the staging folder; report.
+- **Forbidden, always:** amend, rebase, reset, cherry-pick, revert,
+  force-push, `git add -A`. Pre-registration entries are never edited after
+  drafting; a wrong entry gets a correction entry.
+- From 2026-10-10: Claude edits files directly and hands commands to a job
+  runner (`.jobs/runner.ps1`, started once in AntiGravity's terminal; `.jobs/`
+  is git-excluded). Same checklist and rules.
+- Remote: `origin` = github.com/drvnv2000-lab/polysafe (private), branch `main`.
+
+### Environment
+- Python 3.12.10 venv **shared with the ADMET project**: `..\.venv` (i.e.
+  `V:\1. Work\Project 1\.venv`). lightgbm 4.7.0, scikit-learn 1.9.1,
+  numpy 1.26.4, pandas 2.3.3.
+- Model runs: `python -m polysafe.models --workers 6` with
+  `OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1`. ~9 min. The
+  laptop has only ~2-3 GB of free commit memory; do not raise workers.
+- Test suite: 224 tests (pytest + ruff green at `0241278`). CI
+  (`.github/workflows`) runs only the data-free append-only and citation tests.
+- Guard tests that bind every change: `tests/test_preregistration.py`
+  (every commit since BASELINE `9635d73` only appends to PREREGISTRATION.md)
+  and `tests/test_citations.py` (every quote of protocol text in committed
+  files must exist verbatim).
+
+### Primary result (`results/models.md`, `a713fd2`, 2026-10-09 15:24)
+Primary cohort: 671 stays, 78 AKI, medication-recording hospitals, baseline A,
+EPV 4.6 (D4.4). Repeated patient-grouped CV (5 folds x 10 repeats, states
+0-9); each stay's 10 out-of-fold predictions averaged; patient-level BCa,
+10,000 resamples (D2.1a).
 
 | Spec | AUROC clinical | AUROC +medication | Paired dAUROC (95% BCa) |
 |---|---|---|---|
-| Reduced L2 LR (primary, D7.2) | 0.641 | 0.677 | **+0.036 (0.006 to 0.071)** |
+| Reduced L2 LR (**primary**, D7.2) | 0.641 | 0.677 | **+0.036 (0.006 to 0.071)** |
 | LightGBM (secondary) | 0.657 | 0.659 | +0.002 (-0.009 to 0.015) |
 | Full penalised LR (sensitivity) | 0.624 | 0.640 | +0.016 (0.001 to 0.034) |
 
-80%-power threshold (section 9, D2.1a): dAUROC 0.031. Calibration slopes:
-LR 1.05 / 1.12, LightGBM 0.81 / 0.81. **The LR-vs-LightGBM disagreement is
-the first thing a reviewer will raise; the README must report both.**
+80%-power threshold (section 9, D2.1a): dAUROC 0.031. Calibration slopes
+(clinical / +med): LR 1.05 / 1.12, LightGBM 0.81 / 0.81. Medication features
+(D7.2): vancomycin, piperacillin-tazobactam, furosemide, NSAIDs (aspirin
+excluded), iodinated contrast; HICL + gtc arm, primary variant.
+**The LR-vs-LightGBM disagreement is the first thing a reviewer will raise;
+the README reports both.**
 
-**Open items**
-- Step 7: D8.1 analyses not run (20 ascertainment analyses, full cohort n=868,
-  >=48 h follow-up n=314, baseline C n=497, hospital clusters, ethnicity).
-- `tests/test_review.py::test_end_to_end_decision_to_stay_level_exposure` still
-  has its TODO: the builder (`polysafe.ascertain`) exists but the test is not
-  yet re-pointed at it.
-- Figures not built: cohort flow (CONSORT), calibration curves, paired dAUROC.
-- Step 8 (pre-specified agents) and step 9 (FastAPI, Docker, CI, README) not started.
+### Integrity issue to resolve before anything else
+D8.1 ends: "Decided by the PI while the primary model run was in progress; no
+model output had been seen by the PI or the analyst when these choices were
+made." The executor flagged on 2026-10-09 that the record cannot confirm this:
+the run ended 15:24:34, the full `results/models.md` was printed shortly after,
+the prepared D8 files were written at 15:26:44, and D8.1 was committed at
+15:28:31, after the results commit (`a713fd2`, 15:24:50). Anyone reading the
+git log will see the order. It needs a factual correction entry stating this
+timeline; the PI states what he had seen.
+
+### Open items, in order
+1. Correction entry for the D8.1 timing (above).
+2. Step 7: write and run the D8.1 sensitivity analyses (20 ascertainment
+   analyses, full cohort n=868, >=48 h follow-up n=314, baseline C n=497,
+   hospital clusters, ethnicity). Primary LR comparison only; LightGBM is not
+   repeated.
+3. Re-point `tests/test_review.py::test_end_to_end_decision_to_stay_level_exposure`
+   at `polysafe.ascertain` (its TODO is still open).
+4. Figures from real output: cohort flow (CONSORT), calibration curves with
+   slope/intercept, paired dAUROC.
+5. Step 8: pre-specified agents, propensity-adjusted, associational language.
+6. Step 9 per `DEMO_SCOPE.md` (locked 2026-10-04): one app, the "PolySafe
+   Research Lab" (`python -m polysafe.lab` -> `results/lab/index.html`; today
+   Overview + Research Integrity). Add Measurement Lab, Conclusion Robustness
+   and Failure Injection only when their artifacts exist. **No per-patient
+   prediction card** (EPV 4.6). Then Docker, CI, README with real numbers.
 
 ## The research question
 
