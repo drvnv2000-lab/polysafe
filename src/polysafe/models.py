@@ -263,16 +263,17 @@ def nearest(value: float, grid) -> float:
 
 
 def matched_cell(cov: pd.DataFrame, mde: pd.DataFrame, prevalence: float, a0: float,
-                 rho: float, delta: float) -> dict:
-    """D2.1a: the primary-cohort, measured-prevalence cell nearest the realised values."""
-    sel = cov[(cov["cohort"] == PRIMARY_COHORT) & np.isclose(cov["prevalence"], prevalence)]
+                 rho: float, delta: float, cohort: str = PRIMARY_COHORT) -> dict:
+    """D2.1a: the measured-prevalence cell of ``cohort`` nearest the realised values
+    (the primary cohort unless a D8.1 analysis names another)."""
+    sel = cov[(cov["cohort"] == cohort) & np.isclose(cov["prevalence"], prevalence)]
     if sel.empty:
-        raise ValueError("no coverage cells for the primary cohort at its measured prevalence")
+        raise ValueError(f"no coverage cells for {cohort} at its measured prevalence")
     cell = {"a0": nearest(a0, sel["a0"].unique()), "rho": nearest(rho, sel["rho"].unique()),
             "delta": nearest(delta, sel["delta"].unique())}
     row = sel[(sel["a0"] == cell["a0"]) & (sel["rho"] == cell["rho"])
               & (sel["delta"] == cell["delta"])].iloc[0]
-    m = mde[(mde["cohort"] == PRIMARY_COHORT) & np.isclose(mde["prevalence"], prevalence)
+    m = mde[(mde["cohort"] == cohort) & np.isclose(mde["prevalence"], prevalence)
             & (mde["a0"] == cell["a0"]) & (mde["rho"] == cell["rho"])].iloc[0]
     return {f"cell_{k}": v for k, v in cell.items()} | {
         "cov_dauroc": row["bca_coverage"], "cov_auroc_clin": row["clin_coverage"],
