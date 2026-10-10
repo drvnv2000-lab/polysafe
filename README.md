@@ -28,8 +28,9 @@ care-process signals is unresolved.
 
 A pre-study simulation estimated 80% power to detect a dAUROC of 0.031 under its stated
 assumptions; that is a design parameter, not a clinical-importance threshold. AUPRC did not
-improve: 0.216 (0.145-0.302) vs 0.213 (0.149-0.288) for the primary model. Source:
-[`results/models.md`](results/models.md).
+improve: 0.216 (0.145-0.302) vs 0.213 (0.149-0.288) for the primary model. Sources:
+[`results/models.md`](results/models.md); the fitted model, with every coefficient, in
+[`results/final_model.md`](results/final_model.md).
 
 ![Paired dAUROC](results/figures/dauroc.svg)
 
@@ -105,7 +106,7 @@ plausible explanation.
 | Predictors | 74 clinical features at T with their missingness ([`results/features_clinical.md`](results/features_clinical.md)); the primary model uses the reduced set of D4.4 with median imputation, missingness indicators and standardisation fitted in the training fold; medication features as D7.1-D7.2 |
 | Validation | Repeated stratified patient-grouped CV, 5 folds x 10 repeats; L2 strength (13 values) or LightGBM grid tuned by inner patient-grouped log loss; each stay's 10 out-of-fold predictions averaged; patient-level BCa, 10,000 resamples |
 | Software | Python 3.12; pandas 2.3.3, numpy 1.26.4, scikit-learn 1.9.1, lightgbm 4.7.0 (`requirements.txt`) |
-| Pre-registration | [`PREREGISTRATION.md`](PREREGISTRATION.md), committed before any model was fitted; changes only by appended Deviations (D1-D11), enforced by a test over every commit |
+| Pre-registration | [`PREREGISTRATION.md`](PREREGISTRATION.md), committed before any model was fitted; changes only by appended Deviations (D1-D12), enforced by a test over every commit |
 
 ## Limitations
 
@@ -119,8 +120,11 @@ plausible explanation.
 - Cancelled orders are excluded using eICU's cancellation flag, whose timing is not
   recorded; an order active by T but cancelled later could be classified with post-T
   information.
-- Performance is from pooled cross-validated predictions; no single final model with
-  coefficients is reported, and calibration intercept and slope have no intervals.
+- Performance is from pooled cross-validated predictions. The final model's coefficients
+  ([`results/final_model.md`](results/final_model.md), D12.1) are for transparency; it is
+  heavily penalised (C = 0.01), and its apparent performance is not reported. Calibration
+  intervals are wide: primary model slope 1.12 (0.69 to 1.57) with medication, 1.05 (0.60
+  to 1.54) without.
 - The demo is a small sample of eICU-CRD; nothing here has been externally validated.
 
 ## Reproduce

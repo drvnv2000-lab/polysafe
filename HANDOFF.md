@@ -84,8 +84,9 @@ the README reports both.**
 - Two independent ChatGPT reviews; their edits adopted in the README.
 
 ### Open, not blocking
-- No single final model with coefficients; calibration slope/intercept have no CIs.
-- Docker image is checked in CI only (not built on the laptop).
+- D12.1 final model and calibration CIs done (`results/final_model.md`). CI green on all
+  three jobs (protocol, lint, docker build + serve); Docker Desktop is not running on the
+  laptop, so the image is verified in CI only.
 - Failure Injection (DEMO_SCOPE) not built; its section stays hidden by design.
 
 ## The research question
